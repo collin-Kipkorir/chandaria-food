@@ -363,7 +363,14 @@ function Hero() {
 
         <div className="hidden lg:block animate-in fade-in zoom-in-95 duration-1000">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-            <div className="h-full w-full bg-gradient-to-br from-white/6 to-white/10 flex items-center justify-center">
+            <img
+              src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=60"
+              alt="Supermarket interior with neatly stocked shelves"
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-brand-green-deep/60 to-brand-green-dark/60" />
+            <div className="relative h-full w-full flex items-center justify-center">
               <div className="text-white/80 text-2xl font-bold">Chandaria Food Plus</div>
             </div>
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-green-deep to-transparent p-6 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
@@ -389,7 +396,13 @@ function About() {
     <section id="about" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl">
-          <div className="h-full w-full bg-gradient-to-br from-white/6 to-white/12 flex items-center justify-center">
+          <img
+            src="https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=1400&q=60"
+            alt="Fresh local produce on display at market stalls"
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/6 to-white/12 flex items-center justify-center">
             <div className="text-brand-green-deep text-2xl font-bold">Fresh local produce</div>
           </div>
         </div>
@@ -684,6 +697,12 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
       </button>
 
       <header className="relative mt-5 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green via-brand-green-dark to-brand-green-deep p-6 text-white shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500 sm:p-10">
+        <img
+          src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1600&q=60"
+          alt="Team and store environment behind the role"
+          className="absolute inset-0 h-full w-full object-cover opacity-20"
+          loading="lazy"
+        />
         <div
           aria-hidden
           className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-gold/20 blur-3xl"
@@ -692,7 +711,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
           aria-hidden
           className="pointer-events-none absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-brand-gold/10 blur-3xl"
         />
-        <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
+  <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
           <div className="min-w-0 flex-1">
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
               <Sparkles className="h-3 w-3" /> Now Hiring
