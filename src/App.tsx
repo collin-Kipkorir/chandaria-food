@@ -363,11 +363,9 @@ function Hero() {
 
         <div className="hidden lg:block animate-in fade-in zoom-in-95 duration-1000">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
-            <img
-              src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=1200&q=80"
-              alt="Supermarket aisle"
-              className="h-full w-full object-cover"
-            />
+            <div className="h-full w-full bg-gradient-to-br from-white/6 to-white/10 flex items-center justify-center">
+              <div className="text-white/80 text-2xl font-bold">Chandaria Food Plus</div>
+            </div>
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-green-deep to-transparent p-6 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
               More than just food
             </div>
@@ -391,11 +389,9 @@ function About() {
     <section id="about" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl">
-          <img
-            src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=80"
-            alt="Fresh fruit display"
-            className="h-full w-full object-cover transition duration-700 hover:scale-105"
-          />
+          <div className="h-full w-full bg-gradient-to-br from-white/6 to-white/12 flex items-center justify-center">
+            <div className="text-brand-green-deep text-2xl font-bold">Fresh local produce</div>
+          </div>
         </div>
         <div>
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">

@@ -23,7 +23,7 @@ export default function LoginPage() {
             const res = login(email.trim(), password);
             if (!res.ok) return setErr(res.error || "Failed");
             const user = useApp.getState().users.find((u) => u.email === email.trim());
-            navigate({ to: user?.role === "admin" ? "/admin" : "/profile" });
+            navigate(user?.role === "admin" ? "/admin" : "/profile");
           }}
         >
           <div>

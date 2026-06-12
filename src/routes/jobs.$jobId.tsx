@@ -623,9 +623,9 @@ function JobDetail() {
           }
         }}
         aria-label="Apply for this role"
-        className="fixed bottom-6 right-6 z-50 hidden items-center gap-2 rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-5 py-3 text-sm font-bold uppercase tracking-[0.18em] text-brand-green-deep shadow-lg transition hover:scale-[1.02] sm:inline-flex"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-5 py-3 text-base font-bold uppercase tracking-[0.14em] text-brand-green-deep shadow-2xl transition hover:scale-[1.03]"
       >
-        Apply <Send className="ml-2 h-3.5 w-3.5" />
+        Apply <Send className="ml-2 h-4 w-4" />
       </button>
     </div>
   );

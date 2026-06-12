@@ -38,7 +38,7 @@ export default function RegisterPage() {
                 .filter(Boolean),
             });
             if (!res.ok) return setErr(res.error || "Failed");
-            navigate({ to: "/profile" });
+            navigate("/profile");
           }}
         >
           <Field label="Full name">
