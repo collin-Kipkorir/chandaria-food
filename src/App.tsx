@@ -452,33 +452,79 @@ function About() {
 
 function Stores() {
   return (
-    <section id="stores" className="bg-brand-green-deep py-16 text-white sm:py-24">
+    <section id="stores" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-12 max-w-2xl">
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
-            Our Stores
-          </span>
-          <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
-            FIND US <span className="text-brand-gold">NEARBY</span>
-          </h2>
-          <p className="mt-4 text-base text-white/80">
-            50+ locations across Nairobi and beyond — from buzzing malls to quiet neighbourhoods.
-          </p>
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
+              Our Stores
+            </span>
+            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
+              FIND US <span className="text-brand-gold">NEARBY</span>
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground max-w-xl">
+              50+ locations across Nairobi and beyond — from buzzing malls to quiet neighbourhoods.
+            </p>
+          </div>
+          <div className="hidden items-center gap-2 md:flex">
+            <button
+              aria-label="Previous stores"
+              id="stores-prev"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-sm hover:bg-muted"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </button>
+            <button
+              aria-label="Next stores"
+              id="stores-next"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-sm hover:bg-muted"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {STORES.map((s) => (
-            <div key={s.name} className="group animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <h3 className="font-display text-2xl tracking-wide text-white group-hover:text-brand-gold transition">
-                {s.name}
-              </h3>
-              <p className="mt-2 text-sm text-white/70 group-hover:text-white/90 transition">
-                Convenient locations across Nairobi.
-              </p>
-            </div>
-          ))}
+        <div className="relative">
+          <div
+            id="stores-scroller"
+            tabIndex={0}
+            className="no-scrollbar flex gap-6 overflow-x-auto pb-4 scroll-smooth touch-pan-x rounded-md"
+            role="list"
+            aria-label="Nearby stores"
+          >
+            {STORES.map((s, i) => (
+              <article
+                key={s.name}
+                role="listitem"
+                className="min-w-[18rem] flex-shrink-0 rounded-2xl border border-border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                style={{ animationDelay: `${i * 60}ms` }}
+              >
+                <h3 className="font-display text-xl tracking-wide text-brand-green-deep">
+                  {s.name}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">Convenient locations across Nairobi.</p>
+                <div className="mt-4 flex items-center gap-2">
+                  <button className="rounded-full bg-brand-gold px-3 py-1 text-xs font-bold uppercase tracking-[0.15em] text-brand-green-deep">
+                    View
+                  </button>
+                  <button className="text-sm text-muted-foreground">Get directions</button>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </div>
+      <script dangerouslySetInnerHTML={{
+        __html: `(() => {
+          const scroller = document.getElementById('stores-scroller');
+          const prev = document.getElementById('stores-prev');
+          const next = document.getElementById('stores-next');
+          if (!scroller) return;
+          const step = Math.min(300, scroller.clientWidth * 0.6);
+          prev?.addEventListener('click', () => scroller.scrollBy({ left: -step, behavior: 'smooth' }));
+          next?.addEventListener('click', () => scroller.scrollBy({ left: step, behavior: 'smooth' }));
+        })()`
+      }} />
     </section>
   );
 }
@@ -1067,7 +1113,7 @@ function Footer() {
             CHANDARANA <span className="text-brand-gold">FOODPLUS</span>
           </div>
         </div>
-        <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
           © {new Date().getFullYear()} Chandarana Foodplus · More than just food
         </p>
       </div>
