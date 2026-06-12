@@ -302,9 +302,9 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-brand-green-deep text-white">
       <img
-        src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=2000&q=70"
+        src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=2000&q=80"
         alt="Fresh produce display"
-        className="absolute inset-0 h-full w-full object-cover opacity-20"
+        className="absolute inset-0 h-full w-full object-cover opacity-22"
         loading="eager"
       />
       <div className="absolute inset-0 bg-gradient-to-br from-brand-green-deep via-brand-green-deep/90 to-brand-green-dark/80" />
@@ -364,7 +364,7 @@ function Hero() {
         <div className="hidden lg:block animate-in fade-in zoom-in-95 duration-1000">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl group">
             <img
-              src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=60"
+              src="https://images.unsplash.com/photo-1542831371-d531d36971e6?auto=format&fit=crop&w=1400&q=80"
               alt="Supermarket interior with neatly stocked shelves"
               className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
               loading="lazy"
@@ -400,7 +400,7 @@ function About() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl group">
           <img
-            src="https://images.unsplash.com/photo-1488459716781-6815394dc245?auto=format&fit=crop&w=1400&q=60"
+            src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=80"
             alt="Fresh local produce on display at market stalls"
             className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
             loading="lazy"
@@ -708,7 +708,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
 
       <header className="relative mt-5 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green via-brand-green-dark to-brand-green-deep p-6 text-white shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500 sm:p-10">
         <img
-          src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=1600&q=60"
+          src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1600&q=80"
           alt="Team and store environment behind the role"
           className="absolute inset-0 h-full w-full object-cover opacity-20"
           loading="lazy"
