@@ -362,19 +362,22 @@ function Hero() {
         </div>
 
         <div className="hidden lg:block animate-in fade-in zoom-in-95 duration-1000">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl group">
             <img
               src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=60"
               alt="Supermarket interior with neatly stocked shelves"
-              className="absolute inset-0 h-full w-full object-cover"
+              className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-brand-green-deep/60 to-brand-green-dark/60" />
-            <div className="relative h-full w-full flex items-center justify-center">
-              <div className="text-white/80 text-2xl font-bold">Chandaria Food Plus</div>
-            </div>
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-green-deep to-transparent p-6 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
-              More than just food
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-8">
+              <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
+                Chandaria <br />
+                <span className="text-brand-gold">Food Plus</span>
+              </h3>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
+                More than just food
+              </p>
             </div>
           </div>
         </div>
@@ -395,15 +398,22 @@ function About() {
   return (
     <section id="about" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
-        <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl">
+        <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl group">
           <img
-            src="https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=1400&q=60"
+            src="https://images.unsplash.com/photo-1488459716781-6815394dc245?auto=format&fit=crop&w=1400&q=60"
             alt="Fresh local produce on display at market stalls"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-white/6 to-white/12 flex items-center justify-center">
-            <div className="text-brand-green-deep text-2xl font-bold">Fresh local produce</div>
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-8">
+            <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
+              Fresh local <br />
+              <span className="text-brand-gold">produce</span>
+            </h3>
+            <p className="mt-2 text-sm text-white/90">
+              Sourced daily from Kenyan farms, supporting local communities.
+            </p>
           </div>
         </div>
         <div>
