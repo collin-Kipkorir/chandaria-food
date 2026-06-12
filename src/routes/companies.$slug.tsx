@@ -18,8 +18,8 @@ const COMPANY_BY_SLUG: Record<string, { name: string; tagline: string; about: st
 export default CompanyPage;
 
 function CompanyPage() {
-  const { slug } = useParams();
-  const meta = COMPANY_BY_SLUG[slug];
+  const { slug } = useParams<{ slug: string }>();
+  const meta = slug ? COMPANY_BY_SLUG[slug] : undefined;
   const allJobs = useApp((s) => s.jobs);
   const jobs = useMemo(
     () => allJobs.filter((j) => j.status === "open" && j.companyName === meta?.name),

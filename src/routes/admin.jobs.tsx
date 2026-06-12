@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import type { Job, JobType } from "@/lib/types";
 import { toast } from "sonner";
@@ -29,6 +30,9 @@ const empty: Draft = {
   requirements: "",
   applyDeadline: "",
   status: "open",
+  skills: [],
+  description: "",
+  responsibilities: "",
 };
 
 export default function AdminJobs() {

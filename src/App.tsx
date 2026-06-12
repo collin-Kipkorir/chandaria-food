@@ -108,22 +108,10 @@ const NAV = [
 ];
 
 const STORES = [
-  {
-    name: "Westgate",
-    img: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=70",
-  },
-  {
-    name: "Lavington",
-    img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=70",
-  },
-  {
-    name: "Sarit Centre",
-    img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=900&q=70",
-  },
-  {
-    name: "Two Rivers",
-    img: "https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fit=crop&w=900&q=70",
-  },
+  { name: "Westgate" },
+  { name: "Lavington" },
+  { name: "Sarit Centre" },
+  { name: "Two Rivers" },
 ];
 
 const SERVICES = [
@@ -155,9 +143,35 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeJob]);
 
+  // Push a history state when opening a preview so mobile/browser back button
+  // closes the preview instead of exiting the app.
+  useEffect(() => {
+    if (!activeJob) return;
+    // push a dummy state
+    try {
+      window.history.pushState({ preview: true }, "");
+    } catch (e) {
+      // ignore
+    }
+
+    const onPop = (e: PopStateEvent) => {
+      // if preview is open, close it instead of letting the browser navigate away
+      if (activeJob) {
+        setActiveJob(null);
+        // replace state so further back goes back to real history
+        try {
+          window.history.replaceState({}, "");
+        } catch (er) {}
+      }
+    };
+
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [activeJob]);
+
   return (
     <div className="min-h-screen bg-brand-cream font-body text-brand-green-deep">
-      <Header onApplyClick={() => goTo("careers")} />
+      <Header onApplyClick={() => goTo("careers")} onNavigate={() => setActiveJob(null)} />
       {activeJob ? (
         <JobDetailView job={activeJob} onBack={() => setActiveJob(null)} />
       ) : (
@@ -174,7 +188,7 @@ function goTo(id: string) {
 }
 
 // ---------------- Header ----------------
-function Header({ onApplyClick }: { onApplyClick: () => void }) {
+function Header({ onApplyClick, onNavigate }: { onApplyClick: () => void; onNavigate?: () => void }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -205,7 +219,11 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
           {NAV.map((n) => (
             <button
               key={n.target}
-              onClick={() => goTo(n.target)}
+              onClick={() => {
+                close();
+                onNavigate?.();
+                goTo(n.target);
+              }}
               className="transition hover:text-brand-gold"
             >
               {n.label}
@@ -217,6 +235,7 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
           <button
             onClick={() => {
               close();
+              onNavigate?.();
               onApplyClick();
             }}
             className="hidden items-center justify-center rounded-full bg-brand-gold px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep shadow-lg shadow-brand-gold/30 transition hover:scale-[1.03] hover:bg-brand-gold-dark sm:inline-flex"
@@ -242,6 +261,7 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
                 key={n.target}
                 onClick={() => {
                   close();
+                  onNavigate?.();
                   goTo(n.target);
                 }}
                 className="rounded-lg px-3 py-3 text-left hover:bg-white/5 hover:text-brand-gold"
@@ -252,6 +272,7 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
             <button
               onClick={() => {
                 close();
+                onNavigate?.();
                 onApplyClick();
               }}
               className="mt-2 inline-flex items-center justify-center rounded-full bg-brand-gold px-5 py-3 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep"
@@ -281,9 +302,9 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-brand-green-deep text-white">
       <img
-        src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=2000&q=70"
-        alt="Fresh produce display"
-        className="absolute inset-0 h-full w-full object-cover opacity-20"
+        src="https://images.unsplash.com/photo-1514512364185-2a5f07e1b88d?auto=format&fit=crop&w=2000&q=90"
+        alt="Vibrant assortment of fresh fruits and vegetables"
+        className="absolute inset-0 h-full w-full object-cover opacity-24"
         loading="eager"
       />
       <div className="absolute inset-0 bg-gradient-to-br from-brand-green-deep via-brand-green-deep/90 to-brand-green-dark/80" />
@@ -341,14 +362,22 @@ function Hero() {
         </div>
 
         <div className="hidden lg:block animate-in fade-in zoom-in-95 duration-1000">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl group">
             <img
-              src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=1200&q=80"
-              alt="Supermarket aisle"
-              className="h-full w-full object-cover"
+              src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1400&q=90"
+              alt="Close-up of colorful produce display in a market"
+              className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
+              loading="lazy"
             />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-brand-green-deep to-transparent p-6 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
-              More than just food
+            <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-8">
+              <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
+                Chandaria <br />
+                <span className="text-brand-gold">Food Plus</span>
+              </h3>
+              <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
+                More than just food
+              </p>
             </div>
           </div>
         </div>
@@ -369,12 +398,23 @@ function About() {
   return (
     <section id="about" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
-        <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl">
+        <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl group">
           <img
-            src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=80"
-            alt="Fresh fruit display"
-            className="h-full w-full object-cover transition duration-700 hover:scale-105"
+            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=90"
+            alt="Baskets of fresh vegetables and herbs at a farmers market"
+            className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
+            loading="lazy"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 p-8">
+            <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
+              Fresh local <br />
+              <span className="text-brand-gold">produce</span>
+            </h3>
+            <p className="mt-2 text-sm text-white/90">
+              Sourced daily from Kenyan farms, supporting local communities.
+            </p>
+          </div>
         </div>
         <div>
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">
@@ -414,40 +454,27 @@ function Stores() {
   return (
     <section id="stores" className="bg-brand-green-deep py-16 text-white sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
-              Our Stores
-            </span>
-            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
-              FIND US <span className="text-brand-gold">NEARBY</span>
-            </h2>
-          </div>
-          <p className="max-w-md text-sm text-white/70">
+        <div className="mb-12 max-w-2xl">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
+            Our Stores
+          </span>
+          <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
+            FIND US <span className="text-brand-gold">NEARBY</span>
+          </h2>
+          <p className="mt-4 text-base text-white/80">
             50+ locations across Nairobi and beyond — from buzzing malls to quiet neighbourhoods.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {STORES.map((s, i) => (
-            <div
-              key={s.name}
-              className="group relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-lg animate-in fade-in zoom-in-95"
-              style={{ animationDelay: `${i * 80}ms`, animationDuration: "600ms" }}
-            >
-              <img
-                src={s.img}
-                alt={s.name}
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep via-brand-green-deep/30 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <div className="font-display text-2xl tracking-wide">{s.name}</div>
-                <div className="mt-1 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-gold">
-                  <MapPin className="h-3 w-3" /> Nairobi
-                </div>
-              </div>
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {STORES.map((s) => (
+            <div key={s.name} className="group animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <h3 className="font-display text-2xl tracking-wide text-white group-hover:text-brand-gold transition">
+                {s.name}
+              </h3>
+              <p className="mt-2 text-sm text-white/70 group-hover:text-white/90 transition">
+                Convenient locations across Nairobi.
+              </p>
             </div>
           ))}
         </div>
@@ -680,6 +707,12 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
       </button>
 
       <header className="relative mt-5 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green via-brand-green-dark to-brand-green-deep p-6 text-white shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500 sm:p-10">
+        <img
+          src="https://images.unsplash.com/photo-1543353071-087092ec393f?auto=format&fit=crop&w=1600&q=90"
+          alt="Prepared fresh food and smiling staff in a store environment"
+          className="absolute inset-0 h-full w-full object-cover opacity-22"
+          loading="lazy"
+        />
         <div
           aria-hidden
           className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-brand-gold/20 blur-3xl"
@@ -688,7 +721,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
           aria-hidden
           className="pointer-events-none absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-brand-gold/10 blur-3xl"
         />
-        <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
+  <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
           <div className="min-w-0 flex-1">
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
               <Sparkles className="h-3 w-3" /> Now Hiring

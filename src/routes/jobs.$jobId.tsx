@@ -24,6 +24,7 @@ import {
   User2,
   Wallet,
 } from "lucide-react";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 
 // Route handled by react-router-dom via AppRoutes
 
@@ -121,6 +122,7 @@ function JobDetail() {
   const allJobs = useApp((s) => s.jobs);
   const job = useMemo(() => allJobs.find((j) => j.id === jobId), [allJobs, jobId]);
   const apply = useApp((s) => s.applyToJob);
+  const nav = useNavigationLoader();
 
   const [step, setStep] = useState(1);
   // step 1
@@ -606,6 +608,25 @@ function JobDetail() {
           </aside>
         </div>
       </main>
+      {/* Sticky Apply button */}
+      <button
+        type="button"
+        onClick={() => {
+          try {
+            nav.start();
+            const el = document.getElementById("apply");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+            setTimeout(() => nav.done(), 700);
+          } catch (e) {
+            const el = document.getElementById("apply");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }}
+        aria-label="Apply for this role"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-5 py-3 text-base font-bold uppercase tracking-[0.14em] text-brand-green-deep shadow-2xl transition hover:scale-[1.03]"
+      >
+        Apply <Send className="ml-2 h-4 w-4" />
+      </button>
     </div>
   );
 }

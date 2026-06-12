@@ -5,6 +5,7 @@ import { Toaster } from "./components/ui/sonner";
 import AppRoutes from "./AppRoutes";
 import { startFirebaseSync } from "./lib/store";
 import { isFirebaseConfigured } from "./lib/firebase";
+import { NavigationLoaderProvider } from "./components/NavigationLoader";
 
 const queryClient = new QueryClient();
 
@@ -20,9 +21,11 @@ export default function Root() {
           Firebase Realtime DB not configured — running on local fallback.
         </div>
       )}
-      <MaintenanceGate>
-        <AppRoutes />
-      </MaintenanceGate>
+      <NavigationLoaderProvider>
+        <MaintenanceGate>
+          <AppRoutes />
+        </MaintenanceGate>
+      </NavigationLoaderProvider>
       <Toaster />
     </QueryClientProvider>
   );
