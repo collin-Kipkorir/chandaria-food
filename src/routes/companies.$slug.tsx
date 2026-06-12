@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useParams, Link } from "react-router-dom";
 import { AppHeader } from "@/components/AppHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,10 @@ const COMPANY_BY_SLUG: Record<string, { name: string; tagline: string; about: st
   },
 };
 
-export const Route = createFileRoute("/companies/$slug")({
-  component: CompanyPage,
-});
+export default CompanyPage;
 
 function CompanyPage() {
-  const { slug } = Route.useParams();
+  const { slug } = useParams();
   const meta = COMPANY_BY_SLUG[slug];
   const allJobs = useApp((s) => s.jobs);
   const jobs = useMemo(
@@ -64,8 +62,7 @@ function CompanyPage() {
           {jobs.map((j) => (
             <Link
               key={j.id}
-              to="/jobs/$jobId"
-              params={{ jobId: j.id }}
+              to={`/jobs/${j.id}`}
               className="group rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm"
             >
               <div className="flex items-start justify-between gap-4">

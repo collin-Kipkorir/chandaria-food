@@ -2,21 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-
-type ServerEntry = {
-  fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
-};
-
-let serverEntryPromise: Promise<ServerEntry> | undefined;
-
-async function getServerEntry(): Promise<ServerEntry> {
-  if (!serverEntryPromise) {
-    serverEntryPromise = import("@tanstack/react-start/server-entry").then(
-      (m) => (m.default ?? m) as ServerEntry,
-    );
-  }
-  return serverEntryPromise;
-}
+import { getGreetingHandler } from "./lib/api/example.functions";
 
 // h3 swallows in-handler throws into a normal 500 Response with body
 // {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
@@ -40,9 +26,28 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
-      const handler = await getServerEntry();
-      const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      const url = new URL(request.url);
+
+      // Lightweight API route replacement for the example createServerFn.
+      if (url.pathname === "/api/getGreeting" && request.method === "POST") {
+        const bodyText = await request.text();
+        let body: unknown = undefined;
+        try {
+          body = bodyText ? JSON.parse(bodyText) : undefined;
+        } catch (e) {
+          return new Response("Invalid JSON", { status: 400 });
+        }
+        const result = await getGreetingHandler(body);
+        return new Response(JSON.stringify(result), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        });
+      }
+
+      // No SSR handler present (TanStack start removed). Return 404 for unknown
+      // routes — existing SSR behavior should be replaced by a proper Vite SSR
+      // entry if you need server rendering.
+      return new Response("Not Found", { status: 404 });
     } catch (error) {
       console.error(error);
       return new Response(renderErrorPage(), {

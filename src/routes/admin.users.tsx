@@ -1,15 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { COUNTIES, useApp } from "@/lib/store";
 import type { User } from "@/lib/types";
-
-export const Route = createFileRoute("/admin/users")({
-  component: UsersPage,
-});
-
-function UsersPage() {
+export default function UsersPage() {
   const { users, setUserStatus, deleteUser, approveBeta, emailLogs } = useApp();
   const [q, setQ] = useState("");
   const [county, setCounty] = useState("");

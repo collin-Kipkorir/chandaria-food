@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useApp } from "@/lib/store";
 import { COUNTIES } from "@/lib/store";
@@ -12,15 +11,10 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import type { Job, JobType } from "@/lib/types";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
-
-export const Route = createFileRoute("/admin/jobs")({
-  component: AdminJobs,
-});
 
 type Draft = Omit<Job, "id" | "createdAt">;
 
@@ -32,15 +26,12 @@ const empty: Draft = {
   county: "Nairobi",
   jobType: "full-time",
   salaryRange: "",
-  skills: [],
-  description: "",
-  responsibilities: "",
   requirements: "",
   applyDeadline: "",
   status: "open",
 };
 
-function AdminJobs() {
+export default function AdminJobs() {
   const jobs = useApp((s) => s.jobs);
   const apps = useApp((s) => s.applications);
   const createJob = useApp((s) => s.createJob);

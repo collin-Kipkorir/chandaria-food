@@ -1,15 +1,10 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { COUNTIES, useApp, useCurrentUser } from "@/lib/store";
-
-export const Route = createFileRoute("/profile")({
-  component: ProfilePage,
-});
-
-function ProfilePage() {
+export default function ProfilePage() {
   const user = useCurrentUser();
   const updateProfile = useApp((s) => s.updateProfile);
   const interviews = useApp((s) => s.interviews);

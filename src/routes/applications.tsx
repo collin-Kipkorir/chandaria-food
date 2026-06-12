@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { useApp } from "@/lib/store";
@@ -6,10 +6,6 @@ import type { ApplicationStatus } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-
-export const Route = createFileRoute("/applications")({
-  component: TrackApplications,
-});
 
 const statusStyle: Record<ApplicationStatus, string> = {
   submitted: "bg-blue-100 text-blue-800",
@@ -19,7 +15,7 @@ const statusStyle: Record<ApplicationStatus, string> = {
   hired: "bg-amber-100 text-amber-900",
 };
 
-function TrackApplications() {
+export default function TrackApplications() {
   const apps = useApp((s) => s.applications);
   const jobs = useApp((s) => s.jobs);
   const [email, setEmail] = useState("");
@@ -79,8 +75,7 @@ function TrackApplications() {
                     <div className="min-w-0">
                       {job ? (
                         <Link
-                          to="/jobs/$jobId"
-                          params={{ jobId: job.id }}
+                          to={`/jobs/${job.id}`}
                           className="font-display text-xl tracking-wide text-brand-green-deep hover:text-brand-gold-dark"
                         >
                           {job.title}

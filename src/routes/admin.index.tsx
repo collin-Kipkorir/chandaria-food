@@ -1,11 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useApp } from "@/lib/store";
 
-export const Route = createFileRoute("/admin/")({
-  component: Dashboard,
-});
-
-function Dashboard() {
+export default function Dashboard() {
   const { users, campaigns, interviews, emailLogs, audits } = useApp();
   const seekers = users.filter((u) => u.role === "seeker");
   const active = seekers.filter((u) => u.status === "active").length;

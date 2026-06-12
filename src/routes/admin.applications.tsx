@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useApp } from "@/lib/store";
 import { Badge } from "@/components/ui/badge";
@@ -6,11 +5,7 @@ import type { ApplicationStatus } from "@/lib/types";
 
 const STATUSES: ApplicationStatus[] = ["submitted", "reviewed", "shortlisted", "rejected", "hired"];
 
-export const Route = createFileRoute("/admin/applications")({
-  component: AdminApplications,
-});
-
-function AdminApplications() {
+export default function AdminApplications() {
   const apps = useApp((s) => s.applications);
   const jobs = useApp((s) => s.jobs);
   const setStatus = useApp((s) => s.setApplicationStatus);

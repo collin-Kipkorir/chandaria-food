@@ -1,14 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/store";
 
-export const Route = createFileRoute("/admin/interviews")({
-  component: InterviewsPage,
-});
-
-function InterviewsPage() {
+export default function InterviewsPage() {
   const { users, interviews, createInterview } = useApp();
   const seekers = users.filter((u) => u.role === "seeker");
   const [form, setForm] = useState({

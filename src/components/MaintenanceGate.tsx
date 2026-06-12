@@ -1,4 +1,4 @@
-import { useRouterState } from "@tanstack/react-router";
+import { useLocation } from "react-router-dom";
 import { useApp, useCurrentUser } from "@/lib/store";
 import { Wrench } from "lucide-react";
 
@@ -12,7 +12,7 @@ import { Wrench } from "lucide-react";
 export function MaintenanceGate({ children }: { children: React.ReactNode }) {
   const settings = useApp((s) => s.settings);
   const user = useCurrentUser();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { pathname } = useLocation();
 
   if (
     settings.websiteMode === "maintenance" &&

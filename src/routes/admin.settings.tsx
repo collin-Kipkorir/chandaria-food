@@ -1,11 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/store";
 import type { WebsiteMode } from "@/lib/types";
-
-export const Route = createFileRoute("/admin/settings")({
-  component: SettingsPage,
-});
 
 const MODES: { value: WebsiteMode; label: string; desc: string }[] = [
   { value: "online", label: "Online", desc: "Full system access." },
@@ -22,7 +17,7 @@ const MODES: { value: WebsiteMode; label: string; desc: string }[] = [
   { value: "beta", label: "Private beta", desc: "Only admin-approved users can sign in." },
 ];
 
-function SettingsPage() {
+export default function SettingsPage() {
   const { settings, setSettings } = useApp();
 
   return (

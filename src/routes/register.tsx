@@ -1,15 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { COUNTIES, useApp } from "@/lib/store";
-
-export const Route = createFileRoute("/register")({
-  component: RegisterPage,
-});
-
-function RegisterPage() {
+export default function RegisterPage() {
   const register = useApp((s) => s.register);
   const navigate = useNavigate();
   const [form, setForm] = useState({

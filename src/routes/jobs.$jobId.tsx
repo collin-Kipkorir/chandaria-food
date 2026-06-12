@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, useParams } from "react-router-dom";
 import { useMemo, useRef, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
@@ -25,9 +25,7 @@ import {
   Wallet,
 } from "lucide-react";
 
-export const Route = createFileRoute("/jobs/$jobId")({
-  component: JobDetail,
-});
+// Route handled by react-router-dom via AppRoutes
 
 const MAX_CV_BYTES = 5 * 1024 * 1024; // 5MB
 const ACCEPT =
@@ -119,7 +117,7 @@ const STEPS = [
 ] as const;
 
 function JobDetail() {
-  const { jobId } = Route.useParams();
+  const { jobId } = useParams() as { jobId?: string };
   const allJobs = useApp((s) => s.jobs);
   const job = useMemo(() => allJobs.find((j) => j.id === jobId), [allJobs, jobId]);
   const apply = useApp((s) => s.applyToJob);
@@ -611,6 +609,8 @@ function JobDetail() {
     </div>
   );
 }
+
+export default JobDetail;
 
 function Block({
   title,

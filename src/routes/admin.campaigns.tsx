@@ -1,14 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/store";
 
-export const Route = createFileRoute("/admin/campaigns")({
-  component: CampaignsPage,
-});
-
-function CampaignsPage() {
+export default function CampaignsPage() {
   const { campaigns, users, emailLogs, createCampaign, sendCampaign } = useApp();
   const [form, setForm] = useState({ title: "", subject: "", message: "", bannerImageUrl: "" });
   const seekers = users.filter((u) => u.role === "seeker" && u.status === "active");

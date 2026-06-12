@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Navigate, Outlet, useRouterState } from "@tanstack/react-router";
+import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 import { AppHeader } from "@/components/AppHeader";
 import { useCurrentUser } from "@/lib/store";
 import {
@@ -12,9 +12,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/admin")({
-  component: AdminLayout,
-});
+// Admin layout is rendered via react-router-dom routes
 
 const nav: { to: string; label: string; icon: typeof Users; exact?: boolean }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -26,9 +24,9 @@ const nav: { to: string; label: string; icon: typeof Users; exact?: boolean }[] 
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
-function AdminLayout() {
+export default function AdminLayout() {
   const user = useCurrentUser();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { pathname } = useLocation();
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "admin") return <Navigate to="/" />;
 
@@ -43,7 +41,7 @@ function AdminLayout() {
               return (
                 <Link
                   key={n.to}
-                  to={n.to as "/admin"}
+                  to={n.to}
                   className={cn(
                     "flex items-center gap-2 rounded-md px-3 py-2 text-sm",
                     active ? "bg-secondary font-medium" : "hover:bg-accent",

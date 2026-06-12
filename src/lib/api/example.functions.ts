@@ -1,22 +1,29 @@
-import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
 import { getServerConfig } from "../config.server";
 
-// Example createServerFn. Server-side handler invoked from the client:
-//   const result = await getGreeting({ data: { name: "Ada" } })
-// The .handler body runs server-only — imports used only inside it (like
-// .server.ts modules) are tree-shaken from the client bundle. Module-level
-// code here still ships to the client; for truly server-only helpers, put
-// them in a .server.ts file. Use this pattern instead of Supabase Edge
-// Functions for server logic.
+const greetingSchema = z.object({ name: z.string().min(1) });
 
-export const getGreeting = createServerFn({ method: "POST" })
-  .inputValidator(z.object({ name: z.string().min(1) }))
-  .handler(async ({ data }) => {
-    const config = getServerConfig();
-    return {
-      greeting: `Hello, ${data.name}!`,
-      mode: config.nodeEnv ?? "unknown",
-    };
+// Server-side handler — can be imported by the server entry to serve an API
+// route. Kept in this module to preserve the example, but it's plain code
+// with no dependency on TanStack Start.
+export async function getGreetingHandler(body: unknown) {
+  const parsed = greetingSchema.parse(body);
+  const config = getServerConfig();
+  return {
+    greeting: `Hello, ${parsed.name}!`,
+    mode: config.nodeEnv ?? "unknown",
+  };
+}
+
+// Client helper that calls the server endpoint. This is optional; callers
+// can also call fetch('/api/getGreeting', ... ) directly.
+export async function callGetGreeting(name: string) {
+  const res = await fetch("/api/getGreeting", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ name }),
   });
+  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+  return res.json();
+}
