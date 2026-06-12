@@ -108,22 +108,10 @@ const NAV = [
 ];
 
 const STORES = [
-  {
-    name: "Westgate",
-    img: "https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=900&q=70",
-  },
-  {
-    name: "Lavington",
-    img: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=70",
-  },
-  {
-    name: "Sarit Centre",
-    img: "https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=900&q=70",
-  },
-  {
-    name: "Two Rivers",
-    img: "https://images.unsplash.com/photo-1506617564039-2f3b650b7010?auto=format&fit=crop&w=900&q=70",
-  },
+  { name: "Westgate" },
+  { name: "Lavington" },
+  { name: "Sarit Centre" },
+  { name: "Two Rivers" },
 ];
 
 const SERVICES = [
@@ -429,23 +417,17 @@ function Stores() {
         </div>
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {STORES.map((s, i) => (
-            <div
-              key={s.name}
-              className="group relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-lg animate-in fade-in zoom-in-95"
-              style={{ animationDelay: `${i * 80}ms`, animationDuration: "600ms" }}
-            >
-              <img
-                src={s.img}
-                alt={s.name}
-                className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep via-brand-green-deep/30 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <div className="font-display text-2xl tracking-wide">{s.name}</div>
-                <div className="mt-1 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-brand-gold">
-                  <MapPin className="h-3 w-3" /> Nairobi
+          {STORES.map((s) => (
+            <div key={s.name} className="flex flex-col items-stretch overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-white/3 to-white/6 p-6 shadow-sm">
+              <div className="mb-4 flex h-36 items-center justify-center rounded-lg bg-white/6 text-white/90">
+                <div className="text-2xl font-bold">{s.name}</div>
+              </div>
+              <div className="mt-auto">
+                <div className="font-display text-lg text-white">{s.name}</div>
+                <div className="mt-2 text-sm text-white/70">Convenient locations across Nairobi.</div>
+                <div className="mt-4 flex items-center gap-2">
+                  <button className="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-white/90">View</button>
+                  <button className="rounded-full bg-brand-gold px-3 py-2 text-xs font-bold text-brand-green-deep">Apply</button>
                 </div>
               </div>
             </div>
