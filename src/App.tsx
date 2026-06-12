@@ -431,31 +431,28 @@ function Stores() {
   return (
     <section id="stores" className="bg-brand-green-deep py-16 text-white sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
-              Our Stores
-            </span>
-            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
-              FIND US <span className="text-brand-gold">NEARBY</span>
-            </h2>
-          </div>
-          <p className="max-w-md text-sm text-white/70">
+        <div className="mb-12 max-w-2xl">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
+            Our Stores
+          </span>
+          <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
+            FIND US <span className="text-brand-gold">NEARBY</span>
+          </h2>
+          <p className="mt-4 text-base text-white/80">
             50+ locations across Nairobi and beyond — from buzzing malls to quiet neighbourhoods.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {STORES.map((s) => (
-                <div key={s.name} className="flex flex-col items-stretch overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-white/3 to-white/6 p-6 shadow-sm">
-                  <div className="mb-4 flex h-36 items-center justify-center rounded-lg bg-white/6 text-white/90">
-                    <div className="text-2xl font-bold">{s.name}</div>
-                  </div>
-                  <div className="mt-auto">
-                    <div className="font-display text-lg text-white">{s.name}</div>
-                    <div className="mt-2 text-sm text-white/70">Convenient locations across Nairobi.</div>
-                  </div>
-                </div>
+            <div key={s.name} className="group animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <h3 className="font-display text-2xl tracking-wide text-white group-hover:text-brand-gold transition">
+                {s.name}
+              </h3>
+              <p className="mt-2 text-sm text-white/70 group-hover:text-white/90 transition">
+                Convenient locations across Nairobi.
+              </p>
+            </div>
           ))}
         </div>
       </div>
