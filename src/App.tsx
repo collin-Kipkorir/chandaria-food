@@ -143,9 +143,35 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeJob]);
 
+  // Push a history state when opening a preview so mobile/browser back button
+  // closes the preview instead of exiting the app.
+  useEffect(() => {
+    if (!activeJob) return;
+    // push a dummy state
+    try {
+      window.history.pushState({ preview: true }, "");
+    } catch (e) {
+      // ignore
+    }
+
+    const onPop = (e: PopStateEvent) => {
+      // if preview is open, close it instead of letting the browser navigate away
+      if (activeJob) {
+        setActiveJob(null);
+        // replace state so further back goes back to real history
+        try {
+          window.history.replaceState({}, "");
+        } catch (er) {}
+      }
+    };
+
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [activeJob]);
+
   return (
     <div className="min-h-screen bg-brand-cream font-body text-brand-green-deep">
-      <Header onApplyClick={() => goTo("careers")} />
+      <Header onApplyClick={() => goTo("careers")} onNavigate={() => setActiveJob(null)} />
       {activeJob ? (
         <JobDetailView job={activeJob} onBack={() => setActiveJob(null)} />
       ) : (
@@ -162,7 +188,7 @@ function goTo(id: string) {
 }
 
 // ---------------- Header ----------------
-function Header({ onApplyClick }: { onApplyClick: () => void }) {
+function Header({ onApplyClick, onNavigate }: { onApplyClick: () => void; onNavigate?: () => void }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
@@ -193,7 +219,11 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
           {NAV.map((n) => (
             <button
               key={n.target}
-              onClick={() => goTo(n.target)}
+              onClick={() => {
+                close();
+                onNavigate?.();
+                goTo(n.target);
+              }}
               className="transition hover:text-brand-gold"
             >
               {n.label}
@@ -205,6 +235,7 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
           <button
             onClick={() => {
               close();
+              onNavigate?.();
               onApplyClick();
             }}
             className="hidden items-center justify-center rounded-full bg-brand-gold px-5 py-2.5 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep shadow-lg shadow-brand-gold/30 transition hover:scale-[1.03] hover:bg-brand-gold-dark sm:inline-flex"
@@ -230,6 +261,7 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
                 key={n.target}
                 onClick={() => {
                   close();
+                  onNavigate?.();
                   goTo(n.target);
                 }}
                 className="rounded-lg px-3 py-3 text-left hover:bg-white/5 hover:text-brand-gold"
@@ -240,6 +272,7 @@ function Header({ onApplyClick }: { onApplyClick: () => void }) {
             <button
               onClick={() => {
                 close();
+                onNavigate?.();
                 onApplyClick();
               }}
               className="mt-2 inline-flex items-center justify-center rounded-full bg-brand-gold px-5 py-3 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep"
@@ -418,19 +451,15 @@ function Stores() {
 
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {STORES.map((s) => (
-            <div key={s.name} className="flex flex-col items-stretch overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-white/3 to-white/6 p-6 shadow-sm">
-              <div className="mb-4 flex h-36 items-center justify-center rounded-lg bg-white/6 text-white/90">
-                <div className="text-2xl font-bold">{s.name}</div>
-              </div>
-              <div className="mt-auto">
-                <div className="font-display text-lg text-white">{s.name}</div>
-                <div className="mt-2 text-sm text-white/70">Convenient locations across Nairobi.</div>
-                <div className="mt-4 flex items-center gap-2">
-                  <button className="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold text-white/90">View</button>
-                  <button className="rounded-full bg-brand-gold px-3 py-2 text-xs font-bold text-brand-green-deep">Apply</button>
+                <div key={s.name} className="flex flex-col items-stretch overflow-hidden rounded-2xl border border-white/8 bg-gradient-to-br from-white/3 to-white/6 p-6 shadow-sm">
+                  <div className="mb-4 flex h-36 items-center justify-center rounded-lg bg-white/6 text-white/90">
+                    <div className="text-2xl font-bold">{s.name}</div>
+                  </div>
+                  <div className="mt-auto">
+                    <div className="font-display text-lg text-white">{s.name}</div>
+                    <div className="mt-2 text-sm text-white/70">Convenient locations across Nairobi.</div>
+                  </div>
                 </div>
-              </div>
-            </div>
           ))}
         </div>
       </div>

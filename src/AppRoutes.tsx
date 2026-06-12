@@ -1,5 +1,6 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Routes, Route, Navigate, useNavigationType, useLocation } from "react-router-dom";
+import { useNavigationLoader } from "@/components/NavigationLoader";
 
 import IndexPage from "./routes/index";
 import JobsIndex from "./routes/jobs.index";
@@ -13,6 +14,18 @@ import AdminLayout from "./routes/admin";
 import AdminIndex from "./routes/admin.index";
 
 export default function AppRoutes() {
+  const navType = useNavigationType();
+  const loc = useLocation();
+  const loader = useNavigationLoader();
+
+  useEffect(() => {
+    // show loader briefly on route change
+    loader.start();
+    const t = setTimeout(() => loader.done(), 600);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loc.pathname, navType]);
+
   return (
     <Routes>
       <Route path="/" element={<IndexPage />} />
