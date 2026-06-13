@@ -9,26 +9,103 @@ import {
   CheckCircle2,
   ChevronDown,
   Coins,
-  FileUp,
-  GraduationCap,
   Leaf,
-  MapPin,
   Menu,
-  Search,
-  Send,
-  ShoppingBasket,
+  X,
   Sparkles,
+  Search,
+  MapPin,
+  ShoppingBasket,
+  Utensils,
   Truck,
   User2,
-  Utensils,
+  GraduationCap,
+  FileUp,
   Wallet,
-  X,
+  Send,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import type { Job } from "@/lib/types";
 
-// ---------------- constants ----------------
-const MAX_CV_BYTES = 5 * 1024 * 1024;
+const EDUCATION_LEVELS = [
+  "Certificate",
+  "Diploma",
+  "Higher National Diploma",
+  "Bachelor's Degree",
+  "Master's Degree",
+  "PhD",
+  "Other",
+];
+
+const SALARY_RANGES = [
+  "Below KSh 20,000",
+  "KSh 20,000 – 35,000",
+  "KSh 35,000 – 60,000",
+  "KSh 60,000 – 90,000",
+  "KSh 90,000 – 150,000",
+  "Above KSh 150,000",
+  "Negotiable",
+];
+
+const NAV = [
+  { label: "Home", target: "home" },
+  { label: "About", target: "about" },
+  { label: "Our Stores", target: "stores" },
+  { label: "Careers", target: "careers" },
+];
+
+const STORES = [
+  {
+    name: "Supermarkets",
+    icon: ShoppingBasket,
+    description: "Our flagship full-service supermarkets carry thousands of local and imported food products, fresh produce, bakery, deli, and household essentials.",
+  },
+  {
+    name: "Fresh Produce & Deli",
+    icon: Leaf,
+    description: "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
+  },
+  {
+    name: "Bakery & Café",
+    icon: Utensils,
+    description: "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
+  },
+  {
+    name: "Online & Delivery",
+    icon: Truck,
+    description: "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
+  },
+  {
+    name: "Own-Brand Products",
+    icon: Building2,
+    description: "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
+  },
+  {
+    name: "Community & Loyalty",
+    icon: Leaf,
+    description: "Our Foodplus Rewards programme and community nutrition initiatives connect us to millions of Kenyan households beyond the checkout.",
+  },
+];
+
+const SERVICES = [
+  {
+    icon: ShoppingBasket,
+    title: "Fresh Groceries",
+    text: "Daily-fresh produce, meats and household essentials sourced locally.",
+  },
+  {
+    icon: Utensils,
+    title: "Ready-To-Eat",
+    text: "In-house bakery, deli and hot-foods counter for meals on the go.",
+  },
+  {
+    icon: Truck,
+    title: "Delivery & Pickup",
+    text: "Same-day delivery across Nairobi and click-and-collect nationwide.",
+  },
+];
+
+const MAX_CV_BYTES = 5 * 1024 * 1024; // 5MB
 const ACCEPT =
   ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
@@ -78,58 +155,6 @@ const KENYA_COUNTIES = [
   "Homa Bay",
   "Migori",
   "Nyamira",
-  "Kisii",
-  "Nyandarua",
-];
-const EDUCATION_LEVELS = [
-  "Certificate",
-  "Diploma",
-  "Higher National Diploma",
-  "Bachelor's Degree",
-  "Master's Degree",
-  "PhD",
-  "Other",
-];
-const SALARY_RANGES = [
-  "Below KSh 20,000",
-  "KSh 20,000 – 35,000",
-  "KSh 35,000 – 60,000",
-  "KSh 60,000 – 90,000",
-  "KSh 90,000 – 150,000",
-  "Above KSh 150,000",
-  "Negotiable",
-];
-
-const NAV = [
-  { label: "Home", target: "home" },
-  { label: "About", target: "about" },
-  { label: "Our Stores", target: "stores" },
-  { label: "Careers", target: "careers" },
-];
-
-const STORES = [
-  { name: "Westgate" },
-  { name: "Lavington" },
-  { name: "Sarit Centre" },
-  { name: "Two Rivers" },
-];
-
-const SERVICES = [
-  {
-    icon: ShoppingBasket,
-    title: "Fresh Groceries",
-    text: "Daily-fresh produce, meats and household essentials sourced locally.",
-  },
-  {
-    icon: Utensils,
-    title: "Ready-To-Eat",
-    text: "In-house bakery, deli and hot-foods counter for meals on the go.",
-  },
-  {
-    icon: Truck,
-    title: "Delivery & Pickup",
-    text: "Same-day delivery across Nairobi and click-and-collect nationwide.",
-  },
 ];
 
 // ---------------- App ----------------
@@ -454,180 +479,149 @@ function Stores() {
   return (
     <section id="stores" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
-              Our Stores
-            </span>
-            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide sm:text-5xl">
-              FIND US <span className="text-brand-gold">NEARBY</span>
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground max-w-xl">
-              50+ locations across Nairobi and beyond — from buzzing malls to quiet neighbourhoods.
-            </p>
-          </div>
-          <div className="hidden items-center gap-2 md:flex">
-            <button
-              aria-label="Previous stores"
-              id="stores-prev"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-sm hover:bg-muted"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </button>
-            <button
-              aria-label="Next stores"
-              id="stores-next"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-input bg-background text-muted-foreground shadow-sm hover:bg-muted"
-            >
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
+        <div className="text-center">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">OUR BUSINESS</span>
+          <h2 className="mt-4 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
+            WHAT WE <span className="text-brand-gold">DO</span>
+          </h2>
+          <p className="mt-4 mx-auto max-w-2xl text-sm text-brand-green-deep/70 sm:text-base">
+            Chandarana Foodplus operates across multiple food retail formats, offering diverse career pathways for everyone.
+          </p>
         </div>
 
-        <div className="relative">
-          <div
-            id="stores-scroller"
-            tabIndex={0}
-            className="no-scrollbar flex gap-6 overflow-x-auto pb-4 scroll-smooth touch-pan-x rounded-md"
-            role="list"
-            aria-label="Nearby stores"
-          >
-            {STORES.map((s, i) => (
-              <article
-                key={s.name}
-                role="listitem"
-                className="min-w-[18rem] flex-shrink-0 rounded-2xl border border-border bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-                style={{ animationDelay: `${i * 60}ms` }}
+        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {STORES.map((store, i) => {
+            const Icon = store.icon;
+            return (
+              <div
+                key={store.name}
+                className="group rounded-2xl border border-brand-green/20 bg-white p-8 transition hover:border-brand-green/40 hover:shadow-md"
+                style={{ animationDelay: `${i * 80}ms` }}
               >
-                <h3 className="font-display text-xl tracking-wide text-brand-green-deep">
-                  {s.name}
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground">Convenient locations across Nairobi.</p>
-                <div className="mt-4 flex items-center gap-2">
-                  <button className="rounded-full bg-brand-gold px-3 py-1 text-xs font-bold uppercase tracking-[0.15em] text-brand-green-deep">
-                    View
-                  </button>
-                  <button className="text-sm text-muted-foreground">Get directions</button>
+                <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-gold/15 text-brand-gold-dark transition group-hover:bg-brand-gold/25">
+                  <Icon className="h-6 w-6" />
                 </div>
-              </article>
-            ))}
-          </div>
+                <h3 className="mt-5 font-display text-lg tracking-wide text-brand-green-deep">
+                  {store.name}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-brand-green-deep/70">
+                  {store.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </div>
-      <script dangerouslySetInnerHTML={{
-        __html: `(() => {
-          const scroller = document.getElementById('stores-scroller');
-          const prev = document.getElementById('stores-prev');
-          const next = document.getElementById('stores-next');
-          if (!scroller) return;
-          const step = Math.min(300, scroller.clientWidth * 0.6);
-          prev?.addEventListener('click', () => scroller.scrollBy({ left: -step, behavior: 'smooth' }));
-          next?.addEventListener('click', () => scroller.scrollBy({ left: step, behavior: 'smooth' }));
-        })()`
-      }} />
     </section>
   );
 }
 
 function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void }) {
   const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<string | null>(null);
+
+  const JOB_TYPES: Array<{ key: string; label: string }> = [
+    { key: "all", label: "All Roles" },
+    { key: "full-time", label: "Full-time" },
+    { key: "part-time", label: "Part-time" },
+    { key: "internship", label: "Internships" },
+  ];
+
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
-    if (!term) return jobs;
-    return jobs.filter(
+    let list = jobs;
+    if (filter) list = list.filter((j) => j.jobType === filter);
+    if (!term) return list;
+    return list.filter(
       (j) =>
         j.title.toLowerCase().includes(term) ||
         j.location.toLowerCase().includes(term) ||
         j.skills.some((s) => s.toLowerCase().includes(term)),
     );
-  }, [jobs, q]);
+  }, [jobs, q, filter]);
 
   return (
     <section id="careers" className="bg-brand-cream py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">
-              Careers
-            </span>
-            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
-              OPEN <span className="text-brand-gold-dark">ROLES</span>
-            </h2>
-            <p className="mt-3 max-w-xl text-sm text-brand-green-deep/70">
-              {filtered.length} {filtered.length === 1 ? "role" : "roles"} currently open — no
-              account needed to apply.
-            </p>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">OPEN ROLES</span>
+            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-4xl">Open Positions</h2>
+            <p className="mt-3 max-w-xl text-sm text-brand-green-deep/70">We are always looking for energetic, caring individuals to join our growing team. Apply directly — no agencies, no middlemen.</p>
+            <div className="mt-4 flex flex-wrap items-center gap-2">
+              {JOB_TYPES.map((t) => (
+                <button key={t.key} onClick={() => setFilter(t.key === "all" ? null : t.key)} className={`px-3 py-1 rounded-full text-xs font-semibold ${filter === t.key || (t.key === "all" && filter === null) ? "bg-brand-green-deep text-white" : "bg-white text-brand-green-deep border border-brand-green/10"}`}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
+
           <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-green-deep/40" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Search role, skill, location…"
-              className="h-11 w-full rounded-full border border-brand-green/15 bg-white pl-10 pr-4 text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/30"
-            />
+            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search roles, skills, or locations" className="h-11 w-full rounded-full border border-brand-green/15 bg-white pl-10 pr-4 text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/30" />
           </div>
         </div>
 
-        {filtered.length === 0 ? (
-          <div className="mt-12 rounded-3xl border border-dashed border-brand-green/20 bg-white p-12 text-center">
-            <p className="text-sm text-brand-green-deep/60">
-              No roles match your search. Try a different keyword.
-            </p>
-          </div>
-        ) : (
-          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((job, i) => (
-              <button
-                key={job.id}
-                onClick={() => onOpenJob(job)}
-                className="group flex h-full flex-col items-start rounded-3xl border border-brand-green/10 bg-white p-6 text-left shadow-sm transition hover:-translate-y-1 hover:border-brand-gold/30 hover:shadow-xl animate-in fade-in slide-in-from-bottom-3"
-                style={{ animationDelay: `${i * 60}ms`, animationDuration: "500ms" }}
-              >
-                <div className="flex w-full items-start justify-between gap-3">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-brand-green/5 text-brand-green-deep transition group-hover:bg-brand-gold/15 group-hover:text-brand-gold-dark">
-                    <Briefcase className="h-5 w-5" />
-                  </div>
-                  <span className="rounded-full bg-emerald-100 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.18em] text-emerald-700">
-                    Open
-                  </span>
-                </div>
-                <h3 className="mt-4 font-display text-xl leading-tight tracking-wide text-brand-green-deep">
-                  {job.title}
-                </h3>
-                <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-brand-green-deep/65">
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="h-3.5 w-3.5" /> {job.location}
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <Briefcase className="h-3.5 w-3.5" /> {job.jobType.replace("-", " ")}
-                  </span>
-                  {job.salaryRange && (
-                    <span className="inline-flex items-center gap-1">
-                      <Coins className="h-3.5 w-3.5" /> {job.salaryRange}
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filtered.map((job) => (
+            <div
+              key={job.id}
+              className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-gray-300"
+            >
+              {/* Top: Job type badge + Open status */}
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-brand-green-deep/60">
+                  {job.jobType.replace("-", " ")}
+                </span>
+                <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[8px] font-bold uppercase text-emerald-700">
+                  Open
+                </span>
+              </div>
+
+              {/* Job title */}
+              <h3 className="font-display text-base leading-tight text-brand-green-deep">{job.title}</h3>
+
+              {/* Location */}
+              <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-600">
+                <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                <span>{job.location}</span>
+              </div>
+
+              {/* Description snippet */}
+              <p className="mt-3 line-clamp-2 text-xs text-gray-600">
+                {job.description.slice(0, 80)}...
+              </p>
+
+              {/* Skills - compact */}
+              {job.skills.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {job.skills.slice(0, 2).map((s) => (
+                    <span
+                      key={s}
+                      className="rounded-full bg-gray-100 px-2 py-0.5 text-[9px] font-semibold text-gray-700"
+                    >
+                      {s}
                     </span>
-                  )}
+                  ))}
                 </div>
-                {job.skills.length > 0 && (
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {job.skills.slice(0, 3).map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-full bg-brand-green/5 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-brand-green-deep/70"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className="mt-6 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-brand-gold-dark">
-                  View & apply{" "}
-                  <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-1" />
-                </div>
-              </button>
-            ))}
-          </div>
-        )}
+              )}
+
+              {/* Spacer to push button to bottom */}
+              <div className="flex-1" />
+
+              {/* Apply button - bottom right */}
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={() => onOpenJob(job)}
+                  className="rounded-full bg-brand-gold px-3 py-1.5 text-xs font-bold text-brand-green-deep shadow-sm transition hover:shadow-md hover:scale-105"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
