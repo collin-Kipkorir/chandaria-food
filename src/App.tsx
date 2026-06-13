@@ -234,7 +234,7 @@ function Header({
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-green-deep/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3 py-3 sm:px-4 sm:py-4">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-2 py-3 sm:px-3 sm:py-4">
         <button
           onClick={() => {
             close();
@@ -357,7 +357,7 @@ function Hero() {
         className="absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-brand-gold/10 blur-3xl"
       />
 
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-3 py-16 sm:px-4 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-32">
+      <div className="relative mx-auto grid max-w-5xl items-center gap-10 px-2 py-16 sm:px-3 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-32">
         <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
           <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
             <Sparkles className="h-3 w-3" /> We're hiring across Kenya
@@ -437,7 +437,7 @@ function Hero() {
 function About() {
   return (
     <section id="about" className="bg-brand-cream py-16 sm:py-24">
-      <div className="mx-auto grid max-w-6xl gap-10 px-3 sm:px-4 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid max-w-5xl gap-10 px-2 sm:px-3 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl group">
           <img
             src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=90"
@@ -493,7 +493,7 @@ function About() {
 function Stores() {
   return (
     <section id="stores" className="bg-brand-cream py-16 sm:py-24">
-      <div className="mx-auto max-w-6xl px-3 sm:px-4">
+      <div className="mx-auto max-w-5xl px-2 sm:px-3">
         <div className="text-center">
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
             OUR BUSINESS
@@ -560,7 +560,7 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
 
   return (
     <section id="careers" className="bg-brand-cream py-16 sm:py-24">
-      <div className="mx-auto max-w-6xl px-3 sm:px-4">
+      <div className="mx-auto max-w-5xl px-2 sm:px-3">
         <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
           <div>
             <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">
@@ -771,7 +771,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
   const progress = ((step - 1) / (STEPS.length - 1)) * 100;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-12">
+    <main className="mx-auto max-w-5xl px-3 py-6 sm:px-4 sm:py-12">
       <button
         onClick={onBack}
         className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep/70 transition hover:text-brand-gold-dark"
@@ -1131,7 +1131,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
 function Footer() {
   return (
     <footer className="border-t border-white/10 bg-brand-green-deep py-10 text-white">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-3 text-center sm:flex-row sm:px-4 sm:text-left">
+      <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-2 text-center sm:flex-row sm:px-3 sm:text-left">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full ring-2 ring-brand-gold/40">
             <Leaf className="h-4 w-4 text-brand-gold" />
