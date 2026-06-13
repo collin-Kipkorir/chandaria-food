@@ -7,7 +7,6 @@
 // may still import `getRouter`. Return a tolerant, chainable stub instead of
 // throwing so those tools don't crash at runtime. The app itself now uses
 // react-router-dom for client routing.
-/* eslint-disable @typescript-eslint/no-explicit-any, prefer-const */
 const createStub = (): any => {
   // A callable proxy that returns itself for any property access or call.
   let proxy: any;
