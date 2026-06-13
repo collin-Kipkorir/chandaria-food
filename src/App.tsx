@@ -457,15 +457,15 @@ function About() {
             {SERVICES.map((s) => (
               <div
                 key={s.title}
-                className="rounded-2xl border border-brand-green/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
+                className="rounded-2xl border border-brand-green/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md flex flex-col h-full"
               >
                 <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gold/15 text-brand-gold-dark">
                   <s.icon className="h-5 w-5" />
                 </div>
-                <h3 className="mt-3 font-display text-base tracking-wide text-brand-green-deep">
+                <h3 className="mt-3 font-display text-sm sm:text-base font-medium text-brand-green-deep">
                   {s.title}
                 </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-brand-green-deep/70">{s.text}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-brand-green-deep/70">{s.text}</p>
               </div>
             ))}
           </div>
@@ -495,16 +495,16 @@ function Stores() {
             return (
               <div
                 key={store.name}
-                className="group rounded-2xl border border-brand-green/20 bg-white p-8 transition hover:border-brand-green/40 hover:shadow-md"
+                className="group rounded-2xl border border-brand-green/20 bg-white p-6 sm:p-8 flex flex-col h-full transition hover:border-brand-green/40 hover:shadow-md"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
                 <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-gold/15 text-brand-gold-dark transition group-hover:bg-brand-gold/25">
                   <Icon className="h-6 w-6" />
                 </div>
-                <h3 className="mt-5 font-display text-lg tracking-wide text-brand-green-deep">
+                <h3 className="mt-5 font-display text-sm sm:text-lg font-medium tracking-wide text-brand-green-deep">
                   {store.name}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-brand-green-deep/70">
+                <p className="mt-3 text-sm leading-relaxed text-brand-green-deep/70 line-clamp-6">
                   {store.description}
                 </p>
               </div>
@@ -567,7 +567,7 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
           {filtered.map((job) => (
             <div
               key={job.id}
-              className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md hover:border-gray-300"
+              className="group relative flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white p-4 pb-12 shadow-sm transition hover:shadow-md hover:border-gray-300"
             >
               {/* Top: Job type badge + Open status */}
               <div className="mb-3 flex items-center justify-between gap-2">
@@ -580,7 +580,7 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
               </div>
 
               {/* Job title */}
-              <h3 className="font-display text-base leading-tight text-brand-green-deep">{job.title}</h3>
+              <h3 className="font-display text-sm sm:text-base leading-tight font-medium text-brand-green-deep">{job.title}</h3>
 
               {/* Location */}
               <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-600">
@@ -589,8 +589,8 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
               </div>
 
               {/* Description snippet */}
-              <p className="mt-3 line-clamp-2 text-xs text-gray-600">
-                {job.description.slice(0, 80)}...
+              <p className="mt-3 line-clamp-3 text-sm text-gray-600">
+                {job.description.slice(0, 120)}...
               </p>
 
               {/* Skills - compact */}
@@ -607,11 +607,8 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
                 </div>
               )}
 
-              {/* Spacer to push button to bottom */}
-              <div className="flex-1" />
-
-              {/* Apply button - bottom right */}
-              <div className="mt-4 flex justify-end">
+              {/* Apply button - bottom right (absolute) */}
+              <div className="absolute right-4 bottom-4">
                 <button
                   onClick={() => onOpenJob(job)}
                   className="rounded-full bg-brand-gold px-3 py-1.5 text-xs font-bold text-brand-green-deep shadow-sm transition hover:shadow-md hover:scale-105"
