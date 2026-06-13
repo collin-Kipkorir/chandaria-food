@@ -24,7 +24,6 @@ const createStub = (): any => {
 };
 
 export const getRouter = () => {
-  // eslint-disable-next-line no-console
-  console.warn('getRouter() called: returning a stub router because TanStack router was removed.');
+  console.warn("getRouter() called: returning a stub router because TanStack router was removed.");
   return createStub();
 };

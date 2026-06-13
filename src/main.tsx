@@ -12,6 +12,7 @@ function Main() {
   );
 }
 
-const el = document.getElementById("root") ?? document.body.appendChild(document.createElement("div"));
+const el =
+  document.getElementById("root") ?? document.body.appendChild(document.createElement("div"));
 const root = createRoot(el as HTMLElement);
 root.render(<Main />);

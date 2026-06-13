@@ -58,32 +58,38 @@ const STORES = [
   {
     name: "Supermarkets",
     icon: ShoppingBasket,
-    description: "Our flagship full-service supermarkets carry thousands of local and imported food products, fresh produce, bakery, deli, and household essentials.",
+    description:
+      "Our flagship full-service supermarkets carry thousands of local and imported food products, fresh produce, bakery, deli, and household essentials.",
   },
   {
     name: "Fresh Produce & Deli",
     icon: Leaf,
-    description: "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
+    description:
+      "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
   },
   {
     name: "Bakery & Café",
     icon: Utensils,
-    description: "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
+    description:
+      "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
   },
   {
     name: "Online & Delivery",
     icon: Truck,
-    description: "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
+    description:
+      "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
   },
   {
     name: "Own-Brand Products",
     icon: Building2,
-    description: "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
+    description:
+      "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
   },
   {
     name: "Community & Loyalty",
     icon: Leaf,
-    description: "Our Foodplus Rewards programme and community nutrition initiatives connect us to millions of Kenyan households beyond the checkout.",
+    description:
+      "Our Foodplus Rewards programme and community nutrition initiatives connect us to millions of Kenyan households beyond the checkout.",
   },
 ];
 
@@ -176,7 +182,8 @@ export default function App() {
     try {
       window.history.pushState({ preview: true }, "");
     } catch (e) {
-      // ignore
+      // ignore errors from older browsers
+      void e;
     }
 
     const onPop = (e: PopStateEvent) => {
@@ -186,7 +193,9 @@ export default function App() {
         // replace state so further back goes back to real history
         try {
           window.history.replaceState({}, "");
-        } catch (er) {}
+        } catch (er) {
+          void er;
+        }
       }
     };
 
@@ -213,13 +222,19 @@ function goTo(id: string) {
 }
 
 // ---------------- Header ----------------
-function Header({ onApplyClick, onNavigate }: { onApplyClick: () => void; onNavigate?: () => void }) {
+function Header({
+  onApplyClick,
+  onNavigate,
+}: {
+  onApplyClick: () => void;
+  onNavigate?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-brand-green-deep/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-3 py-3 sm:px-4 sm:py-4">
         <button
           onClick={() => {
             close();
@@ -342,7 +357,7 @@ function Hero() {
         className="absolute -bottom-40 -left-20 h-96 w-96 rounded-full bg-brand-gold/10 blur-3xl"
       />
 
-      <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-32">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-3 py-16 sm:px-4 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-32">
         <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
           <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
             <Sparkles className="h-3 w-3" /> We're hiring across Kenya
@@ -422,7 +437,7 @@ function Hero() {
 function About() {
   return (
     <section id="about" className="bg-brand-cream py-16 sm:py-24">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid max-w-6xl gap-10 px-3 sm:px-4 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl group">
           <img
             src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=90"
@@ -478,14 +493,17 @@ function About() {
 function Stores() {
   return (
     <section id="stores" className="bg-brand-cream py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-3 sm:px-4">
         <div className="text-center">
-          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">OUR BUSINESS</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
+            OUR BUSINESS
+          </span>
           <h2 className="mt-4 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
             WHAT WE <span className="text-brand-gold">DO</span>
           </h2>
           <p className="mt-4 mx-auto max-w-2xl text-sm text-brand-green-deep/70 sm:text-base">
-            Chandarana Foodplus operates across multiple food retail formats, offering diverse career pathways for everyone.
+            Chandarana Foodplus operates across multiple food retail formats, offering diverse
+            career pathways for everyone.
           </p>
         </div>
 
@@ -542,15 +560,26 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
 
   return (
     <section id="careers" className="bg-brand-cream py-16 sm:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-6xl px-3 sm:px-4">
         <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-end">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">OPEN ROLES</span>
-            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-4xl">Open Positions</h2>
-            <p className="mt-3 max-w-xl text-sm text-brand-green-deep/70">We are always looking for energetic, caring individuals to join our growing team. Apply directly — no agencies, no middlemen.</p>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">
+              OPEN ROLES
+            </span>
+            <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-4xl">
+              Open Positions
+            </h2>
+            <p className="mt-3 max-w-xl text-sm text-brand-green-deep/70">
+              We are always looking for energetic, caring individuals to join our growing team.
+              Apply directly — no agencies, no middlemen.
+            </p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               {JOB_TYPES.map((t) => (
-                <button key={t.key} onClick={() => setFilter(t.key === "all" ? null : t.key)} className={`px-3 py-1 rounded-full text-xs font-semibold ${filter === t.key || (t.key === "all" && filter === null) ? "bg-brand-green-deep text-white" : "bg-white text-brand-green-deep border border-brand-green/10"}`}>
+                <button
+                  key={t.key}
+                  onClick={() => setFilter(t.key === "all" ? null : t.key)}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold ${filter === t.key || (t.key === "all" && filter === null) ? "bg-brand-green-deep text-white" : "bg-white text-brand-green-deep border border-brand-green/10"}`}
+                >
                   {t.label}
                 </button>
               ))}
@@ -559,7 +588,12 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
 
           <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-green-deep/40" />
-            <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search roles, skills, or locations" className="h-11 w-full rounded-full border border-brand-green/15 bg-white pl-10 pr-4 text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/30" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search roles, skills, or locations"
+              className="h-11 w-full rounded-full border border-brand-green/15 bg-white pl-10 pr-4 text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/30"
+            />
           </div>
         </div>
 
@@ -580,7 +614,9 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
               </div>
 
               {/* Job title */}
-              <h3 className="font-display text-sm sm:text-base leading-tight font-medium text-brand-green-deep">{job.title}</h3>
+              <h3 className="font-display text-sm sm:text-base leading-tight font-medium text-brand-green-deep">
+                {job.title}
+              </h3>
 
               {/* Location */}
               <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-600">
@@ -758,7 +794,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
           aria-hidden
           className="pointer-events-none absolute -bottom-32 -left-10 h-72 w-72 rounded-full bg-brand-gold/10 blur-3xl"
         />
-  <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
+        <div className="relative z-10 grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 sm:flex sm:flex-wrap sm:justify-between">
           <div className="min-w-0 flex-1">
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
               <Sparkles className="h-3 w-3" /> Now Hiring
@@ -1095,7 +1131,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
 function Footer() {
   return (
     <footer className="border-t border-white/10 bg-brand-green-deep py-10 text-white">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-center sm:flex-row sm:px-6 sm:text-left">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-3 text-center sm:flex-row sm:px-4 sm:text-left">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full ring-2 ring-brand-gold/40">
             <Leaf className="h-4 w-4 text-brand-gold" />
@@ -1104,7 +1140,7 @@ function Footer() {
             CHANDARANA <span className="text-brand-gold">FOODPLUS</span>
           </div>
         </div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
+        <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
           © {new Date().getFullYear()} Chandarana Foodplus · More than just food
         </p>
       </div>

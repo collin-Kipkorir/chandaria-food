@@ -36,7 +36,7 @@ export default function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/applications" element={<Applications />} />
-      <Route path="/admin" element={<AdminLayout />}> 
+      <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminIndex />} />
       </Route>
     </Routes>
