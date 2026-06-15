@@ -39,10 +39,10 @@ const EDUCATION_LEVELS = [
 
 const SALARY_RANGES = [
   "Below KSh 20,000",
-  "KSh 20,000 ΓÇô 35,000",
-  "KSh 35,000 ΓÇô 60,000",
-  "KSh 60,000 ΓÇô 90,000",
-  "KSh 90,000 ΓÇô 150,000",
+  "KSh 20,000 – 35,000",
+  "KSh 35,000 – 60,000",
+  "KSh 60,000 – 90,000",
+  "KSh 90,000 – 150,000",
   "Above KSh 150,000",
   "Negotiable",
 ];
@@ -68,22 +68,22 @@ const STORES = [
       "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
   },
   {
-    name: "Bakery & Caf├⌐",
+  name: "Bakery & Café",
     icon: Utensils,
     description:
-      "In-store bakeries and caf├⌐ counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
+  "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
   },
   {
     name: "Online & Delivery",
     icon: Truck,
     description:
-      "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns ΓÇö powered by our logistics team.",
+  "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
   },
   {
     name: "Own-Brand Products",
     icon: Building2,
     description:
-      "A growing range of Chandarana-branded staples ΓÇö quality you can trust at prices that are better for you and better for all Kenyans.",
+  "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
   },
   {
     name: "Community & Loyalty",
@@ -466,7 +466,7 @@ function About() {
           <p className="mt-5 text-base leading-relaxed text-brand-green-deep/75">
             For more than four decades, Chandarana Foodplus has been the neighbourhood market
             families trust. We're proudly Kenyan, family run, and obsessed with sourcing the
-            freshest local produce ΓÇö from farm, to shelf, to your table.
+            freshest local produce — from farm, to shelf, to your table.
           </p>
           <div className="mt-7 grid gap-4 sm:grid-cols-3">
             {SERVICES.map((s) => (
@@ -571,7 +571,7 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
             </h2>
             <p className="mt-3 max-w-xl text-sm text-brand-green-deep/70">
               We are always looking for energetic, caring individuals to join our growing team.
-              Apply directly ΓÇö no agencies, no middlemen.
+              Apply directly — no agencies, no middlemen.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-2">
               {JOB_TYPES.map((t) => (
@@ -893,7 +893,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                   Apply for this role
                 </h2>
                 <p className="mt-1 text-xs text-white/70">
-                  No account needed ΓÇö just three quick steps.
+                  No account needed — just three quick steps.
                 </p>
 
                 <div className="mt-5">
@@ -987,7 +987,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                       <SelectInput
                         value={county}
                         onChange={setCounty}
-                        placeholder="Select countyΓÇª"
+                        placeholder="Select county…"
                         options={KENYA_COUNTIES}
                       />
                     </Field>
@@ -999,7 +999,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                       <SelectInput
                         value={education}
                         onChange={setEducation}
-                        placeholder="Select levelΓÇª"
+                        placeholder="Select level…"
                         options={EDUCATION_LEVELS}
                       />
                     </Field>
@@ -1011,7 +1011,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                       <SelectInput
                         value={salary}
                         onChange={setSalary}
-                        placeholder="Select rangeΓÇª"
+                        placeholder="Select range…"
                         options={SALARY_RANGES}
                       />
                     </Field>
@@ -1051,7 +1051,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                           {cvFile ? cvFile.name : "Click to upload or drag & drop your CV"}
                         </span>
                         <span className="mt-1 text-[10px] uppercase tracking-[0.2em] text-brand-green-deep/50">
-                          PDF, DOC or DOCX ΓÇö max 5 MB
+                          PDF, DOC or DOCX — max 5 MB
                         </span>
                         {cvFile && (
                           <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.18em] text-emerald-600">
@@ -1074,7 +1074,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                         rows={4}
                         value={coverLetter}
                         onChange={(e) => setCoverLetter(e.target.value)}
-                        placeholder="Tell us why you'd be a great fitΓÇª"
+                        placeholder="Tell us why you'd be a great fit…"
                         maxLength={2000}
                         className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/30"
                       />
@@ -1099,7 +1099,11 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                     <button
                       type="button"
                       onClick={goNext}
+                      // Keep Tailwind classes but provide an explicit inline fallback
+                      // so the button shows a solid background even if the utility is
+                      // missing. The CSS var is defined in `src/styles.css`.
                       className="inline-flex h-11 items-center gap-1.5 rounded-full bg-brand-green px-6 text-xs font-bold uppercase tracking-[0.2em] text-white shadow-lg shadow-brand-green/20 transition hover:scale-[1.02] hover:bg-brand-green-dark"
+                      style={{ backgroundColor: 'var(--color-brand-green, #1f7a4a)' }}
                     >
                       Continue <ArrowRight className="h-3.5 w-3.5" />
                     </button>
@@ -1109,7 +1113,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                       disabled={submitting}
                       className="inline-flex h-11 items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-6 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep shadow-lg shadow-brand-gold/30 transition hover:scale-[1.02] disabled:opacity-60"
                     >
-                      {submitting ? "SubmittingΓÇª" : "Submit Application"}
+                      {submitting ? "Submitting…" : "Submit Application"}
                       {!submitting && <Send className="h-3.5 w-3.5" />}
                     </button>
                   )}
@@ -1141,7 +1145,7 @@ function Footer() {
           </div>
         </div>
         <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
-          ┬⌐ {new Date().getFullYear()} Chandarana Foodplus ┬╖ More than just food
+          © {new Date().getFullYear()} Chandarana Foodplus — More than just food
         </p>
       </div>
     </footer>
