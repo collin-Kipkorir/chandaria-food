@@ -5,8 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/store";
 import { ArrowRight, Building2, MapPin, Briefcase } from "lucide-react";
-
-constimport { useMemo } from "react";
+import { useMemo } from "react";
 
 const COMPANY_BY_SLUG: Record<string, { name: string; tagline: string; about: string }> = {
   "chandaria-food-plus": {
@@ -22,13 +21,16 @@ export const Route = createFileRoute("/companies/$slug")({
 });
 
 function CompanyPage() {
-  const { slug } = Route.u  const { slug } = useParams<{ slug: string }>();
+  const { slug } = Route.useParams<{ slug: string }>();
   const meta = slug ? COMPANY_BY_SLUG[slug] : undefined;
-pp((s) => s.jobs);
+  const allJobs = useApp((s) => s.jobs);
   const jobs = useMemo(
     () => allJobs.filter((j) => j.status === "open" && j.companyName === meta?.name),
     [allJobs, meta?.name],
-return (
+  );
+
+  if (!meta) {
+    return (
       <div className="min-h-screen">
         <AppHeader />
         <main className="mx-auto max-w-3xl px-4 py-16 text-center">

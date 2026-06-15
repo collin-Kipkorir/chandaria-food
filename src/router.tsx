@@ -26,3 +26,4 @@ const createStub = (): any => {
 export const getRouter = () => {
   console.warn('getRouter() called: returning a stub router because TanStack router was removed.');
   return createStub();
+};

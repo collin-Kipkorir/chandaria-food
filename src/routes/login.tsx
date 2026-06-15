@@ -4,8 +4,9 @@ import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/store";
+
 export default function LoginPage() {
-n = useApp((s) => s.login);
+  const login = useApp((s) => s.login);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,8 +24,11 @@ n = useApp((s) => s.login);
             const res = login(email.trim(), password);
             if (!res.ok) return setErr(res.error || "Failed");
             const user = useApp.getState().users.find((u) => u.email === email.trim());
-            navigate({ to            navigate(user?.role === "admin" ? "/admin" : "/profile");
-       <div>
+            navigate(user?.role === "admin" ? "/admin" : "/profile");
+          }}
+        >
+          {err && <p className="text-sm text-red-600">{err}</p>}
+          <div>
             <label className="text-sm font-medium">Email</label>
             <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
           </div>

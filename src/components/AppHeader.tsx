@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-mport { useState } from "react";
+import { useState } from "react";
 import { Leaf, Menu, X } from "lucide-react";
 
 const NAV = [

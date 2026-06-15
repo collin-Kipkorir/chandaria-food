@@ -7,3 +7,4 @@ import tailwind from "@tailwindcss/vite";
 // `@lovable.dev/vite-tanstack-config` to decouple the build from TanStack Start.
 export default defineConfig({
   plugins: [react(), tsconfigPaths(), tailwind()],
+});
