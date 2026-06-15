@@ -11,7 +11,6 @@
   --color-brand-gold: oklch(0.82 0.16 90);
   --color-brand-gold-dark: oklch(0.72 0.17 88);
   --color-brand-cream: oklch(0.98 0.01 95);
-lay: "Anton", "Impact", sans-serif;
   --font-body: "Inter", system-ui, sans-serif;
 }
 
