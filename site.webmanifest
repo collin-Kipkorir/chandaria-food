@@ -1,0 +1,15 @@
+{
+  "name": "Chandarana Foodplus",
+  "short_name": "Foodplus",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f8f5ef",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
