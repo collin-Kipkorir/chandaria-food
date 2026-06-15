@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
+  "prebuild": "npm run generate-og && npm run generate-sitemap",
+  "generate-og": "node ./scripts/generate-og.mjs",
+  "generate-sitemap": "node ./scripts/generate-sitemap.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -69,6 +72,7 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "sharp": "^0.32.0",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.3.2",
     "@types/node": "^22.16.5",
