@@ -1,10 +1,12 @@
-import { useParams, Link } from "react-router-dom";
+import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { AppHeader } from "@/components/AppHeader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/store";
 import { ArrowRight, Building2, MapPin, Briefcase } from "lucide-react";
-import { useMemo } from "react";
+
+constimport { useMemo } from "react";
 
 const COMPANY_BY_SLUG: Record<string, { name: string; tagline: string; about: string }> = {
   "chandaria-food-plus": {
@@ -15,19 +17,18 @@ const COMPANY_BY_SLUG: Record<string, { name: string; tagline: string; about: st
   },
 };
 
-export default CompanyPage;
+export const Route = createFileRoute("/companies/$slug")({
+  component: CompanyPage,
+});
 
 function CompanyPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug } = Route.u  const { slug } = useParams<{ slug: string }>();
   const meta = slug ? COMPANY_BY_SLUG[slug] : undefined;
-  const allJobs = useApp((s) => s.jobs);
+pp((s) => s.jobs);
   const jobs = useMemo(
     () => allJobs.filter((j) => j.status === "open" && j.companyName === meta?.name),
     [allJobs, meta?.name],
-  );
-
-  if (!meta) {
-    return (
+return (
       <div className="min-h-screen">
         <AppHeader />
         <main className="mx-auto max-w-3xl px-4 py-16 text-center">
@@ -62,7 +63,8 @@ function CompanyPage() {
           {jobs.map((j) => (
             <Link
               key={j.id}
-              to={`/jobs/${j.id}`}
+              to="/jobs/$jobId"
+              params={{ jobId: j.id }}
               className="group rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm"
             >
               <div className="flex items-start justify-between gap-4">

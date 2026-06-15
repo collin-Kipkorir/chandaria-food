@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
@@ -24,62 +24,22 @@ import {
   User2,
   Wallet,
 } from "lucide-react";
-import { useNavigationLoader } from "@/components/NavigationLoader";
 
-// Route handled by react-router-dom via AppRoutes
+export const Route = createFileRoute("/jobs/$jobId")({
+  component: JobDetail,
+});
 
 const MAX_CV_BYTES = 5 * 1024 * 1024; // 5MB
 const ACCEPT =
   ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 const KENYA_COUNTIES = [
-  "Nairobi",
-  "Mombasa",
-  "Kisumu",
-  "Nakuru",
-  "Uasin Gishu",
-  "Kiambu",
-  "Machakos",
-  "Kajiado",
-  "Kakamega",
-  "Bungoma",
-  "Meru",
-  "Nyeri",
-  "Murang'a",
-  "Kirinyaga",
-  "Embu",
-  "Tharaka-Nithi",
-  "Kitui",
-  "Makueni",
-  "Kilifi",
-  "Kwale",
-  "Taita-Taveta",
-  "Lamu",
-  "Tana River",
-  "Garissa",
-  "Wajir",
-  "Mandera",
-  "Marsabit",
-  "Isiolo",
-  "Samburu",
-  "Turkana",
-  "West Pokot",
-  "Trans Nzoia",
-  "Elgeyo-Marakwet",
-  "Baringo",
-  "Laikipia",
-  "Narok",
-  "Bomet",
-  "Kericho",
-  "Nandi",
-  "Vihiga",
-  "Busia",
-  "Siaya",
-  "Homa Bay",
-  "Migori",
-  "Nyamira",
-  "Kisii",
-  "Nyandarua",
+  "Nairobi","Mombasa","Kisumu","Nakuru","Uasin Gishu","Kiambu","Machakos","Kajiado",
+  "Kakamega","Bungoma","Meru","Nyeri","Murang'a","Kirinyaga","Embu","Tharaka-Nithi",
+  "Kitui","Makueni","Kilifi","Kwale","Taita-Taveta","Lamu","Tana River","Garissa",
+  "Wajir","Mandera","Marsabit","Isiolo","Samburu","Turkana","West Pokot","Trans Nzoia",
+  "Elgeyo-Marakwet","Baringo","Laikipia","Narok","Bomet","Kericho","Nandi","Vihiga",
+  "Busia","Siaya","Homa Bay","Migori","Nyamira","Kisii","Nyandarua",
 ];
 
 const EDUCATION_LEVELS = [
@@ -118,11 +78,9 @@ const STEPS = [
 ] as const;
 
 function JobDetail() {
-  const { jobId } = useParams() as { jobId?: string };
-  const allJobs = useApp((s) => s.jobs);
-  const job = useMemo(() => allJobs.find((j) => j.id === jobId), [allJobs, jobId]);
+  const { jobId } = Route.useParams();
+  const job = useApp((s) => s.jobs.find((j) => j.id === jobId));
   const apply = useApp((s) => s.applyToJob);
-  const nav = useNavigationLoader();
 
   const [step, setStep] = useState(1);
   // step 1
@@ -225,14 +183,9 @@ function JobDetail() {
   const resetForm = () => {
     setSubmittedRef(null);
     setStep(1);
-    setFullName("");
-    setEmail("");
-    setPhone("");
-    setCounty("");
-    setEducation("");
-    setSalary("");
-    setCvFile(null);
-    setCoverLetter("");
+    setFullName(""); setEmail(""); setPhone("");
+    setCounty(""); setEducation(""); setSalary("");
+    setCvFile(null); setCoverLetter("");
     if (fileInput.current) fileInput.current.value = "";
   };
 
@@ -314,22 +267,13 @@ function JobDetail() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_1fr]">
           {/* Content */}
           <section className="space-y-6">
-            <Block title="About the role" delay="delay-75">
-              {job.description}
-            </Block>
-            <Block title="Responsibilities" delay="delay-150">
-              {job.responsibilities}
-            </Block>
-            <Block title="Requirements" delay="delay-200">
-              {job.requirements}
-            </Block>
+            <Block title="About the role" delay="delay-75">{job.description}</Block>
+            <Block title="Responsibilities" delay="delay-150">{job.responsibilities}</Block>
+            <Block title="Requirements" delay="delay-200">{job.requirements}</Block>
           </section>
 
           {/* Application wizard */}
-          <aside
-            id="apply"
-            className="lg:sticky lg:top-24 h-fit animate-in fade-in slide-in-from-bottom-6 duration-700"
-          >
+          <aside id="apply" className="lg:sticky lg:top-24 h-fit animate-in fade-in slide-in-from-bottom-6 duration-700">
             {submittedRef ? (
               <div className="overflow-hidden rounded-3xl border border-emerald-200 bg-white p-7 text-center shadow-xl">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 animate-in zoom-in-50 duration-500">
@@ -393,11 +337,7 @@ function JobDetail() {
                                       : "bg-white/15 text-white/60",
                                 ].join(" ")}
                               >
-                                {done ? (
-                                  <CheckCircle2 className="h-4 w-4" />
-                                ) : (
-                                  <Icon className="h-4 w-4" />
-                                )}
+                                {done ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
                               </div>
                               <span
                                 className={[
@@ -434,32 +374,13 @@ function JobDetail() {
                   {step === 1 && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-300">
                       <Field label="Full Name" required icon={<User2 className="h-3.5 w-3.5" />}>
-                        <Input
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          placeholder="e.g. Amina Odhiambo"
-                          maxLength={100}
-                          required
-                        />
+                        <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="e.g. Amina Odhiambo" maxLength={100} required />
                       </Field>
                       <Field label="Email Address" required>
-                        <Input
-                          type="email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="you@example.com"
-                          maxLength={255}
-                          required
-                        />
+                        <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" maxLength={255} required />
                       </Field>
                       <Field label="Phone Number" required>
-                        <Input
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          placeholder="+254 7XX XXX XXX"
-                          maxLength={30}
-                          required
-                        />
+                        <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+254 7XX XXX XXX" maxLength={30} required />
                       </Field>
                     </div>
                   )}
@@ -467,36 +388,13 @@ function JobDetail() {
                   {step === 2 && (
                     <div className="space-y-4 animate-in fade-in slide-in-from-right-2 duration-300">
                       <Field label="County" required icon={<MapPin className="h-3.5 w-3.5" />}>
-                        <Select
-                          value={county}
-                          onChange={setCounty}
-                          placeholder="Select county…"
-                          options={KENYA_COUNTIES}
-                        />
+                        <Select value={county} onChange={setCounty} placeholder="Select county…" options={KENYA_COUNTIES} />
                       </Field>
-                      <Field
-                        label="Education Level"
-                        required
-                        icon={<GraduationCap className="h-3.5 w-3.5" />}
-                      >
-                        <Select
-                          value={education}
-                          onChange={setEducation}
-                          placeholder="Select level…"
-                          options={EDUCATION_LEVELS}
-                        />
+                      <Field label="Education Level" required icon={<GraduationCap className="h-3.5 w-3.5" />}>
+                        <Select value={education} onChange={setEducation} placeholder="Select level…" options={EDUCATION_LEVELS} />
                       </Field>
-                      <Field
-                        label="Expected Salary Range"
-                        required
-                        icon={<Wallet className="h-3.5 w-3.5" />}
-                      >
-                        <Select
-                          value={salary}
-                          onChange={setSalary}
-                          placeholder="Select range…"
-                          options={SALARY_RANGES}
-                        />
+                      <Field label="Expected Salary Range" required icon={<Wallet className="h-3.5 w-3.5" />}>
+                        <Select value={salary} onChange={setSalary} placeholder="Select range…" options={SALARY_RANGES} />
                       </Field>
                     </div>
                   )}
@@ -509,16 +407,11 @@ function JobDetail() {
                         </Label>
                         <label
                           htmlFor="cv"
-                          onDragOver={(e) => {
-                            e.preventDefault();
-                            setDragOver(true);
-                          }}
+                          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                           onDragLeave={() => setDragOver(false)}
                           onDrop={(e) => {
-                            e.preventDefault();
-                            setDragOver(false);
-                            const f = e.dataTransfer.files?.[0];
-                            if (f) void pickFile(f);
+                            e.preventDefault(); setDragOver(false);
+                            const f = e.dataTransfer.files?.[0]; if (f) void pickFile(f);
                           }}
                           className={[
                             "group flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition",
@@ -542,11 +435,7 @@ function JobDetail() {
                             </span>
                           )}
                           <input
-                            id="cv"
-                            ref={fileInput}
-                            type="file"
-                            accept={ACCEPT}
-                            className="sr-only"
+                            id="cv" ref={fileInput} type="file" accept={ACCEPT} className="sr-only"
                             onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
                           />
                         </label>
@@ -554,8 +443,7 @@ function JobDetail() {
 
                       <Field label="Cover letter (optional)">
                         <Textarea
-                          rows={4}
-                          value={coverLetter}
+                          rows={4} value={coverLetter}
                           onChange={(e) => setCoverLetter(e.target.value)}
                           placeholder="Tell us why you'd be a great fit…"
                           maxLength={2000}
@@ -568,29 +456,23 @@ function JobDetail() {
                   <div className="mt-7 flex items-center justify-between gap-3">
                     {step > 1 ? (
                       <Button
-                        type="button"
-                        variant="outline"
-                        onClick={goBack}
+                        type="button" variant="outline" onClick={goBack}
                         className="h-11 rounded-full border-brand-green/20 px-5 text-xs font-bold uppercase tracking-[0.18em] text-brand-green-deep hover:bg-brand-green/5"
                       >
                         <ArrowLeft className="h-3.5 w-3.5" /> Back
                       </Button>
-                    ) : (
-                      <span />
-                    )}
+                    ) : <span />}
 
                     {step < 3 ? (
                       <Button
-                        type="button"
-                        onClick={goNext}
+                        type="button" onClick={goNext}
                         className="h-11 rounded-full bg-brand-green px-6 text-xs font-bold uppercase tracking-[0.2em] text-white shadow-lg shadow-brand-green/20 transition hover:scale-[1.02] hover:bg-brand-green-dark"
                       >
                         Continue <ArrowRight className="h-3.5 w-3.5" />
                       </Button>
                     ) : (
                       <Button
-                        type="submit"
-                        disabled={submitting}
+                        type="submit" disabled={submitting}
                         className="h-11 rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-6 text-xs font-bold uppercase tracking-[0.2em] text-brand-green-deep shadow-lg shadow-brand-gold/30 transition hover:scale-[1.02]"
                       >
                         {submitting ? "Submitting…" : "Submit Application"}
@@ -608,40 +490,11 @@ function JobDetail() {
           </aside>
         </div>
       </main>
-      {/* Sticky Apply button */}
-      <button
-        type="button"
-        onClick={() => {
-          try {
-            nav.start();
-            const el = document.getElementById("apply");
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-            setTimeout(() => nav.done(), 700);
-          } catch (e) {
-            const el = document.getElementById("apply");
-            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
-          }
-        }}
-        aria-label="Apply for this role"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-full bg-gradient-to-r from-brand-gold to-brand-gold-dark px-5 py-3 text-base font-bold uppercase tracking-[0.14em] text-brand-green-deep shadow-2xl transition hover:scale-[1.03]"
-      >
-        Apply <Send className="ml-2 h-4 w-4" />
-      </button>
     </div>
   );
 }
 
-export default JobDetail;
-
-function Block({
-  title,
-  children,
-  delay,
-}: {
-  title: string;
-  children: React.ReactNode;
-  delay?: string;
-}) {
+function Block({ title, children, delay }: { title: string; children: React.ReactNode; delay?: string }) {
   return (
     <div
       className={`rounded-2xl border border-brand-green/10 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500 ${delay ?? ""}`}
@@ -655,16 +508,8 @@ function Block({
 }
 
 function Field({
-  label,
-  required,
-  icon,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  icon?: React.ReactNode;
-  children: React.ReactNode;
-}) {
+  label, required, icon, children,
+}: { label: string; required?: boolean; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
       <Label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.15em] text-brand-green-deep/70">
@@ -677,16 +522,8 @@ function Field({
 }
 
 function Select({
-  value,
-  onChange,
-  options,
-  placeholder,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-  placeholder: string;
-}) {
+  value, onChange, options, placeholder,
+}: { value: string; onChange: (v: string) => void; options: string[]; placeholder: string }) {
   return (
     <select
       value={value}
@@ -694,13 +531,9 @@ function Select({
       required
       className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/30"
     >
-      <option value="" disabled>
-        {placeholder}
-      </option>
+      <option value="" disabled>{placeholder}</option>
       {options.map((o) => (
-        <option key={o} value={o}>
-          {o}
-        </option>
+        <option key={o} value={o}>{o}</option>
       ))}
     </select>
   );

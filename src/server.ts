@@ -2,7 +2,8 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
-import { getGreetingHandler } from "./lib/api/example.functions";
+
+typimport { getGreetingHandler } from "./lib/api/example.functions";
 
 // h3 swallows in-handler throws into a normal 500 Response with body
 // {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
@@ -48,8 +49,7 @@ export default {
       // routes — existing SSR behavior should be replaced by a proper Vite SSR
       // entry if you need server rendering.
       return new Response("Not Found", { status: 404 });
-    } catch (error) {
-      console.error(error);
+or);
       return new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },

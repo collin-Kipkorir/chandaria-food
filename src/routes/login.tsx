@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/store";
 export default function LoginPage() {
-  const login = useApp((s) => s.login);
+n = useApp((s) => s.login);
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,10 +23,8 @@ export default function LoginPage() {
             const res = login(email.trim(), password);
             if (!res.ok) return setErr(res.error || "Failed");
             const user = useApp.getState().users.find((u) => u.email === email.trim());
-            navigate(user?.role === "admin" ? "/admin" : "/profile");
-          }}
-        >
-          <div>
+            navigate({ to            navigate(user?.role === "admin" ? "/admin" : "/profile");
+       <div>
             <label className="text-sm font-medium">Email</label>
             <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
           </div>
