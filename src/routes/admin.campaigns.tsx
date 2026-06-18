@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useApp } from "@/lib/store";
+import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 
 export default function CampaignsPage() {
   const { campaigns, users, emailLogs, createCampaign, sendCampaign } = useApp();
@@ -10,6 +11,7 @@ export default function CampaignsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminFirebaseNotice />
       <h1 className="text-2xl font-semibold">Email campaigns</h1>
 
       <form

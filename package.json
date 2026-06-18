@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
-  "prebuild": "npm run generate-og && npm run generate-sitemap",
-  "generate-og": "node ./scripts/generate-og.mjs",
-  "generate-sitemap": "node ./scripts/generate-sitemap.mjs",
+    "prebuild": "npm run generate-og && npm run generate-sitemap",
+    "generate-og": "node ./scripts/generate-og.mjs",
+    "generate-sitemap": "node ./scripts/generate-sitemap.mjs",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "worker:run": "node ./scripts/worker/process-email-queue.mjs"
+    ,"seed:jobs": "node ./scripts/seed/seed-jobs.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -42,6 +44,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@sendgrid/mail": "^7.7.0",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.83.0",
     "@tanstack/react-router": "^1.168.25",
@@ -53,6 +56,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "firebase": "^12.14.0",
+    "firebase-admin": "^12.7.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.575.0",
     "react": "^19.2.0",
@@ -72,7 +76,6 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "sharp": "^0.32.0",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.3.2",
     "@types/node": "^22.16.5",
@@ -87,6 +90,7 @@
     "globals": "^15.15.0",
     "nitro": "3.0.260603-beta",
     "prettier": "^3.7.3",
+    "sharp": "^0.32.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"

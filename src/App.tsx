@@ -730,7 +730,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
     setSubmitting(true);
     try {
       const cvDataUrl = await fileToDataUrl(cvFile);
-      const res = apply(job.id, {
+      const res = await apply(job.id, {
         applicantName: fullName.trim(),
         applicantEmail: email.trim(),
         applicantPhone: phone.trim(),

@@ -16,6 +16,7 @@ import {
 import type { Job, JobType } from "@/lib/types";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
+import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 
 type Draft = Omit<Job, "id" | "createdAt">;
 
@@ -46,6 +47,16 @@ export default function AdminJobs() {
   const [editId, setEditId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(empty);
   const [skillsText, setSkillsText] = useState("");
+  // bulk invite moved to Interviews page
+  type InviteOptions = {
+    interviewDate?: string;
+    interviewTime?: string;
+    venue?: string;
+    message?: string;
+    bannerImageUrl?: string;
+  };
+  const sendInvitations = useApp((s) => s.sendInterviewInvitations);
+  const sendBulkInvitations = useApp((s) => s.sendBulkInvitations);
 
   const openNew = () => {
     setEditId(null);
@@ -70,18 +81,26 @@ export default function AdminJobs() {
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
-    if (editId) {
-      updateJob(editId, { ...draft, skills });
-      toast.success("Job updated");
-    } else {
-      createJob({ ...draft, skills });
-      toast.success("Job created");
-    }
+    (async () => {
+      try {
+        if (editId) {
+          await updateJob(editId, { ...draft, skills });
+          toast.success("Job updated");
+        } else {
+          await createJob({ ...draft, skills });
+          toast.success("Job created");
+        }
+      } catch (err) {
+        console.error("save job error", err);
+        toast.error("Could not save job. Try again.");
+      }
+    })();
     setOpen(false);
   };
 
   return (
     <div>
+      <AdminFirebaseNotice />
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Jobs</h1>
@@ -116,6 +135,13 @@ export default function AdminJobs() {
                   </Button>
                   <Button
                     size="sm"
+                    variant="secondary"
+                    onClick={() => (window.location.href = "/admin/interviews")}
+                  >
+                    Manage invites
+                  </Button>
+                  <Button
+                    size="sm"
                     variant="outline"
                     onClick={() =>
                       updateJob(j.id, { status: j.status === "open" ? "closed" : "open" })
@@ -126,8 +152,15 @@ export default function AdminJobs() {
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => {
-                      if (confirm("Delete this job?")) deleteJob(j.id);
+                    onClick={async () => {
+                      if (!confirm("Delete this job?")) return;
+                      try {
+                        await deleteJob(j.id);
+                        toast.success("Job deleted");
+                      } catch (err) {
+                        console.error("delete job error", err);
+                        toast.error("Could not delete job.");
+                      }
                     }}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -232,6 +265,8 @@ export default function AdminJobs() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Bulk invite UI moved to Admin Interviews page. */}
     </div>
   );
 }

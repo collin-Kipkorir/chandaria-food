@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/lib/store";
+import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 import type { WebsiteMode } from "@/lib/types";
 
 const MODES: { value: WebsiteMode; label: string; desc: string }[] = [
@@ -22,6 +23,7 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
+      <AdminFirebaseNotice />
       <h1 className="text-2xl font-semibold">Settings</h1>
 
       <section className="rounded-xl border bg-card p-5">

@@ -1,128 +1,110 @@
-import { useState } from "react";
+﻿import React, { useMemo, useState } from "react";
+import { useApp } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useApp } from "@/lib/store";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 export default function InterviewsPage() {
-  const { users, interviews, createInterview } = useApp();
-  const seekers = users.filter((u) => u.role === "seeker");
-  const [form, setForm] = useState({
-    userId: "",
-    companyName: "",
-    jobTitle: "",
-    interviewDate: "",
-    interviewTime: "",
-    venue: "",
-    message: "",
-    bannerImageUrl: "",
-  });
+  const jobs = useApp((s) => s.jobs);
+  const applications = useApp((s) => s.applications);
+  const sendBulkInvitations = useApp((s) => s.sendBulkInvitations);
+  const [open, setOpen] = useState(false);
+  const [jobId, setJobId] = useState<string | "">("");
+  const [county, setCounty] = useState<string | "">("");
+  const [message, setMessage] = useState("");
+
+  const jobOptions = useMemo(() => jobs.map((j) => ({ id: j.id, title: j.title })), [jobs]);
+
+  const send = async () => {
+    try {
+      await sendBulkInvitations(
+        { jobId: jobId || undefined, scope: jobId ? "job" : "all", county: county || undefined },
+        { message },
+      );
+      toast.success("Invitations queued");
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to send invitations");
+    }
+  };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Interview invitations</h1>
-
-      <form
-        className="grid gap-3 rounded-xl border bg-card p-5"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (!form.userId || !form.companyName) return;
-          createInterview(form);
-          setForm({ ...form, companyName: "", jobTitle: "", venue: "", message: "" });
-        }}
-      >
-        <h2 className="font-semibold">New invitation</h2>
-        <select
-          className="h-9 rounded-md border border-input bg-transparent px-3 text-sm"
-          value={form.userId}
-          onChange={(e) => setForm({ ...form, userId: e.target.value })}
-          required
-        >
-          <option value="">Select candidate…</option>
-          {seekers.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.fullName} ({u.email})
-            </option>
-          ))}
-        </select>
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            placeholder="Company"
-            value={form.companyName}
-            onChange={(e) => setForm({ ...form, companyName: e.target.value })}
-          />
-          <Input
-            placeholder="Job title"
-            value={form.jobTitle}
-            onChange={(e) => setForm({ ...form, jobTitle: e.target.value })}
-          />
-          <Input
-            type="date"
-            value={form.interviewDate}
-            onChange={(e) => setForm({ ...form, interviewDate: e.target.value })}
-          />
-          <Input
-            type="time"
-            value={form.interviewTime}
-            onChange={(e) => setForm({ ...form, interviewTime: e.target.value })}
-          />
+    <div className="p-4">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Interviews</h1>
+          <p className="text-sm text-muted-foreground">Manage interview invitations and bulk sends.</p>
         </div>
-        <Input
-          placeholder="Venue / location"
-          value={form.venue}
-          onChange={(e) => setForm({ ...form, venue: e.target.value })}
-        />
-        <textarea
-          className="min-h-[80px] rounded-md border border-input bg-transparent p-2 text-sm"
-          placeholder="Custom message"
-          value={form.message}
-          onChange={(e) => setForm({ ...form, message: e.target.value })}
-        />
-        <Input
-          placeholder="Banner image URL (Cloudinary)"
-          value={form.bannerImageUrl}
-          onChange={(e) => setForm({ ...form, bannerImageUrl: e.target.value })}
-        />
-        <Button type="submit" className="w-fit">
-          Send invitation
-        </Button>
-      </form>
-
-      <div className="rounded-xl border bg-card">
-        <table className="w-full text-sm">
-          <thead className="bg-muted/40 text-left">
-            <tr>
-              <th className="p-3">Candidate</th>
-              <th className="p-3">Company</th>
-              <th className="p-3">Role</th>
-              <th className="p-3">When</th>
-              <th className="p-3">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {interviews.map((iv) => {
-              const u = users.find((x) => x.id === iv.userId);
-              return (
-                <tr key={iv.id} className="border-t">
-                  <td className="p-3">{u?.fullName ?? "—"}</td>
-                  <td className="p-3">{iv.companyName}</td>
-                  <td className="p-3">{iv.jobTitle}</td>
-                  <td className="p-3">
-                    {iv.interviewDate} {iv.interviewTime}
-                  </td>
-                  <td className="p-3">{iv.status}</td>
-                </tr>
-              );
-            })}
-            {interviews.length === 0 && (
-              <tr>
-                <td colSpan={5} className="p-6 text-center text-muted-foreground">
-                  No invitations yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        <Button onClick={() => setOpen(true)}>Bulk invite</Button>
       </div>
+
+      <div className="space-y-3">
+        {applications.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No applications yet.</p>
+        ) : (
+          applications.slice(0, 50).map((a) => (
+            <div key={a.id} className="rounded-md border p-3">
+              <div className="flex justify-between">
+                <div>
+                  <div className="font-semibold">{a.applicantName}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {a.applicantEmail} • {a.county}
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground">Job: {a.jobId}</div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk invite applicants</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-3">
+            <div>
+              <Label>Job (optional)</Label>
+              <select
+                className="w-full rounded border px-2 py-1"
+                value={jobId}
+                onChange={(e) => setJobId(e.target.value)}
+              >
+                <option value="">All jobs</option>
+                {jobOptions.map((o) => (
+                  <option key={o.id} value={o.id}>
+                    {o.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label>County (optional)</Label>
+              <Input value={county} onChange={(e) => setCounty(e.target.value)} />
+            </div>
+            <div>
+              <Label>Message</Label>
+              <Input value={message} onChange={(e) => setMessage(e.target.value)} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={send}>Send</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

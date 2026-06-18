@@ -36,6 +36,7 @@ export interface EmailLog {
   userId: string;
   status: "sent" | "failed" | "skipped";
   sentAt: string;
+  applicationId?: string;
 }
 
 export interface InterviewInvitation {
@@ -43,6 +44,7 @@ export interface InterviewInvitation {
   userId: string;
   companyName: string;
   jobTitle: string;
+  applicationId?: string;
   interviewDate: string;
   interviewTime: string;
   venue: string;

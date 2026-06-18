@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { useApp } from "@/lib/store";
+import { getFirebaseDb, isFirebaseConfigured, databaseURL } from "@/lib/firebase";
 import { Badge } from "@/components/ui/badge";
 import type { ApplicationStatus } from "@/lib/types";
+import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 
 const STATUSES: ApplicationStatus[] = ["submitted", "reviewed", "shortlisted", "rejected", "hired"];
 
@@ -9,7 +11,11 @@ export default function AdminApplications() {
   const apps = useApp((s) => s.applications);
   const jobs = useApp((s) => s.jobs);
   const setStatus = useApp((s) => s.setApplicationStatus);
+  const isFB = useApp((s) => s.firebaseReady);
   const [filter, setFilter] = useState<string>("");
+  const [showJson, setShowJson] = useState(false);
+  const [rawFetch, setRawFetch] = useState<string | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const rows = useMemo(() => {
     return apps
@@ -19,6 +25,8 @@ export default function AdminApplications() {
 
   return (
     <div>
+      <AdminFirebaseNotice />
+      {/* Debug panel removed for production admin UI */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">Applications</h1>

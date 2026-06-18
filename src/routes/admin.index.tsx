@@ -1,4 +1,5 @@
 import { useApp } from "@/lib/store";
+import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 
 export default function Dashboard() {
   const { users, campaigns, interviews, emailLogs, audits } = useApp();
@@ -14,6 +15,7 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
+      <AdminFirebaseNotice />
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

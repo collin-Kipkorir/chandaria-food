@@ -156,7 +156,7 @@ function JobDetail() {
     setSubmitting(true);
     try {
       const cvDataUrl = await fileToDataUrl(cvFile);
-      const res = apply(job.id, {
+      const res = await apply(job.id, {
         applicantName: fullName.trim(),
         applicantEmail: email.trim(),
         applicantPhone: phone.trim(),
@@ -493,6 +493,8 @@ function JobDetail() {
     </div>
   );
 }
+
+export default JobDetail;
 
 function Block({ title, children, delay }: { title: string; children: React.ReactNode; delay?: string }) {
   return (
