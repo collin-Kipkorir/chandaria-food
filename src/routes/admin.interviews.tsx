@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import AdminHeader from "@/components/AdminHeader";
 
 export default function InterviewsPage() {
   const jobs = useApp((s) => s.jobs);
@@ -39,13 +40,9 @@ export default function InterviewsPage() {
 
   return (
     <div className="p-4">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Interviews</h1>
-          <p className="text-sm text-muted-foreground">Manage interview invitations and bulk sends.</p>
-        </div>
+      <AdminHeader title="Interviews" subtitle="Manage interview invitations and bulk sends.">
         <Button onClick={() => setOpen(true)}>Bulk invite</Button>
-      </div>
+      </AdminHeader>
 
       <div className="space-y-3">
         {applications.length === 0 ? (

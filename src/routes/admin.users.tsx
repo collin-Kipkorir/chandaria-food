@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { COUNTIES, useApp } from "@/lib/store";
 import type { User } from "@/lib/types";
 import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
+import AdminHeader from "@/components/AdminHeader";
 export default function UsersPage() {
   const { users, setUserStatus, deleteUser, approveBeta, emailLogs } = useApp();
   const [q, setQ] = useState("");
@@ -66,12 +67,11 @@ export default function UsersPage() {
   return (
     <div className="space-y-6">
       <AdminFirebaseNotice />
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Users</h1>
+      <AdminHeader title="Users" subtitle="Manage registered users and send emails">
         <Button variant="outline" onClick={exportCsv}>
           Export CSV
         </Button>
-      </div>
+      </AdminHeader>
 
       <div className="grid gap-3 rounded-xl border bg-card p-4 md:grid-cols-5">
         <Input

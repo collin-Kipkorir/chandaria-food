@@ -142,6 +142,26 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
+/* Admin-only theme: scoped under .admin-theme so brand colors only apply on admin pages */
+.admin-theme {
+  /* Map brand semantic tokens into the design system variables used by Tailwind utilities */
+  --primary: var(--color-brand-green);
+  --primary-foreground: var(--color-brand-cream);
+  --secondary: color-mix(in srgb, var(--color-brand-green) 12%, white);
+  --secondary-foreground: var(--color-brand-cream);
+  --sidebar-primary: var(--color-brand-green-deep);
+  --sidebar-primary-foreground: var(--color-brand-cream);
+  --sidebar-accent: var(--color-brand-gold);
+  --sidebar-accent-foreground: var(--color-brand-green-deep);
+  /* Also expose the brand tokens directly for legacy components */
+  --color-brand-green: oklch(0.33 0.09 142);
+  --color-brand-green-dark: oklch(0.25 0.08 142);
+  --color-brand-green-deep: oklch(0.20 0.07 142);
+  --color-brand-gold: oklch(0.82 0.16 90);
+  --color-brand-gold-dark: oklch(0.72 0.17 88);
+  --color-brand-cream: oklch(0.98 0.01 95);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
