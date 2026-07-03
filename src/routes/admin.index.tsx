@@ -2,9 +2,10 @@ import { useApp } from "@/lib/store";
 import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 
 export default function Dashboard() {
-  const { users, campaigns, interviews, emailLogs, audits } = useApp();
+  const { users, applications, campaigns, interviews, emailLogs, audits } = useApp();
   const seekers = users.filter((u) => u.role === "seeker");
-  const active = seekers.filter((u) => u.status === "active").length;
+  const allTimeApplicants = applications.length;
+  const newApplicants = applications.filter((a) => a.status === "submitted").length;
   const sent = emailLogs.filter((l) => l.status === "sent").length;
 
   const byCounty = group(seekers, (u) => u.county || "—");
@@ -19,8 +20,8 @@ export default function Dashboard() {
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <Stat label="Total users" value={seekers.length} />
-        <Stat label="Active" value={active} />
+        <Stat label="All-time applicants" value={allTimeApplicants} />
+        <Stat label="New applicants" value={newApplicants} />
         <Stat label="Emails sent" value={sent} />
         <Stat label="Interviews" value={interviews.length} />
       </div>
