@@ -1,10 +1,66 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwind from "@tailwindcss/vite";
 
+function rawBody(request) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    request.on("data", (chunk) => chunks.push(chunk));
+    request.on("end", () => resolve(Buffer.concat(chunks)));
+    request.on("error", reject);
+  });
+}
+
+function apiRouteMiddleware(serverHandler) {
+  return async (req, res, next) => {
+    if (!req.url?.startsWith("/api/")) {
+      next();
+      return;
+    }
+
+    try {
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      const body = await rawBody(req);
+      const request = new Request(url.toString(), {
+        method: req.method,
+        headers: req.headers,
+        body: body.length ? body : null,
+      });
+      const response = await serverHandler.fetch(request, process.env, undefined);
+      res.statusCode = response.status;
+      response.headers.forEach((value, key) => res.setHeader(key, value));
+      const buffer = Buffer.from(await response.arrayBuffer());
+      res.end(buffer);
+    } catch (error) {
+      next(error);
+    }
+  };
+}
+
 // Minimal Vite config using standard plugins. We removed the project-specific
 // `@lovable.dev/vite-tanstack-config` to decouple the build from TanStack Start.
 export default defineConfig({
-  plugins: [react(), tsconfigPaths(), tailwind()],
+  plugins: [
+    react(),
+    tsconfigPaths(),
+    tailwind(),
+    {
+      name: "api-route-middleware",
+      async configureServer(server) {
+        const env = loadEnv(server.config.mode, process.cwd(), "");
+        Object.assign(process.env, env);
+        const serverModule = await import("./src/server");
+        const serverHandler = serverModule.default ?? serverModule;
+        server.middlewares.use(apiRouteMiddleware(serverHandler));
+      },
+      async configurePreviewServer(server) {
+        const env = loadEnv(server.config.mode, process.cwd(), "");
+        Object.assign(process.env, env);
+        const serverModule = await import("./src/server");
+        const serverHandler = serverModule.default ?? serverModule;
+        server.middlewares.use(apiRouteMiddleware(serverHandler));
+      },
+    },
+  ],
 });

@@ -262,7 +262,7 @@ export const useApp = create<AppState>()(
             ),
           });
         }
-        get().audit("send_campaign", `${campaignId} sent=${sent} skipped=${skipped}`);
+        get().audit("send_campaign", campaignId);
         return { sent, skipped };
       },
 

@@ -1,6 +1,5 @@
-﻿import React, { useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { COUNTIES, useApp } from "@/lib/store";
-import { countBulkInvitePreview } from "@/lib/bulk-invitations";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -18,55 +17,80 @@ import { toast } from "sonner";
 import AdminHeader from "@/components/AdminHeader";
 
 export default function InterviewsPage() {
+  const NONE_SELECT_VALUE = "__none__";
   const jobs = useApp((s) => s.jobs);
   const applications = useApp((s) => s.applications);
-  const users = useApp((s) => s.users);
-  const emailLogs = useApp((s) => s.emailLogs);
-  const interviews = useApp((s) => s.interviews);
-  const sendBulkInvitations = useApp((s) => s.sendBulkInvitations);
-
-  const NONE_SELECT_VALUE = "__none__";
   const [open, setOpen] = useState(false);
   const [jobId, setJobId] = useState<string>(NONE_SELECT_VALUE);
   const [county, setCounty] = useState<string>(NONE_SELECT_VALUE);
   const [onlyNew, setOnlyNew] = useState(false);
-  const [message, setMessage] = useState("");
-  const [sending, setSending] = useState(false);
-
-  const preview = useMemo(
-    () =>
-      countBulkInvitePreview(applications, users, emailLogs, interviews, {
-        jobIds: jobId !== NONE_SELECT_VALUE ? [jobId] : undefined,
-        counties: county !== NONE_SELECT_VALUE ? [county] : undefined,
-        notYetSent: onlyNew,
-      }),
-    [applications, users, emailLogs, interviews, jobId, county, onlyNew],
+  const [subject, setSubject] = useState("Interview invitation details");
+  const [message, setMessage] = useState(
+    "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Please review the details and confirm your availability.",
   );
+  const [invitationUrl, setInvitationUrl] = useState("");
+  const [invitationText, setInvitationText] = useState("View interview details");
+  const [sending, setSending] = useState(false);
+  const [preview, setPreview] = useState({ total: 0, alreadyInvited: 0, toSend: 0 });
+  const placeholderText = "{{name}}, {{job}}, {{county}}, {{interview_date}}, {{location}}";
 
   const selectedJob = useMemo(
-    () => (jobId !== NONE_SELECT_VALUE ? jobs.find((job) => job.id === jobId) : undefined),
+    () => (jobId !== "__none__" ? jobs.find((job) => job.id === jobId) : undefined),
     [jobs, jobId],
   );
 
+  useEffect(() => {
+    if (!open) return;
+
+    const loadPreview = async () => {
+      try {
+        const response = await fetch("/api/interviews/preview", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            jobId: jobId !== "__none__" ? jobId : undefined,
+            county: county !== "__none__" ? county : undefined,
+            notYetSent: onlyNew,
+          }),
+        });
+        if (!response.ok) throw new Error("Preview request failed");
+        const data = await response.json();
+        setPreview({
+          total: data.matched ?? 0,
+          alreadyInvited: data.alreadyInvited ?? 0,
+          toSend: data.toSend ?? 0,
+        });
+      } catch (error) {
+        console.error(error);
+        toast.error("Unable to load preview");
+      }
+    };
+
+    loadPreview();
+  }, [open, jobId, county, onlyNew]);
+
   const send = async () => {
     setSending(true);
-    let scope: "all" | "job" | "county" = "all";
-    if (jobId && county) scope = "county";
-    else if (jobId) scope = "job";
-    else if (county) scope = "county";
 
     try {
-      await sendBulkInvitations(
-        {
-          jobId: jobId !== NONE_SELECT_VALUE ? jobId : undefined,
-          scope,
-          county: county !== NONE_SELECT_VALUE ? county : undefined,
+      const response = await fetch("/api/interviews/send", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          jobId: jobId !== "__none__" ? jobId : undefined,
+          county: county !== "__none__" ? county : undefined,
           notYetSent: onlyNew,
-        },
-        { message },
-      );
-      toast.success("Invitations queued");
+          subject,
+          message,
+          invitationUrl: invitationUrl || undefined,
+          invitationText: invitationText || undefined,
+        }),
+      });
+      if (!response.ok) throw new Error("Send request failed");
+      const result = await response.json();
+      toast.success(`Sent ${result.sent} invitations, skipped ${result.skipped}`);
       setOpen(false);
+      setPreview({ total: 0, alreadyInvited: 0, toSend: 0 });
     } catch (err) {
       console.error(err);
       toast.error("Failed to send invitations");
@@ -175,12 +199,44 @@ export default function InterviewsPage() {
                 </div>
 
                 <div className="grid gap-2">
+                  <Label>Subject</Label>
+                  <Input
+                    value={subject}
+                    onChange={(event) => setSubject(event.target.value)}
+                    placeholder="Interview invitation details"
+                  />
+                </div>
+
+                <div className="grid gap-2">
                   <Label>Message</Label>
                   <Textarea
                     value={message}
                     onChange={(event) => setMessage(event.target.value)}
                     placeholder="Write a personalized invite message..."
+                    rows={6}
                   />
+                  <p className="text-sm text-muted-foreground">
+                    Use placeholders: <code>{placeholderText}</code>.
+                  </p>
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label>Invitation link</Label>
+                    <Input
+                      value={invitationUrl}
+                      onChange={(event) => setInvitationUrl(event.target.value)}
+                      placeholder="https://example.com/interview-details"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Link button/text</Label>
+                    <Input
+                      value={invitationText}
+                      onChange={(event) => setInvitationText(event.target.value)}
+                      placeholder="View interview details"
+                    />
+                  </div>
                 </div>
 
                 <div className="rounded-xl bg-secondary/10 p-4 text-sm text-muted-foreground">
