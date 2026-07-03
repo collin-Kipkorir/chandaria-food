@@ -55,25 +55,27 @@ export default function AdminApplications() {
                 <p className="text-xs text-muted-foreground">
                   {job?.companyName} · {new Date(a.createdAt).toLocaleString()}
                 </p>
-                <div className="mt-2 text-sm">
+                <div className="mt-2 text-sm space-y-2">
                   <div>
                     <strong>{a.applicantName}</strong>
                   </div>
                   <div className="text-xs text-muted-foreground">
                     {a.applicantEmail} · {a.applicantPhone}
                   </div>
+                  {a.county && (
+                    <div className="text-xs text-muted-foreground">County: {a.county}</div>
+                  )}
+                  {a.educationLevel && (
+                    <div className="text-xs text-muted-foreground">
+                      Education: {a.educationLevel}
+                    </div>
+                  )}
+                  {a.expectedSalary && (
+                    <div className="text-xs text-muted-foreground">
+                      Expected salary: {a.expectedSalary}
+                    </div>
+                  )}
                 </div>
-                {a.cvUrl && (
-                  <a
-                    href={a.cvUrl}
-                    download={a.cvFileName || "cv"}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-2 inline-block text-xs text-primary underline"
-                  >
-                    Download CV {a.cvFileName ? `(${a.cvFileName})` : ""}
-                  </a>
-                )}
                 {a.coverLetter && (
                   <p className="mt-2 max-w-2xl whitespace-pre-wrap text-sm text-muted-foreground">
                     {a.coverLetter}

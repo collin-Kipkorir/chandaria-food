@@ -101,8 +101,6 @@ export interface JobApplication {
   educationLevel?: string;
   expectedSalary?: string;
   coverLetter?: string;
-  cvUrl: string;
-  cvFileName?: string;
   status: ApplicationStatus;
   createdAt: string;
 }

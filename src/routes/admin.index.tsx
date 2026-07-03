@@ -26,12 +26,9 @@ export default function Dashboard() {
         <Stat label="Interviews" value={interviews.length} />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Panel title="Users by county">
           <Bars data={byCounty} />
-        </Panel>
-        <Panel title="Users by skill">
-          <Bars data={bySkill} />
         </Panel>
       </div>
 

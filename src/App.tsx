@@ -68,22 +68,22 @@ const STORES = [
       "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
   },
   {
-  name: "Bakery & Café",
+    name: "Bakery & Café",
     icon: Utensils,
     description:
-  "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
+      "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
   },
   {
     name: "Online & Delivery",
     icon: Truck,
     description:
-  "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
+      "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
   },
   {
     name: "Own-Brand Products",
     icon: Building2,
     description:
-  "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
+      "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
   },
   {
     name: "Community & Loyalty",
@@ -667,15 +667,6 @@ const STEPS = [
   { id: 3, label: "Upload CV", icon: FileUp },
 ] as const;
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result));
-    r.onerror = () => reject(r.error);
-    r.readAsDataURL(file);
-  });
-}
-
 function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
   const apply = useApp((s) => s.applyToJob);
 
@@ -729,7 +720,6 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
     }
     setSubmitting(true);
     try {
-      const cvDataUrl = await fileToDataUrl(cvFile);
       const res = await apply(job.id, {
         applicantName: fullName.trim(),
         applicantEmail: email.trim(),
@@ -737,8 +727,6 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
         county,
         educationLevel: education,
         expectedSalary: salary,
-        cvUrl: cvDataUrl,
-        cvFileName: cvFile.name,
         coverLetter: coverLetter.trim() || undefined,
       });
       if (!res.ok || !res.applicationId) {
@@ -748,7 +736,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
       toast.success("Application submitted! We'll be in touch.");
       setSubmittedRef(res.applicationId);
     } catch {
-      toast.error("Could not read your CV file.");
+      toast.error("Could not submit your application. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -1103,7 +1091,7 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
                       // so the button shows a solid background even if the utility is
                       // missing. The CSS var is defined in `src/styles.css`.
                       className="inline-flex h-11 items-center gap-1.5 rounded-full bg-brand-green px-6 text-xs font-bold uppercase tracking-[0.2em] text-white shadow-lg shadow-brand-green/20 transition hover:scale-[1.02] hover:bg-brand-green-dark"
-                      style={{ backgroundColor: 'var(--color-brand-green, #1f7a4a)' }}
+                      style={{ backgroundColor: "var(--color-brand-green, #1f7a4a)" }}
                     >
                       Continue <ArrowRight className="h-3.5 w-3.5" />
                     </button>
@@ -1250,4 +1238,3 @@ function SelectInput({
     </select>
   );
 }
-
