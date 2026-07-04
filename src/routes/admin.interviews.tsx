@@ -54,6 +54,8 @@ export default function InterviewsPage() {
     [jobs, jobId],
   );
 
+  const selectedCountyLabel = county !== NONE_SELECT_VALUE ? county : "All counties";
+
   useEffect(() => {
     if (recentSends.length === 0 && interviews.length > 0) {
       const seeded = interviews
@@ -487,7 +489,7 @@ export default function InterviewsPage() {
                   </div>
                   <div className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
                     <span>County</span>
-                    <span className="font-medium">{county || "All counties"}</span>
+                    <span className="font-medium">{selectedCountyLabel}</span>
                   </div>
                   <div className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2">
                     <span>Only new applicants</span>
