@@ -1,4 +1,4 @@
-import { previewInvitationsData } from "../../src/lib/api/interviews.api";
+import { previewInvitationsData } from "../../src/lib/api/interviews.api.ts";
 
 export default async function handler(req: any, res: any) {
   if (req.method === "OPTIONS") {
