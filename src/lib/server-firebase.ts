@@ -18,6 +18,7 @@ function initializeAdmin() {
   }
 
   const credentialPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+  const credentialJson = process.env.GOOGLE_SERVICE_ACCOUNT ?? process.env.FIREBASE_SERVICE_ACCOUNT;
   let credential: admin.credential.Credential | undefined;
 
   if (credentialPath) {
@@ -28,6 +29,16 @@ function initializeAdmin() {
       return null;
     }
     credential = admin.credential.cert(credentialPath);
+  } else if (credentialJson) {
+    try {
+      credential = admin.credential.cert(JSON.parse(credentialJson));
+    } catch (error) {
+      console.warn(
+        "Failed to parse GOOGLE_SERVICE_ACCOUNT / FIREBASE_SERVICE_ACCOUNT JSON:",
+        error instanceof Error ? error.message : error,
+      );
+      return null;
+    }
   } else {
     try {
       credential = admin.credential.applicationDefault();
