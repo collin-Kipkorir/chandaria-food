@@ -79,19 +79,28 @@ export default {
             },
           });
         }
-        if (request.method === "POST") {
-          const raw = await request.text();
-          console.log("API /api/interviews/preview raw body:", raw);
-          const body = raw ? JSON.parse(raw) : {};
-          const result = await previewInvitationsData(body);
-          return new Response(JSON.stringify(result), {
-            status: 200,
+        if (request.method !== "POST") {
+          return new Response(JSON.stringify({ error: "Method not allowed" }), {
+            status: 405,
             headers: {
               "content-type": "application/json",
               "access-control-allow-origin": "*",
+              "allow": "POST, OPTIONS",
             },
           });
         }
+
+        const raw = await request.text();
+        console.log("API /api/interviews/preview raw body:", raw);
+        const body = raw ? JSON.parse(raw) : {};
+        const result = await previewInvitationsData(body);
+        return new Response(JSON.stringify(result), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "access-control-allow-origin": "*",
+          },
+        });
       }
 
       if (url.pathname === "/api/interviews/send") {
@@ -105,19 +114,28 @@ export default {
             },
           });
         }
-        if (request.method === "POST") {
-          const raw = await request.text();
-          console.log("API /api/interviews/send raw body:", raw);
-          const body = raw ? JSON.parse(raw) : {};
-          const result = await sendInvitationsData(body);
-          return new Response(JSON.stringify(result), {
-            status: 200,
+        if (request.method !== "POST") {
+          return new Response(JSON.stringify({ error: "Method not allowed" }), {
+            status: 405,
             headers: {
               "content-type": "application/json",
               "access-control-allow-origin": "*",
+              "allow": "POST, OPTIONS",
             },
           });
         }
+
+        const raw = await request.text();
+        console.log("API /api/interviews/send raw body:", raw);
+        const body = raw ? JSON.parse(raw) : {};
+        const result = await sendInvitationsData(body);
+        return new Response(JSON.stringify(result), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "access-control-allow-origin": "*",
+          },
+        });
       }
 
       if (url.pathname === "/api/interviews/history" && request.method === "GET") {
