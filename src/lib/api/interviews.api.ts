@@ -144,8 +144,8 @@ export async function sendInvitationsData(body: {
     }
 
     const job = jobs.find((j) => j.id === application.jobId);
-    const resolvedSubject = (body.subject ?? body.customSubject ?? "").trim() || DEFAULT_INVITATION_SUBJECT;
-    const resolvedMessage = (body.message ?? body.customMessage ?? body.customBody ?? "").trim() || DEFAULT_INVITATION_MESSAGE;
+    const resolvedSubject = (body.subject ?? "").trim() || DEFAULT_INVITATION_SUBJECT;
+    const resolvedMessage = (body.message ?? "").trim() || DEFAULT_INVITATION_MESSAGE;
     const data = {
       name: application.applicantName,
       job: job?.title ?? "",

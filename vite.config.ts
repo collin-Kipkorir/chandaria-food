@@ -2,18 +2,25 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwind from "@tailwindcss/vite";
+import type { IncomingMessage, ServerResponse } from "http";
 
-function rawBody(request) {
+function rawBody(request: IncomingMessage): Promise<Buffer> {
   return new Promise((resolve, reject) => {
-    const chunks = [];
-    request.on("data", (chunk) => chunks.push(chunk));
+    const chunks: Uint8Array[] = [];
+    request.on("data", (chunk: Uint8Array) => chunks.push(chunk));
     request.on("end", () => resolve(Buffer.concat(chunks)));
     request.on("error", reject);
   });
 }
 
-function apiRouteMiddleware(serverHandler) {
-  return async (req, res, next) => {
+function apiRouteMiddleware(serverHandler: {
+  fetch: (request: Request, env: NodeJS.ProcessEnv, ctx?: unknown) => Promise<Response>;
+}) {
+  return async (
+    req: IncomingMessage,
+    res: ServerResponse,
+    next: (error?: unknown) => void,
+  ) => {
     if (!req.url?.startsWith("/api/")) {
       next();
       return;
@@ -24,8 +31,8 @@ function apiRouteMiddleware(serverHandler) {
       const body = await rawBody(req);
       const request = new Request(url.toString(), {
         method: req.method,
-        headers: req.headers,
-        body: body.length ? body : null,
+        headers: req.headers as HeadersInit,
+        body: body.length ? new Uint8Array(body) : null,
       });
       const response = await serverHandler.fetch(request, process.env, undefined);
       res.statusCode = response.status;

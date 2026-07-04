@@ -14,7 +14,7 @@ export default async function handler(req: any, res: any) {
   }
 
   try {
-    const { previewInvitationsData } = await import("../../src/lib/api/interviews.api.ts");
+    const { previewInvitationsData } = await import("../../src/lib/api/interviews.api.js");
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body ?? {};
     const result = await previewInvitationsData(body);
     res.setHeader("Access-Control-Allow-Origin", "*");
