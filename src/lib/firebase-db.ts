@@ -7,7 +7,7 @@ import {
   update,
   type Database,
 } from "firebase/database";
-import { getFirebaseDb } from "./firebase";
+import { getFirebaseDb } from "./firebase.ts";
 
 /**
  * Chandarana Foodplus — Realtime Database schema

@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { get as dbGet, onValue, ref, set as dbSet } from "firebase/database";
-import { getFirebaseDb, isFirebaseConfigured } from "./firebase";
-import { fbPush, fbRemove, fbUpdate, fbWrite, toArray } from "./firebase-db";
+import { getFirebaseDb, isFirebaseConfigured } from "./firebase.ts";
+import { fbPush, fbRemove, fbUpdate, fbWrite, toArray } from "./firebase-db.ts";
 import type {
   ApplicationStatus,
   AuditLog,
