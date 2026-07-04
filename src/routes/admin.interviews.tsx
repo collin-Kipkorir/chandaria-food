@@ -78,16 +78,14 @@ export default function InterviewsPage() {
   }, [applications, interviews, recentSends.length]);
 
   useEffect(() => {
-    if (!open) return;
-
-    const loadPreview = async () => {
+    const loadPreview = async (showError = false) => {
       try {
         const response = await fetch("/api/interviews/preview", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
-            jobId: jobId !== "__none__" ? jobId : undefined,
-            county: county !== "__none__" ? county : undefined,
+            jobId: jobId !== NONE_SELECT_VALUE ? jobId : undefined,
+            county: county !== NONE_SELECT_VALUE ? county : undefined,
             notYetSent: onlyNew,
           }),
         });
@@ -100,11 +98,13 @@ export default function InterviewsPage() {
         });
       } catch (error) {
         console.error(error);
-        toast.error("Unable to load preview");
+        if (showError) {
+          toast.error("Unable to load preview");
+        }
       }
     };
 
-    loadPreview();
+    loadPreview(open);
   }, [open, jobId, county, onlyNew]);
 
   const insertLinkPlaceholder = () => {
