@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "api/interviews/preview.ts": {
+      "includeFiles": "src/**"
+    },
+    "api/interviews/send.ts": {
+      "includeFiles": "src/**"
+    }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
