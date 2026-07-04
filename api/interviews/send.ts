@@ -15,8 +15,13 @@ export default async function handler(req: any, res: any) {
 
   try {
     const { sendInvitationsData } = await import("../../src/lib/api/interviews.api.js");
-    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body ?? {};
-    const result = await sendInvitationsData(body);
+    let body: unknown = req.body ?? {};
+    if (typeof body === "string") {
+      body = JSON.parse(body);
+    } else if (body instanceof Uint8Array || Buffer.isBuffer(body)) {
+      body = JSON.parse(body.toString("utf8"));
+    }
+    const result = await sendInvitationsData(body as Record<string, unknown>);
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(200).json(result);
   } catch (error) {
