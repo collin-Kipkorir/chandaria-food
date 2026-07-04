@@ -1,11 +1,9 @@
 {
   "functions": {
     "api/interviews/preview.ts": {
-      "runtime": "nodejs20.x",
       "includeFiles": "src/lib/**"
     },
     "api/interviews/send.ts": {
-      "runtime": "nodejs20.x",
       "includeFiles": "src/lib/**"
     }
   },
