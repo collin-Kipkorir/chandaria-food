@@ -44,6 +44,7 @@ export interface InterviewInvitation {
   userId: string;
   companyName: string;
   jobTitle: string;
+  subject?: string;
   applicationId?: string;
   interviewDate: string;
   interviewTime: string;

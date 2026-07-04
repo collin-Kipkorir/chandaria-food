@@ -1,24 +1,18 @@
-import * as Brevo from "@getbrevo/brevo";
 import type { EmailProvider, EmailPayload } from "../EmailProvider";
 
 const DEFAULT_FROM_EMAIL = process.env.BREVO_FROM_EMAIL ?? "careers@example.com";
 const DEFAULT_FROM_NAME = process.env.BREVO_FROM_NAME ?? "Recruitment";
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 export class BrevoProvider implements EmailProvider {
-  private api: any;
+  private apiKey: string;
 
   constructor() {
     const key = process.env.BREVO_API_KEY;
     if (!key) {
       throw new Error("BREVO_API_KEY is required for BrevoProvider");
     }
-
-    const client = Brevo.ApiClient.instance;
-    if (client && client.authentications && client.authentications["api-key"]) {
-      client.authentications["api-key"].apiKey = key;
-    }
-
-    this.api = new Brevo.TransactionalEmailsApi();
+    this.apiKey = key;
   }
 
   async send(payload: EmailPayload) {
@@ -28,18 +22,31 @@ export class BrevoProvider implements EmailProvider {
       subject: payload.subject,
       htmlContent: payload.html,
       textContent: payload.text ?? payload.html.replace(/<[^>]+>/g, ""),
+      params: {
+        name: payload.name ?? "",
+        subject: payload.subject,
+      },
     };
 
     try {
-      const result = await this.api.sendTransacEmail(request);
-      return { ok: true, info: result };
-    } catch (err: any) {
-      if (err && typeof err === "object") {
-        const status = (err.statusCode ?? err.status ?? (err.rawResponse && err.rawResponse.status)) || null;
-        const message = err.message ?? (err.body && JSON.stringify(err.body)) ?? String(err);
-        return { ok: false, error: status ? `${status} ${message}` : message };
+      const response = await fetch(BREVO_API_URL, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          "api-key": this.apiKey,
+        },
+        body: JSON.stringify(request),
+      });
+
+      const body = await response.text();
+      if (!response.ok) {
+        return { ok: false, error: `${response.status} ${body}` };
       }
-      return { ok: false, error: String(err) };
+
+      return { ok: true, info: body ? JSON.parse(body) : null };
+    } catch (err: any) {
+      return { ok: false, error: err?.message ?? String(err) };
     }
   }
 }

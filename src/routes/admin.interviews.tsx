@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTIES, useApp } from "@/lib/store";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -20,24 +20,60 @@ export default function InterviewsPage() {
   const NONE_SELECT_VALUE = "__none__";
   const jobs = useApp((s) => s.jobs);
   const applications = useApp((s) => s.applications);
+  const interviews = useApp((s) => s.interviews);
+  const [recentSends, setRecentSends] = useState<
+    Array<{
+      applicantName: string;
+      applicantEmail: string;
+      subject: string;
+      message: string;
+      sentAt: string;
+    }>
+  >([]);
   const [open, setOpen] = useState(false);
   const [jobId, setJobId] = useState<string>(NONE_SELECT_VALUE);
   const [county, setCounty] = useState<string>(NONE_SELECT_VALUE);
   const [onlyNew, setOnlyNew] = useState(false);
   const [subject, setSubject] = useState("Interview invitation details");
   const [message, setMessage] = useState(
-    "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Please review the details and confirm your availability.",
+    "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Interview date and venue will be communicated shortly. Please review the details and confirm your availability.\n\nPlease ensure you bring the following documents to the interview:\n1. Food Handling certificate - https://example.com/food-handling-certificate\n2. Original Academic Certificates\n3. Any other relevant certificates\n\nThank you.",
   );
+  const [linkLabel, setLinkLabel] = useState("View interview details");
+  const [linkUrl, setLinkUrl] = useState("https://kemri.ecitizen.go.ke/");
+  const [interviewDate, setInterviewDate] = useState("");
+  const [location, setLocation] = useState("");
   const [invitationUrl, setInvitationUrl] = useState("");
   const [invitationText, setInvitationText] = useState("View interview details");
   const [sending, setSending] = useState(false);
   const [preview, setPreview] = useState({ total: 0, alreadyInvited: 0, toSend: 0 });
+  const messageRef = useRef<HTMLTextAreaElement | null>(null);
   const placeholderText = "{{name}}, {{job}}, {{county}}, {{interview_date}}, {{location}}";
 
   const selectedJob = useMemo(
     () => (jobId !== "__none__" ? jobs.find((job) => job.id === jobId) : undefined),
     [jobs, jobId],
   );
+
+  useEffect(() => {
+    if (recentSends.length === 0 && interviews.length > 0) {
+      const seeded = interviews
+        .filter((invitation) => invitation.subject || invitation.message)
+        .slice(0, 6)
+        .map((invitation) => {
+          const application = applications.find((app) => app.id === invitation.applicationId);
+          return {
+            applicantName: application?.applicantName ?? "Applicant",
+            applicantEmail: application?.applicantEmail ?? "No email",
+            subject: invitation.subject ?? "Interview invitation",
+            message: invitation.message ?? "",
+            sentAt: invitation.createdAt ?? new Date().toISOString(),
+          };
+        });
+      if (seeded.length > 0) {
+        setRecentSends(seeded);
+      }
+    }
+  }, [applications, interviews, recentSends.length]);
 
   useEffect(() => {
     if (!open) return;
@@ -69,6 +105,32 @@ export default function InterviewsPage() {
     loadPreview();
   }, [open, jobId, county, onlyNew]);
 
+  const insertLinkPlaceholder = () => {
+    const label = linkLabel.trim();
+    const url = linkUrl.trim();
+
+    if (!label || !url) {
+      toast.error("Please enter both link text and URL.");
+      return;
+    }
+
+    const placeholder = `{{link:${label}:${url}}}`;
+    const textarea = messageRef.current;
+    const start = textarea?.selectionStart ?? message.length;
+    const end = textarea?.selectionEnd ?? message.length;
+    const nextMessage = `${message.slice(0, start)}${placeholder}${message.slice(end)}`;
+
+    setMessage(nextMessage);
+    setLinkLabel("");
+    setLinkUrl("");
+
+    requestAnimationFrame(() => {
+      textarea?.focus();
+      const cursorPosition = start + placeholder.length;
+      textarea?.setSelectionRange(cursorPosition, cursorPosition);
+    });
+  };
+
   const send = async () => {
     setSending(true);
 
@@ -80,14 +142,21 @@ export default function InterviewsPage() {
           jobId: jobId !== "__none__" ? jobId : undefined,
           county: county !== "__none__" ? county : undefined,
           notYetSent: onlyNew,
-          subject,
-          message,
+          subject: subject || "Interview invitation details",
+          message:
+            message ||
+            "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}.",
           invitationUrl: invitationUrl || undefined,
           invitationText: invitationText || undefined,
+          interviewDate: interviewDate || undefined,
+          location:
+            location ||
+            (county !== NONE_SELECT_VALUE ? county : selectedJob?.location || undefined),
         }),
       });
       if (!response.ok) throw new Error("Send request failed");
       const result = await response.json();
+      setRecentSends((prev) => [...(result.sentItems ?? []), ...prev].slice(0, 6));
       toast.success(`Sent ${result.sent} invitations, skipped ${result.skipped}`);
       setOpen(false);
       setPreview({ total: 0, alreadyInvited: 0, toSend: 0 });
@@ -210,14 +279,62 @@ export default function InterviewsPage() {
                 <div className="grid gap-2">
                   <Label>Message</Label>
                   <Textarea
+                    ref={messageRef}
                     value={message}
                     onChange={(event) => setMessage(event.target.value)}
                     placeholder="Write a personalized invite message..."
                     rows={6}
                   />
+                  <div className="rounded-lg border border-border bg-background/70 p-3">
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <div className="grid flex-1 gap-2">
+                        <Label>Link text</Label>
+                        <Input
+                          value={linkLabel}
+                          onChange={(event) => setLinkLabel(event.target.value)}
+                          placeholder="View interview details"
+                        />
+                      </div>
+                      <div className="grid flex-1 gap-2">
+                        <Label>Link URL</Label>
+                        <Input
+                          value={linkUrl}
+                          onChange={(event) => setLinkUrl(event.target.value)}
+                          placeholder="https://example.com"
+                        />
+                      </div>
+                      <Button type="button" onClick={insertLinkPlaceholder} className="self-end">
+                        Add link
+                      </Button>
+                    </div>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      This inserts a clickable link placeholder at the cursor position in the
+                      message.
+                    </p>
+                  </div>
                   <p className="text-sm text-muted-foreground">
-                    Use placeholders: <code>{placeholderText}</code>.
+                    Use placeholders: <code>{placeholderText}</code>. You can also insert clickable
+                    links with the controls above.
                   </p>
+                </div>
+
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label>Interview date</Label>
+                    <Input
+                      type="date"
+                      value={interviewDate}
+                      onChange={(event) => setInterviewDate(event.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Location</Label>
+                    <Input
+                      value={location}
+                      onChange={(event) => setLocation(event.target.value)}
+                      placeholder={selectedJob?.location ?? "Nairobi"}
+                    />
+                  </div>
                 </div>
 
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -267,6 +384,50 @@ export default function InterviewsPage() {
               <p className="text-sm text-muted-foreground">
                 See the freshest applicants and where they applied.
               </p>
+            </div>
+
+            <div className="mt-6 rounded-xl border border-border bg-background p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-lg font-semibold">Recent invite log</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Review the exact subject and message body sent to each applicant.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {recentSends.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No invitation sends logged yet.</p>
+                ) : (
+                  recentSends.map((entry, index) => (
+                    <div
+                      key={`${entry.applicantEmail}-${entry.sentAt}-${index}`}
+                      className="rounded-lg border border-border p-3"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p className="font-medium">{entry.applicantName}</p>
+                          <p className="text-sm text-muted-foreground">{entry.applicantEmail}</p>
+                        </div>
+                        <Badge variant="outline">Sent</Badge>
+                      </div>
+                      <div className="mt-2 space-y-2 text-sm">
+                        <div>
+                          <span className="font-medium">Subject:</span>{" "}
+                          {entry.subject || "Interview invitation"}
+                        </div>
+                        <div>
+                          <span className="font-medium">Message:</span>
+                          <p className="mt-1 whitespace-pre-wrap rounded-md bg-muted/40 p-2 text-xs">
+                            {entry.message || "No message recorded"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
             <div className="mt-5 space-y-3">
