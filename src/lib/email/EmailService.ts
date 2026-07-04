@@ -1,8 +1,8 @@
-import type { EmailPayload, EmailProvider } from "./EmailProvider.ts";
-import { BrevoProvider } from "./providers/BrevoProvider.ts";
-import { AmazonSESProvider } from "./providers/AmazonSESProvider.ts";
-import { SMTPProvider } from "./providers/SMTPProvider.ts";
-import { MockProvider } from "./providers/MockProvider.ts";
+import type { EmailPayload, EmailProvider } from "./EmailProvider.js";
+import { BrevoProvider } from "./providers/BrevoProvider.js";
+import { AmazonSESProvider } from "./providers/AmazonSESProvider.js";
+import { SMTPProvider } from "./providers/SMTPProvider.js";
+import { MockProvider } from "./providers/MockProvider.js";
 
 export class EmailService {
   private provider: EmailProvider | null = null;

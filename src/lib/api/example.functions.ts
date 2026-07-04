@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { getServerConfig } from "../config.server.ts";
+import { getServerConfig } from "../config.server.js";
 
 const greetingSchema = z.object({ name: z.string().min(1) });
 

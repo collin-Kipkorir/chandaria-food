@@ -1,10 +1,10 @@
-import { getDatabaseValue, getFirebaseAdminDatabase, objectToArray } from "../server-firebase.ts";
-import { EmailService } from "../email/EmailService.ts";
+import { getDatabaseValue, getFirebaseAdminDatabase, objectToArray } from "../server-firebase.js";
+import { EmailService } from "../email/EmailService.js";
 import {
   buildInvitationCampaignId,
   hasReceivedInvitation,
   shouldSkipInvitation,
-} from "../invitation-eligibility.ts";
+} from "../invitation-eligibility.js";
 import type { EmailLog, InterviewInvitation, JobApplication, Job } from "../types.ts";
 
 const emailService = new EmailService();
