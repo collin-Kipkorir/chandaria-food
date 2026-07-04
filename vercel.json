@@ -1,10 +1,12 @@
 {
   "functions": {
     "api/interviews/preview.ts": {
-      "includeFiles": "src/**"
+      "runtime": "nodejs20.x",
+      "includeFiles": ["src/lib/**"]
     },
     "api/interviews/send.ts": {
-      "includeFiles": "src/**"
+      "runtime": "nodejs20.x",
+      "includeFiles": ["src/lib/**"]
     }
   },
   "rewrites": [
