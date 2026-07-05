@@ -77,6 +77,10 @@ export async function getFiltersData() {
   return { jobs, counties };
 }
 
+function buildInvitationRecipientKey(application: JobApplication) {
+  return `${application.jobId}:${application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id}`;
+}
+
 export async function previewInvitationsData(body: {
   jobId?: string | null;
   county?: string | null;
@@ -95,12 +99,20 @@ export async function previewInvitationsData(body: {
   if (body.jobId) matched = matched.filter((app) => app.jobId === body.jobId);
   if (body.county) matched = matched.filter((app) => app.county === body.county);
 
-  const alreadyInvited = matched.filter((app) => hasReceivedInvitation(app, emailLogs, interviews)).length;
-  const toSend = body.notYetSent
-    ? matched.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews)).length
-    : matched.length;
+  const uniqueMatched = Array.from(
+    matched.reduce<Map<string, JobApplication>>((map, app) => {
+      const key = buildInvitationRecipientKey(app);
+      if (!map.has(key)) map.set(key, app);
+      return map;
+    }, new Map()),
+  ).map(([, app]) => app);
 
-  return { matched: matched.length, alreadyInvited, toSend };
+  const alreadyInvited = uniqueMatched.filter((app) => hasReceivedInvitation(app, emailLogs, interviews)).length;
+  const toSend = body.notYetSent
+    ? uniqueMatched.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews)).length
+    : uniqueMatched.length;
+
+  return { matched: uniqueMatched.length, alreadyInvited, toSend };
 }
 
 export async function sendInvitationsData(body: {
@@ -128,15 +140,25 @@ export async function sendInvitationsData(body: {
   let targets = applications;
   if (body.jobId) targets = targets.filter((app) => app.jobId === body.jobId);
   if (body.county) targets = targets.filter((app) => app.county === body.county);
+
+  const uniqueTargets = Array.from(
+    targets.reduce<Map<string, JobApplication>>((map, app) => {
+      const key = buildInvitationRecipientKey(app);
+      if (!map.has(key)) map.set(key, app);
+      return map;
+    }, new Map()),
+  ).map(([, app]) => app);
+
+  let filteredTargets = uniqueTargets;
   if (body.notYetSent) {
-    targets = targets.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews));
+    filteredTargets = filteredTargets.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews));
   }
 
   let sent = 0;
   let skipped = 0;
   const sentItems: Array<{ applicantName: string; applicantEmail: string; subject: string; message: string; sentAt: string }> = [];
 
-  for (const application of targets) {
+  for (const application of filteredTargets) {
     const already = shouldSkipInvitation(application, emailLogs, interviews, Boolean(body.notYetSent));
     if (already) {
       skipped++;

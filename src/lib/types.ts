@@ -44,7 +44,6 @@ export interface InterviewInvitation {
   userId: string;
   companyName: string;
   jobTitle: string;
-  subject?: string;
   applicationId?: string;
   interviewDate: string;
   interviewTime: string;
@@ -102,6 +101,8 @@ export interface JobApplication {
   educationLevel?: string;
   expectedSalary?: string;
   coverLetter?: string;
+  cvUrl: string;
+  cvFileName?: string;
   status: ApplicationStatus;
   createdAt: string;
 }

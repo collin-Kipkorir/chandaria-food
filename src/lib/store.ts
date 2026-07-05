@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { get as dbGet, onValue, ref, set as dbSet } from "firebase/database";
-import { getFirebaseDb, isFirebaseConfigured } from "./firebase.js";
-import { fbPush, fbRemove, fbUpdate, fbWrite, toArray } from "./firebase-db.js";
+import { getFirebaseDb, isFirebaseConfigured } from "./firebase";
+import { fbPush, fbRemove, fbUpdate, fbWrite, toArray } from "./firebase-db";
 import type {
   ApplicationStatus,
   AuditLog,
@@ -120,6 +120,8 @@ interface AppState {
       county?: string;
       educationLevel?: string;
       expectedSalary?: string;
+      cvUrl: string;
+      cvFileName?: string;
       coverLetter?: string;
     },
   ) => Promise<{ ok: boolean; error?: string; applicationId?: string }>;
@@ -262,7 +264,7 @@ export const useApp = create<AppState>()(
             ),
           });
         }
-        get().audit("send_campaign", campaignId);
+        get().audit("send_campaign", `${campaignId} sent=${sent} skipped=${skipped}`);
         return { sent, skipped };
       },
 
@@ -577,6 +579,8 @@ export const useApp = create<AppState>()(
           educationLevel: data.educationLevel,
           expectedSalary: data.expectedSalary,
           coverLetter: data.coverLetter,
+          cvUrl: data.cvUrl,
+          cvFileName: data.cvFileName,
           status: "submitted",
           createdAt: new Date().toISOString(),
         };

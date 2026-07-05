@@ -1,6 +1,12 @@
 import type { EmailLog, InterviewInvitation, JobApplication } from "./types";
 
 export function buildInvitationCampaignId(application: JobApplication): string {
+  const recipientKey =
+    application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id;
+  return `bulk-invite:${application.jobId ?? "all"}:${recipientKey}`;
+}
+
+export function buildLegacyInvitationCampaignId(application: JobApplication): string {
   return `bulk-invite:${application.jobId ?? "all"}:${application.id}`;
 }
 
@@ -11,12 +17,17 @@ export function hasReceivedInvitation(
 ): boolean {
   if (interviews.some((invite) => invite.applicationId === application.id)) return true;
 
-  const applicationSpecificCampaignIds = new Set([application.id, buildInvitationCampaignId(application)]);
+  const campaignIds = new Set([
+    application.id,
+    buildInvitationCampaignId(application),
+    buildLegacyInvitationCampaignId(application),
+  ]);
+
   return emailLogs.some(
     (log) =>
       log.status === "sent" &&
       (Boolean(log.applicationId && log.applicationId === application.id) ||
-        applicationSpecificCampaignIds.has(log.campaignId ?? "")),
+        campaignIds.has(log.campaignId ?? "")),
   );
 }
 
