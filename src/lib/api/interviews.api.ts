@@ -119,6 +119,7 @@ export async function sendInvitationsData(body: {
   jobId?: string | null;
   county?: string | null;
   notYetSent?: boolean;
+  applicationIds?: string[];
   subject: string;
   message: string;
   invitationText?: string;
@@ -138,6 +139,11 @@ export async function sendInvitationsData(body: {
   const jobs = objectToArray<Job>(jobsValue);
 
   let targets = applications;
+  // If specific application IDs supplied, target only those
+  if (Array.isArray(body.applicationIds) && body.applicationIds.length > 0) {
+    const allowed = new Set(body.applicationIds.filter(Boolean));
+    targets = targets.filter((app) => allowed.has(app.id ?? ""));
+  }
   if (body.jobId) targets = targets.filter((app) => app.jobId === body.jobId);
   if (body.county) targets = targets.filter((app) => app.county === body.county);
 
