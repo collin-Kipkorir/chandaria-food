@@ -195,6 +195,13 @@ export async function sendInvitationsData(body: {
       text: personalized,
     });
 
+    // Detailed logging for send result to assist in diagnosing production failures
+    if (!result.ok) {
+      console.error(`[invites][error] send failed for ${application.applicantEmail}`, { error: result.error });
+    } else {
+      console.log(`[invites][ok] sent to ${application.applicantEmail}`, { info: result.info });
+    }
+
     const logId = `${Date.now()}-${application.id}`;
     if (adminDb) {
       await adminDb.ref(`emailLogs/${logId}`).set({
