@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { countBulkInvitePreview } from "@/lib/bulk-invitations";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import AdminHeader from "@/components/AdminHeader";
@@ -21,6 +22,8 @@ export default function InterviewsPage() {
   const jobs = useApp((s) => s.jobs);
   const applications = useApp((s) => s.applications);
   const interviews = useApp((s) => s.interviews);
+  const users = useApp((s) => s.users);
+  const emailLogs = useApp((s) => s.emailLogs);
   const [recentSends, setRecentSends] = useState<
     Array<{
       applicantName: string;
@@ -98,8 +101,18 @@ export default function InterviewsPage() {
         });
       } catch (error) {
         console.error(error);
-        if (showError) {
-          toast.error("Unable to load preview");
+        // Fallback: compute preview client-side from local store
+        try {
+          const filters = {
+            jobIds: jobId !== NONE_SELECT_VALUE ? [jobId] : undefined,
+            counties: county !== NONE_SELECT_VALUE ? [county] : undefined,
+            notYetSent: onlyNew,
+          };
+          const local = countBulkInvitePreview(applications, users, emailLogs, interviews, filters as any);
+          setPreview({ total: local.total, alreadyInvited: local.alreadyInvited, toSend: local.toSend });
+        } catch (e) {
+          console.error("Local preview fallback failed", e);
+          if (showError) toast.error("Unable to load preview");
         }
       }
     };
