@@ -463,36 +463,6 @@ export default function InterviewsPage() {
                       <Badge variant="outline">{job?.title ?? application.jobId}</Badge>
                       <Badge variant="secondary">{application.county || "No county"}</Badge>
                     </div>
-                    <div className="mt-3 sm:mt-0">
-                      <Button
-                        size="sm"
-                        onClick={async () => {
-                          try {
-                            const res = await fetch("/api/interviews/send", {
-                              method: "POST",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({
-                                applicationIds: [application.id],
-                                subject: subject || "Interview invitation",
-                                message: message || undefined,
-                                invitationUrl: invitationUrl || undefined,
-                                invitationText: invitationText || undefined,
-                                interviewDate: interviewDate || undefined,
-                                location: location || undefined,
-                              }),
-                            });
-                            if (!res.ok) throw new Error(await res.text());
-                            const data = await res.json();
-                            toast.success(`Sent ${data.sent} invitations`);
-                          } catch (err) {
-                            console.error(err);
-                            toast.error("Failed to send to applicant");
-                          }
-                        }}
-                      >
-                        Send
-                      </Button>
-                    </div>
                   </div>
                 );
               })}
