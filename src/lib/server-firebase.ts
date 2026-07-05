@@ -18,37 +18,33 @@ function initializeAdmin() {
   }
 
   const credentialPath = process.env.GOOGLE_APPLICATION_CREDENTIALS;
-  const credentialJson = process.env.GOOGLE_SERVICE_ACCOUNT ?? process.env.FIREBASE_SERVICE_ACCOUNT;
+  const credentialJson = process.env.FIREBASE_SERVICE_ACCOUNT ?? process.env.GOOGLE_SERVICE_ACCOUNT;
+
+  // Prefer explicit service account JSON in env (`FIREBASE_SERVICE_ACCOUNT`) or a
+  // file path via `GOOGLE_APPLICATION_CREDENTIALS`. Do NOT fall back to
+  // Application Default Credentials (metadata server) in serverless environments.
   let credential: admin.credential.Credential | undefined;
 
   if (credentialPath) {
     if (!fs.existsSync(credentialPath)) {
-      console.warn(
-        `GOOGLE_APPLICATION_CREDENTIALS is set to '${credentialPath}' but the file does not exist. Firebase Admin will not initialize. Remove or correct this env var to enable admin writes.`,
+      throw new Error(
+        `GOOGLE_APPLICATION_CREDENTIALS is set to '${credentialPath}' but the file does not exist. Set a valid path or provide FIREBASE_SERVICE_ACCOUNT env JSON.`,
       );
-      return null;
     }
     credential = admin.credential.cert(credentialPath);
   } else if (credentialJson) {
     try {
-      credential = admin.credential.cert(JSON.parse(credentialJson));
+      const parsed = typeof credentialJson === "string" ? JSON.parse(credentialJson) : credentialJson;
+      credential = admin.credential.cert(parsed as admin.ServiceAccount);
     } catch (error) {
-      console.warn(
-        "Failed to parse GOOGLE_SERVICE_ACCOUNT / FIREBASE_SERVICE_ACCOUNT JSON:",
-        error instanceof Error ? error.message : error,
+      throw new Error(
+        "Failed to parse FIREBASE_SERVICE_ACCOUNT / GOOGLE_SERVICE_ACCOUNT JSON. Ensure the env contains valid service account JSON.",
       );
-      return null;
     }
   } else {
-    try {
-      credential = admin.credential.applicationDefault();
-    } catch (error) {
-      console.warn(
-        "Firebase Admin applicationDefault credential resolution failed:",
-        error instanceof Error ? error.message : error,
-      );
-      return null;
-    }
+    throw new Error(
+      "Missing Firebase service account credentials. Set FIREBASE_SERVICE_ACCOUNT (JSON) or GOOGLE_APPLICATION_CREDENTIALS (file path) in environment.",
+    );
   }
 
   if (admin.apps.length === 0) {
