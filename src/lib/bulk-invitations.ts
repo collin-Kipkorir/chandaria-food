@@ -27,20 +27,44 @@ export function hasReceivedInvitation(
   users: User[],
   emailLogs: EmailLog[],
   interviews: InterviewInvitation[],
+  invitationStatuses: Array<{ status?: string; key?: string; recipientKey?: string; applicationId?: string; jobId?: string }> = [],
 ): boolean {
   const user = resolveUserForApplication(application, users);
   const userId = user?.id ?? application.userId ?? "";
+  const applicantEmail = application.applicantEmail.trim().toLowerCase();
+  const jobKey = application.jobId ?? "";
+
+  if (
+    invitationStatuses.some(
+      (record) =>
+        (record.status === "pending" || record.status === "sent") &&
+        ((record.key && record.key === `${(application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id).toLowerCase()}::${(application.jobId ?? "all").toLowerCase()}`) ||
+          (record.applicationId && record.applicationId === application.id) ||
+          (record.recipientKey && record.recipientKey === (application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id))),
+    )
+  ) {
+    return true;
+  }
 
   if (interviews.some((i) => i.applicationId === application.id)) {
     return true;
   }
 
-  return emailLogs.some(
-    (log) =>
-      log.status === "sent" &&
-      ((log.applicationId && log.applicationId === application.id) ||
-        (log.userId === userId && log.campaignId === (application.jobId ?? "") && userId !== "")),
-  );
+  return emailLogs.some((log) => {
+    if (log.status !== "sent") return false;
+
+    if (log.applicationId && log.applicationId === application.id) return true;
+
+    if (userId && log.userId === userId) {
+      return log.campaignId?.includes(`bulk-invite:${jobKey}:`) || log.campaignId === jobKey;
+    }
+
+    if (applicantEmail && log.campaignId?.includes(applicantEmail)) {
+      return log.campaignId?.includes(`bulk-invite:${jobKey}:`);
+    }
+
+    return false;
+  });
 }
 
 export function filterApplicationsForBulkInvite(

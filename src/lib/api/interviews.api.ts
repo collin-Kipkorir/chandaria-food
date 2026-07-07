@@ -1,16 +1,19 @@
-import { getDatabaseValue, getFirebaseAdminDatabase, objectToArray } from "../server-firebase.js";
+import { getDatabaseValue, getFirebaseAdminDatabase, objectToArray, setDatabaseValue } from "../server-firebase.js";
 import { EmailService } from "../email/EmailService.js";
 import {
   buildInvitationCampaignId,
+  buildInvitationStatusRecord,
+  buildInvitationStatusKey,
   hasReceivedInvitation,
   shouldSkipInvitation,
+  type InvitationStatusRecord,
 } from "../invitation-eligibility.js";
 import type { EmailLog, InterviewInvitation, JobApplication, Job } from "../types.ts";
 
 const emailService = new EmailService();
 const DEFAULT_INVITATION_SUBJECT = "Interview invitation details";
 const DEFAULT_INVITATION_MESSAGE =
-  "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Interview date and venue will be communicated shortly. Please review the details and confirm your availability.\n\nPlease ensure you bring the following documents to the interview:\n1. Food Handling certificate - https://example.com/food-handling-certificate\n2. Original Academic Certificates\n3. Any other relevant certificates\n\nThank you.";
+  "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Interview date and venue will be communicated shortly. Please review the details and confirm your availability.\n\nPlease ensure you bring the following documents to the interview:\n1. Submit documents - {{documentUploadUrl}}\n2. Work Ethics / Labour Clearance - {{workEthicsUrl}}\n3. Food Handler Certificate - {{foodHandlerCertUrl}}\n\nThank you.";
 
 function replacePlaceholders(template: string, data: Record<string, string>) {
   return template.replace(/{{\s*([^}]+)\s*}}/g, (_, key) => {
@@ -88,20 +91,26 @@ function buildInvitationRecipientKey(application: JobApplication) {
   return `${application.jobId}:${application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id}`;
 }
 
+function toInvitationStatusRecords(value: Record<string, unknown> | null): InvitationStatusRecord[] {
+  return objectToArray<InvitationStatusRecord>(value).filter((record) => Boolean(record.status));
+}
+
 export async function previewInvitationsData(body: {
   jobId?: string | null;
   county?: string | null;
   notYetSent?: boolean;
 }) {
   const onlyNew = Boolean(body.notYetSent);
-  const [applicationsValue, emailLogsValue, interviewsValue] = await Promise.all([
+  const [applicationsValue, emailLogsValue, interviewsValue, inviteStatusesValue] = await Promise.all([
     getDatabaseValue<Record<string, unknown> | null>("applications"),
     getDatabaseValue<Record<string, unknown> | null>("emailLogs"),
     getDatabaseValue<Record<string, unknown> | null>("interviews"),
+    getDatabaseValue<Record<string, unknown> | null>("bulkInviteStatus"),
   ]);
   const applications = objectToArray<JobApplication>(applicationsValue);
   const emailLogs = objectToArray<EmailLog>(emailLogsValue);
   const interviews = objectToArray<InterviewInvitation>(interviewsValue);
+  const invitationStatuses = toInvitationStatusRecords(inviteStatusesValue);
 
   let matched = applications;
   if (body.jobId) matched = matched.filter((app) => app.jobId === body.jobId);
@@ -115,9 +124,11 @@ export async function previewInvitationsData(body: {
     }, new Map()),
   ).map(([, app]) => app);
 
-  const alreadyInvited = uniqueMatched.filter((app) => hasReceivedInvitation(app, emailLogs, interviews)).length;
+  const alreadyInvited = uniqueMatched.filter((app) =>
+    hasReceivedInvitation(app, emailLogs, interviews, invitationStatuses),
+  ).length;
   const toSend = onlyNew
-    ? uniqueMatched.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews)).length
+    ? uniqueMatched.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews, invitationStatuses)).length
     : uniqueMatched.length;
 
   return { matched: uniqueMatched.length, alreadyInvited, toSend };
@@ -138,16 +149,18 @@ export async function sendInvitationsData(body: {
   workEthicsUrl?: string;
   foodHandlerCertUrl?: string;
 }) {
-  const [applicationsValue, emailLogsValue, interviewsValue, jobsValue] = await Promise.all([
+  const [applicationsValue, emailLogsValue, interviewsValue, jobsValue, inviteStatusesValue] = await Promise.all([
     getDatabaseValue<Record<string, unknown> | null>("applications"),
     getDatabaseValue<Record<string, unknown> | null>("emailLogs"),
     getDatabaseValue<Record<string, unknown> | null>("interviews"),
     getDatabaseValue<Record<string, unknown> | null>("jobs"),
+    getDatabaseValue<Record<string, unknown> | null>("bulkInviteStatus"),
   ]);
   const applications = objectToArray<JobApplication>(applicationsValue);
   const emailLogs = objectToArray<EmailLog>(emailLogsValue);
   const interviews = objectToArray<InterviewInvitation>(interviewsValue);
   const jobs = objectToArray<Job>(jobsValue);
+  const invitationStatuses = toInvitationStatusRecords(inviteStatusesValue);
 
   const onlyNew = Boolean(body.notYetSent);
 
@@ -171,7 +184,7 @@ export async function sendInvitationsData(body: {
   let filteredTargets = uniqueTargets;
   if (onlyNew) {
     const before = filteredTargets.length;
-    filteredTargets = filteredTargets.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews));
+    filteredTargets = filteredTargets.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews, invitationStatuses));
     const after = filteredTargets.length;
     console.log(`[invites][filter] filtered ${before - after} previously-invited applicants out of ${before}`);
   }
@@ -181,7 +194,7 @@ export async function sendInvitationsData(body: {
   const sentItems: Array<{ applicantName: string; applicantEmail: string; subject: string; message: string; sentAt: string }> = [];
 
   for (const application of filteredTargets) {
-    const already = shouldSkipInvitation(application, emailLogs, interviews, onlyNew);
+    const already = shouldSkipInvitation(application, emailLogs, interviews, onlyNew, invitationStatuses);
     if (already) {
       skipped++;
       console.log(`[invites][skip] skipping ${application.applicantEmail} (${application.id}) - already invited`);
@@ -210,6 +223,24 @@ export async function sendInvitationsData(body: {
     console.log(`[invites] sending to ${application.applicantEmail}`, { subject: resolvedSubject, message: personalized });
 
     const adminDb = getFirebaseAdminDatabase();
+    const statusKey = buildInvitationStatusKey(application);
+    const statusPath = `bulkInviteStatus/${encodeURIComponent(statusKey)}`;
+    const pendingStatus = buildInvitationStatusRecord(application, "pending");
+
+    if (adminDb) {
+      await adminDb.ref(statusPath).set({
+        id: statusKey,
+        key: statusKey,
+        ...pendingStatus,
+      });
+    } else {
+      await setDatabaseValue(statusPath, {
+        id: statusKey,
+        key: statusKey,
+        ...pendingStatus,
+      });
+    }
+
     const result = await emailService.send({
       to: application.applicantEmail,
       name: application.applicantName,
@@ -221,8 +252,34 @@ export async function sendInvitationsData(body: {
     // Detailed logging for send result to assist in diagnosing production failures
     if (!result.ok) {
       console.error(`[invites][error] send failed for ${application.applicantEmail}`, { error: result.error });
+      if (adminDb) {
+        await adminDb.ref(statusPath).set({
+          id: statusKey,
+          key: statusKey,
+          ...buildInvitationStatusRecord(application, "failed"),
+        });
+      } else {
+        await setDatabaseValue(statusPath, {
+          id: statusKey,
+          key: statusKey,
+          ...buildInvitationStatusRecord(application, "failed"),
+        });
+      }
     } else {
       console.log(`[invites][ok] sent to ${application.applicantEmail}`, { info: result.info });
+      if (adminDb) {
+        await adminDb.ref(statusPath).set({
+          id: statusKey,
+          key: statusKey,
+          ...buildInvitationStatusRecord(application, "sent", new Date().toISOString()),
+        });
+      } else {
+        await setDatabaseValue(statusPath, {
+          id: statusKey,
+          key: statusKey,
+          ...buildInvitationStatusRecord(application, "sent", new Date().toISOString()),
+        });
+      }
     }
 
     const logId = `${Date.now()}-${application.id}`;

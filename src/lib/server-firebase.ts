@@ -89,6 +89,28 @@ export async function getDatabaseValue<T>(path: string): Promise<T | null> {
   return fetchDatabaseValue<T>(path);
 }
 
+export async function setDatabaseValue<T>(path: string, value: T): Promise<void> {
+  const adminDb = getFirebaseAdminDatabase();
+  if (adminDb) {
+    await adminDb.ref(path).set(value as Record<string, unknown>);
+    return;
+  }
+
+  if (!databaseURL) return;
+  const url = `${normalizeDatabaseUrl(databaseURL)}/${path}.json`;
+  const authParam = process.env.FIREBASE_DATABASE_SECRET
+    ? `?auth=${encodeURIComponent(process.env.FIREBASE_DATABASE_SECRET)}`
+    : "";
+  const response = await fetch(`${url}${authParam}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(value),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to write RTDB path '${path}' with status ${response.status}`);
+  }
+}
+
 export function objectToArray<T extends { id?: string }>(value: unknown): T[] {
   if (!value || typeof value !== "object" || Array.isArray(value)) return [];
   return Object.entries(value as Record<string, unknown>).map(([key, item]) => {

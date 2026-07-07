@@ -36,10 +36,10 @@ export default function InterviewsPage() {
   const [open, setOpen] = useState(false);
   const [jobId, setJobId] = useState<string>(NONE_SELECT_VALUE);
   const [county, setCounty] = useState<string>(NONE_SELECT_VALUE);
-  const [onlyNew, setOnlyNew] = useState(false);
+  const [onlyNew, setOnlyNew] = useState(true);
   const [subject, setSubject] = useState("Interview invitation details");
   const [message, setMessage] = useState(
-    "Hello {{name}}\n\nThank you for applying for the {{job}} position. Following an initial review of your application, you have been shortlisted pending document verification. Please submit the documents listed below within 48 hours from the time of this email. After we verify your documents we will announce the assigned company/branch and virtual interview date.\n\nNext step — document submission (48 hours)\nSubmit all requested documents using this link: [Submit documents]({{documentUploadUrl}})\n\nRequired Documentation:\n1. Academic Certificate (Mandatory) — Higher Education or High School Certificate.\n2. National Identification Card (Mandatory) — clear copy of your ID.\n3. Work Ethics / Labour Clearance (Mandatory) — if you do not have this, obtain it here: [Get Work Ethics / Labour Clearance]({{workEthicsUrl}})\n4. Food Handler Certificate (Mandatory for food roles) — if you do not have this, obtain it here: [Food Handler Certificate]({{foodHandlerCertUrl}})\n5. Insurance Cover (Optional) — to avoid deductions from salary.\n\nPlease ensure all documents are submitted within the stipulated 48-hour window to avoid disqualification due to delays. Once documents are verified we will send a follow-up email with the confirmed interview date, time and assigned branch.\n\nWe congratulate you on being shortlisted and look forward to meeting you after verification.\n\nHuman Resource Department\n{{companyName}}",
+    "Hello {{name}}\n\nThank you for applying for the {{job}} position. Following an initial review of your application, you have been shortlisted pending document verification. Please submit the documents listed below within 48 hours from the time of this email. After we verify your documents we will announce the assigned company/branch and virtual interview date.\n\nNext step — document submission (48 hours)\nSubmit all requested documents using this link: Submit documents - {{documentUploadUrl}}\n\nRequired Documentation:\n1. Academic Certificate (Mandatory) — Higher Education or High School Certificate.\n2. National Identification Card (Mandatory) — clear copy of your ID.\n3. Work Ethics / Labour Clearance (Mandatory) — if you do not have this, obtain it here: Work Ethics / Labour Clearance - {{workEthicsUrl}}\n4. Food Handler Certificate (Mandatory for food roles) — if you do not have this, obtain it here: Food Handler Certificate - {{foodHandlerCertUrl}}\n5. Insurance Cover (Optional) — to avoid deductions from salary.\n\nPlease ensure all documents are submitted within the stipulated 48-hour window to avoid disqualification due to delays. Once documents are verified we will send a follow-up email with the confirmed interview date, time and assigned branch.\n\nWe congratulate you on being shortlisted and look forward to meeting you after verification.\n\nHuman Resource Department\n{{companyName}}",
   );
   const [linkLabel, setLinkLabel] = useState("View interview details");
   const [linkUrl, setLinkUrl] = useState("https://kemri.ecitizen.go.ke/");
@@ -62,9 +62,6 @@ export default function InterviewsPage() {
   );
 
   useEffect(() => {
-    // If admin selects a specific job, default to only sending to applicants
-    // who have not previously received an invitation — but only auto-apply once
-    // to avoid re-applying after deliberate changes.
     if (jobId !== NONE_SELECT_VALUE && !onlyNew && !autoCheckedOnce) {
       setOnlyNew(true);
       setAutoCheckedOnce(true);
@@ -94,49 +91,48 @@ export default function InterviewsPage() {
     }
   }, [applications, interviews, recentSends.length]);
 
-  useEffect(() => {
-    const loadPreview = async (showError = false) => {
+  const refreshPreview = async (showError = false) => {
+    try {
+      const response = await fetch("/api/interviews/preview", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          jobId: jobId !== NONE_SELECT_VALUE ? jobId : undefined,
+          county: county !== NONE_SELECT_VALUE ? county : undefined,
+          notYetSent: onlyNew,
+        }),
+      });
+      if (!response.ok) throw new Error("Preview request failed");
+      const data = await response.json();
+      setPreview({
+        total: data.matched ?? 0,
+        alreadyInvited: data.alreadyInvited ?? 0,
+        toSend: data.toSend ?? 0,
+      });
+    } catch (error) {
+      console.error(error);
       try {
-        const response = await fetch("/api/interviews/preview", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            jobId: jobId !== NONE_SELECT_VALUE ? jobId : undefined,
-            county: county !== NONE_SELECT_VALUE ? county : undefined,
-            notYetSent: onlyNew,
-          }),
-        });
-        if (!response.ok) throw new Error("Preview request failed");
-        const data = await response.json();
-        setPreview({
-          total: data.matched ?? 0,
-          alreadyInvited: data.alreadyInvited ?? 0,
-          toSend: data.toSend ?? 0,
-        });
-      } catch (error) {
-        console.error(error);
-        // Fallback: compute preview client-side from local store
-        try {
-          const filters = {
-            jobIds: jobId !== NONE_SELECT_VALUE ? [jobId] : undefined,
-            counties: county !== NONE_SELECT_VALUE ? [county] : undefined,
-            notYetSent: onlyNew,
-          };
-          const local = countBulkInvitePreview(applications, users, emailLogs, interviews, filters as any);
-          setPreview({ total: local.total, alreadyInvited: local.alreadyInvited, toSend: local.toSend });
-        } catch (e) {
-          console.error("Local preview fallback failed", e);
-          if (showError) toast.error("Unable to load preview");
-        }
+        const filters = {
+          jobIds: jobId !== NONE_SELECT_VALUE ? [jobId] : undefined,
+          counties: county !== NONE_SELECT_VALUE ? [county] : undefined,
+          notYetSent: onlyNew,
+        };
+        const local = countBulkInvitePreview(applications, users, emailLogs, interviews, filters as any);
+        setPreview({ total: local.total, alreadyInvited: local.alreadyInvited, toSend: local.toSend });
+      } catch (e) {
+        console.error("Local preview fallback failed", e);
+        if (showError) toast.error("Unable to load preview");
       }
-    };
+    }
+  };
 
-    loadPreview(open);
+  useEffect(() => {
+    void refreshPreview(open);
   }, [open, jobId, county, onlyNew]);
 
-  const insertLinkPlaceholder = () => {
-    const label = linkLabel.trim();
-    const url = linkUrl.trim();
+  const insertLinkPlaceholder = (labelOverride?: string, urlOverride?: string) => {
+    const label = (labelOverride ?? linkLabel).trim();
+    const url = (urlOverride ?? linkUrl).trim();
 
     if (!label || !url) {
       toast.error("Please enter both link text and URL.");
@@ -200,9 +196,14 @@ export default function InterviewsPage() {
       if (!response.ok) throw new Error("Send request failed");
       const result = await response.json();
       setRecentSends((prev) => [...(result.sentItems ?? []), ...prev].slice(0, 6));
+      setPreview((prev) => ({
+        total: prev.total,
+        alreadyInvited: prev.alreadyInvited + (result.sent ?? 0),
+        toSend: Math.max(0, prev.toSend - (result.sent ?? 0)),
+      }));
       toast.success(`Sent ${result.sent} invitations, skipped ${result.skipped}`);
+      await refreshPreview(false);
       setOpen(false);
-      setPreview({ total: 0, alreadyInvited: 0, toSend: 0 });
     } catch (err) {
       console.error(err);
       toast.error("Failed to send invitations");
@@ -324,23 +325,6 @@ export default function InterviewsPage() {
 
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.95fr]">
           <div className="rounded-xl border bg-card p-5 shadow-sm">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h3 className="text-lg font-semibold">Bulk invite applicants</h3>
-                <p className="text-sm text-muted-foreground">
-                  Select the target job, county, or only applicants who have not yet received an
-                  invite.
-                </p>
-              </div>
-              {open ? (
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Close
-                </Button>
-              ) : (
-                <Button onClick={() => setOpen(true)}>Bulk invite</Button>
-              )}
-            </div>
-
             {open && (
               <div className="mt-5 grid gap-4">
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -418,6 +402,7 @@ export default function InterviewsPage() {
                     </div>
                   )}
                   <div className="rounded-lg border border-border bg-background/70 p-3">
+                    <p className="mb-2 text-sm font-medium">Add link</p>
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <div className="grid flex-1 gap-2">
                         <Label>Link text</Label>
@@ -435,8 +420,34 @@ export default function InterviewsPage() {
                           placeholder="https://example.com"
                         />
                       </div>
-                      <Button type="button" onClick={insertLinkPlaceholder} className="self-end">
+                      <Button type="button" onClick={() => insertLinkPlaceholder()} className="self-end">
                         Add link
+                      </Button>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => insertLinkPlaceholder("Submit documents", documentUploadUrl || "")}
+                      >
+                        Submit documents
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => insertLinkPlaceholder("Get Work Ethics / Labour Clearance", workEthicsUrl || "")}
+                      >
+                        Work Ethics / Labour Clearance
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => insertLinkPlaceholder("Food Handler Certificate", foodHandlerCertUrl || "")}
+                      >
+                        Food Handler Certificate
                       </Button>
                     </div>
                     <p className="mt-2 text-xs text-muted-foreground">
