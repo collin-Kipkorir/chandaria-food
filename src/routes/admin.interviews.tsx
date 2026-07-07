@@ -24,6 +24,7 @@ export default function InterviewsPage() {
   const interviews = useApp((s) => s.interviews);
   const users = useApp((s) => s.users);
   const emailLogs = useApp((s) => s.emailLogs);
+  const bulkInviteStatus = useApp((s) => s.bulkInviteStatus);
   const [recentSends, setRecentSends] = useState<
     Array<{
       applicantName: string;
@@ -73,14 +74,14 @@ export default function InterviewsPage() {
   useEffect(() => {
     if (recentSends.length === 0 && interviews.length > 0) {
       const seeded = interviews
-        .filter((invitation) => invitation.subject || invitation.message)
+        .filter((invitation) => invitation.message)
         .slice(0, 6)
         .map((invitation) => {
           const application = applications.find((app) => app.id === invitation.applicationId);
           return {
             applicantName: application?.applicantName ?? "Applicant",
             applicantEmail: application?.applicantEmail ?? "No email",
-            subject: invitation.subject ?? "Interview invitation",
+            subject: "Interview invitation",
             message: invitation.message ?? "",
             sentAt: invitation.createdAt ?? new Date().toISOString(),
           };
@@ -117,7 +118,14 @@ export default function InterviewsPage() {
           counties: county !== NONE_SELECT_VALUE ? [county] : undefined,
           notYetSent: onlyNew,
         };
-        const local = countBulkInvitePreview(applications, users, emailLogs, interviews, filters as any);
+        const local = countBulkInvitePreview(
+          applications,
+          users,
+          emailLogs,
+          interviews,
+          filters as any,
+          bulkInviteStatus,
+        );
         setPreview({ total: local.total, alreadyInvited: local.alreadyInvited, toSend: local.toSend });
       } catch (e) {
         console.error("Local preview fallback failed", e);

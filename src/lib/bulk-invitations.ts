@@ -1,3 +1,4 @@
+import type { InvitationStatusRecord } from "./invitation-eligibility";
 import type { EmailLog, InterviewInvitation, JobApplication, User } from "./types";
 
 export type BulkInvitationFilters = {
@@ -27,7 +28,7 @@ export function hasReceivedInvitation(
   users: User[],
   emailLogs: EmailLog[],
   interviews: InterviewInvitation[],
-  invitationStatuses: Array<{ status?: string; key?: string; recipientKey?: string; applicationId?: string; jobId?: string }> = [],
+  invitationStatuses: InvitationStatusRecord[] = [],
 ): boolean {
   const user = resolveUserForApplication(application, users);
   const userId = user?.id ?? application.userId ?? "";
@@ -73,6 +74,7 @@ export function filterApplicationsForBulkInvite(
   emailLogs: EmailLog[],
   interviews: InterviewInvitation[],
   filters: BulkInvitationFilters,
+  invitationStatuses: InvitationStatusRecord[] = [],
 ): JobApplication[] {
   let targets = applications.slice();
 
@@ -90,7 +92,7 @@ export function filterApplicationsForBulkInvite(
 
   if (filters.notYetSent) {
     targets = targets.filter(
-      (a) => !hasReceivedInvitation(a, users, emailLogs, interviews),
+      (a) => !hasReceivedInvitation(a, users, emailLogs, interviews, invitationStatuses),
     );
   }
 
@@ -103,6 +105,7 @@ export function countBulkInvitePreview(
   emailLogs: EmailLog[],
   interviews: InterviewInvitation[],
   filters: BulkInvitationFilters,
+  invitationStatuses: InvitationStatusRecord[] = [],
 ): { total: number; alreadyInvited: number; toSend: number; targets: JobApplication[] } {
   const matched = filterApplicationsForBulkInvite(
     applications,
@@ -110,12 +113,13 @@ export function countBulkInvitePreview(
     emailLogs,
     interviews,
     { ...filters, notYetSent: false },
+    invitationStatuses,
   );
   const alreadyInvited = matched.filter((a) =>
-    hasReceivedInvitation(a, users, emailLogs, interviews),
+    hasReceivedInvitation(a, users, emailLogs, interviews, invitationStatuses),
   ).length;
   const targets = filters.notYetSent
-    ? matched.filter((a) => !hasReceivedInvitation(a, users, emailLogs, interviews))
+    ? matched.filter((a) => !hasReceivedInvitation(a, users, emailLogs, interviews, invitationStatuses))
     : matched;
   const toSend = filters.notYetSent ? targets.length : matched.length;
 

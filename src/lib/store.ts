@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { get as dbGet, onValue, ref, set as dbSet } from "firebase/database";
 import { getFirebaseDb, isFirebaseConfigured } from "./firebase";
 import { fbPush, fbRemove, fbUpdate, fbWrite, toArray } from "./firebase-db";
+import type { InvitationStatusRecord } from "./invitation-eligibility";
 import type {
   ApplicationStatus,
   AuditLog,
@@ -44,6 +45,7 @@ interface AppState {
   campaigns: EmailCampaign[];
   emailLogs: EmailLog[];
   interviews: InterviewInvitation[];
+  bulkInviteStatus: InvitationStatusRecord[];
   audits: AuditLog[];
   settings: SystemSettings;
   jobs: Job[];
@@ -137,6 +139,7 @@ export const useApp = create<AppState>()(
       campaigns: [],
       emailLogs: [],
       interviews: [],
+      bulkInviteStatus: [],
       audits: [],
       settings: DEFAULT_SETTINGS,
       jobs: [],
@@ -644,6 +647,7 @@ export const useApp = create<AppState>()(
               campaigns: state.campaigns,
               emailLogs: state.emailLogs,
               interviews: state.interviews,
+              bulkInviteStatus: state.bulkInviteStatus,
               audits: state.audits,
               settings: state.settings,
               jobs: state.jobs,
@@ -686,13 +690,14 @@ export function startFirebaseSync() {
     // Do not auto-seed jobs; rely on admin creating jobs via the admin UI or manual seeding.
     // read initial snapshots for primary collections so the UI immediately reflects DB state
     try {
-      const [jobsSnap, appsSnap, campaignsSnap, emailLogsSnap, interviewsSnap, auditsSnap] =
+      const [jobsSnap, appsSnap, campaignsSnap, emailLogsSnap, interviewsSnap, bulkInviteStatusSnap, auditsSnap] =
         await Promise.all([
           dbGet(ref(db, "jobs")),
           dbGet(ref(db, "applications")),
           dbGet(ref(db, "campaigns")),
           dbGet(ref(db, "emailLogs")),
           dbGet(ref(db, "interviews")),
+          dbGet(ref(db, "bulkInviteStatus")),
           dbGet(ref(db, "audits")),
         ]);
 
@@ -737,6 +742,11 @@ export function startFirebaseSync() {
           ),
         });
       }
+      if (bulkInviteStatusSnap.exists()) {
+        useApp.setState({
+          bulkInviteStatus: toArray<InvitationStatusRecord>(bulkInviteStatusSnap.val()),
+        });
+      }
       if (auditsSnap.exists()) {
         useApp.setState({
           audits: toArray<AuditLog>(auditsSnap.val())
@@ -766,6 +776,9 @@ export function startFirebaseSync() {
       b.createdAt.localeCompare(a.createdAt),
     );
     useApp.setState({ interviews: list });
+  });
+  onValue(ref(db, "bulkInviteStatus"), (snap) => {
+    useApp.setState({ bulkInviteStatus: toArray<InvitationStatusRecord>(snap.val()) });
   });
   onValue(ref(db, "audits"), (snap) => {
     const list = toArray<AuditLog>(snap.val())

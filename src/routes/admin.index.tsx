@@ -2,28 +2,32 @@ import { useApp } from "@/lib/store";
 import AdminFirebaseNotice from "@/components/AdminFirebaseNotice";
 
 export default function Dashboard() {
-  const { users, applications, campaigns, interviews, emailLogs, audits } = useApp();
+  const { users, applications, audits, bulkInviteStatus } = useApp();
   const seekers = users.filter((u) => u.role === "seeker");
   const allTimeApplicants = applications.length;
-  const newApplicants = applications.filter((a) => a.status === "submitted").length;
-  const sent = emailLogs.filter((l) => l.status === "sent").length;
-
-  const byCounty = group(seekers, (u) => u.county || "—");
-  const bySkill = group(
-    seekers.flatMap((u) => u.skills.map((s) => ({ skill: s }))),
-    (x) => x.skill,
+  const sentApplicantIds = new Set(
+    bulkInviteStatus
+      .filter((status) => status.status === "sent" && status.applicationId)
+      .map((status) => status.applicationId as string),
   );
+  const newApplicants = applications.filter((application) => !sentApplicantIds.has(application.id)).length;
+  const sent = sentApplicantIds.size;
+
+  const countySources = [
+    ...seekers.map((user) => user.county || "—"),
+    ...applications.map((application) => application.county || "—"),
+  ].filter(Boolean);
+  const byCounty = group(countySources, (value) => value);
 
   return (
     <div className="space-y-8">
       <AdminFirebaseNotice />
       <h1 className="text-2xl font-semibold">Dashboard</h1>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Stat label="All-time applicants" value={allTimeApplicants} />
         <Stat label="New applicants" value={newApplicants} />
         <Stat label="Emails sent" value={sent} />
-        <Stat label="Interviews" value={interviews.length} />
       </div>
 
       <div className="grid gap-6">
@@ -68,6 +72,14 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
       {children}
     </div>
   );
+}
+
+function isRecentApplication(application: { createdAt?: string; status?: string }) {
+  if (!application.createdAt) return application.status === "submitted";
+  const createdAt = new Date(application.createdAt);
+  if (Number.isNaN(createdAt.getTime())) return application.status === "submitted";
+  const ageDays = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+  return ageDays <= 30 || application.status === "submitted";
 }
 
 function group<T>(items: T[], key: (t: T) => string) {
