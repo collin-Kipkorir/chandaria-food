@@ -409,7 +409,7 @@ export default function InterviewsPage() {
                     rows={6}
                   />
                   <div className="flex gap-2 mt-2">
-                    <Button type="button" onClick={generatePreview}>Preview HTML</Button>
+                    <Button type="button" onClick={generatePreview}>Preview Mail</Button>
                     <Button type="button" variant="outline" onClick={() => { setPreviewOpenLocal(false); setPreviewHtmlLocal(""); }}>Close Preview</Button>
                   </div>
                   {previewOpenLocal && (
@@ -450,72 +450,6 @@ export default function InterviewsPage() {
                   </p>
                 </div>
 
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label>Interview date</Label>
-                    <Input
-                      type="date"
-                      value={interviewDate}
-                      onChange={(event) => setInterviewDate(event.target.value)}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Location</Label>
-                    <Input
-                      value={location}
-                      onChange={(event) => setLocation(event.target.value)}
-                      placeholder={selectedJob?.location ?? "Nairobi"}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2 sm:grid-cols-2">
-                  <div className="grid gap-2">
-                    <Label>Invitation link</Label>
-                    <Input
-                      value={invitationUrl}
-                      onChange={(event) => setInvitationUrl(event.target.value)}
-                      placeholder="https://example.com/interview-details"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Link button/text</Label>
-                    <Input
-                      value={invitationText}
-                      onChange={(event) => setInvitationText(event.target.value)}
-                      placeholder="View interview details"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-2 sm:grid-cols-3">
-                  <div className="grid gap-2">
-                    <Label>Document upload URL</Label>
-                    <Input
-                      value={documentUploadUrl}
-                      onChange={(event) => setDocumentUploadUrl(event.target.value)}
-                      placeholder="https://example.com/submit-documents"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Work ethics URL</Label>
-                    <Input
-                      value={workEthicsUrl}
-                      onChange={(event) => setWorkEthicsUrl(event.target.value)}
-                      placeholder="https://example.com/work-ethics"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label>Food handler URL</Label>
-                    <Input
-                      value={foodHandlerCertUrl}
-                      onChange={(event) => setFoodHandlerCertUrl(event.target.value)}
-                      placeholder="https://example.com/food-handler"
-                    />
-                  </div>
-                </div>
-
-                
 
                 <div className="rounded-xl border border-border bg-background/80 p-4">
                   <div className="flex items-center justify-between gap-3">
