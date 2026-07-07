@@ -33,7 +33,14 @@ function escapeHtml(value: string) {
 
 function renderTextToHtml(message: string, invitationUrl?: string, invitationText?: string) {
   const escaped = escapeHtml(message);
-  const withPlaceholders = escaped.replace(/\{\{link:([^}:]+):([^}]+)\}\}/g, (_match, label, url) => {
+  const withMarkdownLinks = escaped.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_match, label, url) => {
+    const safeLabel = escapeHtml(label.trim());
+    const safeUrl = url.trim();
+    return safeUrl
+      ? `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color:#2563eb;text-decoration:underline;">${safeLabel}</a>`
+      : safeLabel;
+  });
+  const withPlaceholders = withMarkdownLinks.replace(/\{\{link:([^}:]+):([^}]+)\}\}/g, (_match, label, url) => {
     const safeLabel = label.trim();
     const safeUrl = url.trim();
     const resolvedUrl = safeUrl || invitationUrl || "";
@@ -58,7 +65,7 @@ function buildHtmlBody(message: string, invitationUrl?: string, invitationText?:
   const linkHtml = invitationUrl
     ? `<p style="margin-top:12px;"><a href="${invitationUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:10px 14px;background:#2563eb;color:#ffffff;text-decoration:none;border-radius:6px;">${invitationText ?? "Open details"}</a></p>`
     : "";
-  return `<div style="font-family:system-ui, sans-serif;line-height:1.6;color:#111">${bodyHtml}${linkHtml}<p>Regards,<br/>Recruitment Team</p></div>`;
+  return `<div style="font-family:system-ui, sans-serif;line-height:1.6;color:#111">${bodyHtml}${linkHtml}</div>`;
 }
 
 export async function getApplicantsData() {
@@ -86,6 +93,7 @@ export async function previewInvitationsData(body: {
   county?: string | null;
   notYetSent?: boolean;
 }) {
+  const onlyNew = Boolean(body.notYetSent);
   const [applicationsValue, emailLogsValue, interviewsValue] = await Promise.all([
     getDatabaseValue<Record<string, unknown> | null>("applications"),
     getDatabaseValue<Record<string, unknown> | null>("emailLogs"),
@@ -108,7 +116,7 @@ export async function previewInvitationsData(body: {
   ).map(([, app]) => app);
 
   const alreadyInvited = uniqueMatched.filter((app) => hasReceivedInvitation(app, emailLogs, interviews)).length;
-  const toSend = body.notYetSent
+  const toSend = onlyNew
     ? uniqueMatched.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews)).length
     : uniqueMatched.length;
 
@@ -126,6 +134,9 @@ export async function sendInvitationsData(body: {
   invitationUrl?: string;
   interviewDate?: string;
   location?: string;
+  documentUploadUrl?: string;
+  workEthicsUrl?: string;
+  foodHandlerCertUrl?: string;
 }) {
   const [applicationsValue, emailLogsValue, interviewsValue, jobsValue] = await Promise.all([
     getDatabaseValue<Record<string, unknown> | null>("applications"),
@@ -137,6 +148,8 @@ export async function sendInvitationsData(body: {
   const emailLogs = objectToArray<EmailLog>(emailLogsValue);
   const interviews = objectToArray<InterviewInvitation>(interviewsValue);
   const jobs = objectToArray<Job>(jobsValue);
+
+  const onlyNew = Boolean(body.notYetSent);
 
   let targets = applications;
   // If specific application IDs supplied, target only those
@@ -156,8 +169,11 @@ export async function sendInvitationsData(body: {
   ).map(([, app]) => app);
 
   let filteredTargets = uniqueTargets;
-  if (body.notYetSent) {
+  if (onlyNew) {
+    const before = filteredTargets.length;
     filteredTargets = filteredTargets.filter((app) => !hasReceivedInvitation(app, emailLogs, interviews));
+    const after = filteredTargets.length;
+    console.log(`[invites][filter] filtered ${before - after} previously-invited applicants out of ${before}`);
   }
 
   let sent = 0;
@@ -165,9 +181,10 @@ export async function sendInvitationsData(body: {
   const sentItems: Array<{ applicantName: string; applicantEmail: string; subject: string; message: string; sentAt: string }> = [];
 
   for (const application of filteredTargets) {
-    const already = shouldSkipInvitation(application, emailLogs, interviews, Boolean(body.notYetSent));
+    const already = shouldSkipInvitation(application, emailLogs, interviews, onlyNew);
     if (already) {
       skipped++;
+      console.log(`[invites][skip] skipping ${application.applicantEmail} (${application.id}) - already invited`);
       continue;
     }
 
@@ -180,6 +197,12 @@ export async function sendInvitationsData(body: {
       county: application.county ?? "",
       interview_date: body.interviewDate ?? "",
       location: body.location ?? application.county ?? "",
+      companyname: job?.companyName ?? "",
+      sentdate: new Date().toISOString().slice(0,10),
+      hremail: "",
+      documentuploadurl: body.documentUploadUrl ?? "",
+      workethicsurl: body.workEthicsUrl ?? "",
+      foodhandlercerturl: body.foodHandlerCertUrl ?? "",
     };
     const personalized = replacePlaceholders(resolvedMessage, data);
     const html = buildHtmlBody(personalized, body.invitationUrl, body.invitationText);

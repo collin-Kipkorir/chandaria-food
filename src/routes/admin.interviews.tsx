@@ -39,7 +39,7 @@ export default function InterviewsPage() {
   const [onlyNew, setOnlyNew] = useState(false);
   const [subject, setSubject] = useState("Interview invitation details");
   const [message, setMessage] = useState(
-    "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Interview date and venue will be communicated shortly. Please review the details and confirm your availability.\n\nPlease ensure you bring the following documents to the interview:\n1. Food Handling certificate - https://example.com/food-handling-certificate\n2. Original Academic Certificates\n3. Any other relevant certificates\n\nThank you.",
+    "Hello {{name}}\n\nThank you for applying for the {{job}} position. Following an initial review of your application, you have been shortlisted pending document verification. Please submit the documents listed below within 48 hours from the time of this email. After we verify your documents we will announce the assigned company/branch and virtual interview date.\n\nNext step — document submission (48 hours)\nSubmit all requested documents using this link: [Submit documents]({{documentUploadUrl}})\n\nRequired Documentation:\n1. Academic Certificate (Mandatory) — Higher Education or High School Certificate.\n2. National Identification Card (Mandatory) — clear copy of your ID.\n3. Work Ethics / Labour Clearance (Mandatory) — if you do not have this, obtain it here: [Get Work Ethics / Labour Clearance]({{workEthicsUrl}})\n4. Food Handler Certificate (Mandatory for food roles) — if you do not have this, obtain it here: [Food Handler Certificate]({{foodHandlerCertUrl}})\n5. Insurance Cover (Optional) — to avoid deductions from salary.\n\nPlease ensure all documents are submitted within the stipulated 48-hour window to avoid disqualification due to delays. Once documents are verified we will send a follow-up email with the confirmed interview date, time and assigned branch.\n\nWe congratulate you on being shortlisted and look forward to meeting you after verification.\n\nHuman Resource Department\n{{companyName}}",
   );
   const [linkLabel, setLinkLabel] = useState("View interview details");
   const [linkUrl, setLinkUrl] = useState("https://kemri.ecitizen.go.ke/");
@@ -47,15 +47,29 @@ export default function InterviewsPage() {
   const [location, setLocation] = useState("");
   const [invitationUrl, setInvitationUrl] = useState("");
   const [invitationText, setInvitationText] = useState("View interview details");
+  const [documentUploadUrl, setDocumentUploadUrl] = useState("");
+  const [workEthicsUrl, setWorkEthicsUrl] = useState("");
+  const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("");
   const [sending, setSending] = useState(false);
+  const [autoCheckedOnce, setAutoCheckedOnce] = useState(false);
   const [preview, setPreview] = useState({ total: 0, alreadyInvited: 0, toSend: 0 });
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
-  const placeholderText = "{{name}}, {{job}}, {{county}}, {{interview_date}}, {{location}}";
+  const placeholderText = "{{name}}, {{job}}, {{county}}, {{interview_date}}, {{location}}, {{companyName}}, {{sentDate}}, {{hrEmail}}, {{documentUploadUrl}}, {{workEthicsUrl}}, {{foodHandlerCertUrl}}";
 
   const selectedJob = useMemo(
     () => (jobId !== "__none__" ? jobs.find((job) => job.id === jobId) : undefined),
     [jobs, jobId],
   );
+
+  useEffect(() => {
+    // If admin selects a specific job, default to only sending to applicants
+    // who have not previously received an invitation — but only auto-apply once
+    // to avoid re-applying after deliberate changes.
+    if (jobId !== NONE_SELECT_VALUE && !onlyNew && !autoCheckedOnce) {
+      setOnlyNew(true);
+      setAutoCheckedOnce(true);
+    }
+  }, [jobId, onlyNew, autoCheckedOnce]);
 
   const selectedCountyLabel = county !== NONE_SELECT_VALUE ? county : "All counties";
 
@@ -149,6 +163,17 @@ export default function InterviewsPage() {
   const send = async () => {
     setSending(true);
 
+    // If admin chooses to send to users who may already have invites, confirm first
+    if (!onlyNew) {
+      const ok = window.confirm(
+        "You're about to send invitations to applicants who may already have received an invitation. This may use additional email tokens. Do you want to continue?",
+      );
+      if (!ok) {
+        setSending(false);
+        return;
+      }
+    }
+
     try {
       const response = await fetch("/api/interviews/send", {
         method: "POST",
@@ -167,6 +192,9 @@ export default function InterviewsPage() {
           location:
             location ||
             (county !== NONE_SELECT_VALUE ? county : selectedJob?.location || undefined),
+          documentUploadUrl: documentUploadUrl || undefined,
+          workEthicsUrl: workEthicsUrl || undefined,
+          foodHandlerCertUrl: foodHandlerCertUrl || undefined,
         }),
       });
       if (!response.ok) throw new Error("Send request failed");
@@ -181,6 +209,86 @@ export default function InterviewsPage() {
     } finally {
       setSending(false);
     }
+  };
+
+  const [previewOpenLocal, setPreviewOpenLocal] = useState(false);
+  const [previewHtmlLocal, setPreviewHtmlLocal] = useState("");
+
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;");
+
+  const resolveLinkPlaceholders = (msg: string) =>
+    msg
+      .replace(/{{\s*documentUploadUrl\s*}}/gi, documentUploadUrl)
+      .replace(/{{\s*workEthicsUrl\s*}}/gi, workEthicsUrl)
+      .replace(/{{\s*foodHandlerCertUrl\s*}}/gi, foodHandlerCertUrl);
+
+  const renderMessageToHtmlClient = (msg: string, invUrl?: string, invText?: string) => {
+    if (!msg) return "";
+    const resolved = resolveLinkPlaceholders(msg);
+    // Replace link placeholders {{link:Label:https://...}}
+    let out = escapeHtml(resolved);
+    out = out.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, url) => {
+      const l = escapeHtml(label.trim());
+      const u = url.trim();
+      if (!u) return l;
+      return `<a href="${u}" target="_blank" rel="noopener noreferrer" style="color:#9fd0ff;text-decoration:underline;">${l}</a>`;
+    });
+    out = out.replace(/\{\{link:([^}:]+):([^}]+)\}\}/g, (_m, label, url) => {
+      const l = escapeHtml(label.trim());
+      const u = url.trim() || invUrl || "";
+      if (!u) return l;
+      return `<a href="${u}" target="_blank" rel="noopener noreferrer" style="color:#9fd0ff;text-decoration:underline;">${l}</a>`;
+    });
+
+    // Auto-link plain URLs only outside anchor tags
+    const parts = out.split(/(<a[^>]*>.*?<\/a>)/gi);
+    out = parts
+      .map((part, index) => {
+        if (index % 2 === 1) return part;
+        return part.replace(/(https?:\/\/[^\s<]+)/g, (u) =>
+          `<a href="${u}" target="_blank" rel="noopener noreferrer" style="color:#9fd0ff;text-decoration:underline;">${u}</a>`,
+        );
+      })
+      .join("");
+
+    const paragraphs = out.split(/\n\s*\n/).map((p) => p.replace(/\n/g, "<br/>"));
+    return paragraphs.map((p) => `<p style="margin:0 0 10px 0;">${p}</p>`).join("");
+  };
+
+  const generatePreview = () => {
+    const sample = {
+      name: "Jane Doe",
+      job: selectedJob?.title ?? "Position",
+      county: selectedCountyLabel,
+      interview_date: interviewDate || "TBD",
+      location: location || selectedJob?.location || "TBD",
+    };
+
+    let filled = message
+      .replace(/{{\s*name\s*}}/gi, sample.name)
+      .replace(/{{\s*job\s*}}/gi, sample.job)
+      .replace(/{{\s*county\s*}}/gi, sample.county)
+      .replace(/{{\s*interview_date\s*}}/gi, sample.interview_date)
+      .replace(/{{\s*location\s*}}/gi, sample.location)
+      .replace(/{{\s*companyName\s*}}/gi, (selectedJob && selectedJob.companyName) || "Company Name")
+      .replace(/{{\s*hrEmail\s*}}/gi, "")
+      .replace(/{{\s*sentDate\s*}}/gi, new Date().toISOString().slice(0,10));
+
+    const bodyHtml = renderMessageToHtmlClient(filled, invitationUrl || undefined, invitationText || undefined);
+    const containerHtml = `
+      <div style="background:#0f1720;color:#e6eef8;font-family:Arial, Helvetica, sans-serif;padding:20px;">
+        <div style="max-width:680px;margin:0 auto;background:#0b1220;padding:24px;border-radius:8px;">
+          <div style="text-align:center;margin-bottom:12px;"><h1 style="margin:0;color:#fff;">${escapeHtml((selectedJob && selectedJob.companyName) || "Company Name")}</h1><div style="color:#9aa6b8;font-size:13px;">Human Resources Department</div></div>
+          <div style="color:#c9d6e6;margin:12px 0;">Date: ${escapeHtml(new Date().toISOString().slice(0,10))}</div>
+          <div style="color:#e6eef8;margin-bottom:10px;">Good morning <strong>${escapeHtml(sample.name)}</strong>,</div>
+          <div style="font-weight:600;color:#c9d6e6;margin-bottom:8px;">RE: Shortlisting & Document Verification</div>
+          <div style="color:#c9d6e6;">${bodyHtml}</div>
+        </div>
+      </div>`;
+
+    setPreviewHtmlLocal(containerHtml);
+    setPreviewOpenLocal(true);
   };
 
   return (
@@ -278,7 +386,7 @@ export default function InterviewsPage() {
                     onCheckedChange={(value) => setOnlyNew(Boolean(value))}
                   />
                   <Label htmlFor="only-new" className="cursor-pointer">
-                    Only applicants with no prior interview invitation
+                    Only applicants for the selected job who have not previously received an invitation
                   </Label>
                 </div>
 
@@ -300,6 +408,15 @@ export default function InterviewsPage() {
                     placeholder="Write a personalized invite message..."
                     rows={6}
                   />
+                  <div className="flex gap-2 mt-2">
+                    <Button type="button" onClick={generatePreview}>Preview HTML</Button>
+                    <Button type="button" variant="outline" onClick={() => { setPreviewOpenLocal(false); setPreviewHtmlLocal(""); }}>Close Preview</Button>
+                  </div>
+                  {previewOpenLocal && (
+                    <div className="mt-3 rounded-lg border border-border bg-background p-3" style={{ overflow: "auto" }}>
+                      <div dangerouslySetInnerHTML={{ __html: previewHtmlLocal }} />
+                    </div>
+                  )}
                   <div className="rounded-lg border border-border bg-background/70 p-3">
                     <div className="flex flex-col gap-2 sm:flex-row">
                       <div className="grid flex-1 gap-2">
@@ -371,12 +488,60 @@ export default function InterviewsPage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-secondary/10 p-4 text-sm text-muted-foreground">
-                  <p>
-                    {preview.total === 0
-                      ? "Preview will show how many applicants match your selected filters."
-                      : `Matched ${preview.total} applicants, ${preview.alreadyInvited} already invited, ${preview.toSend} will be sent.`}
-                  </p>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  <div className="grid gap-2">
+                    <Label>Document upload URL</Label>
+                    <Input
+                      value={documentUploadUrl}
+                      onChange={(event) => setDocumentUploadUrl(event.target.value)}
+                      placeholder="https://example.com/submit-documents"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Work ethics URL</Label>
+                    <Input
+                      value={workEthicsUrl}
+                      onChange={(event) => setWorkEthicsUrl(event.target.value)}
+                      placeholder="https://example.com/work-ethics"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Food handler URL</Label>
+                    <Input
+                      value={foodHandlerCertUrl}
+                      onChange={(event) => setFoodHandlerCertUrl(event.target.value)}
+                      placeholder="https://example.com/food-handler"
+                    />
+                  </div>
+                </div>
+
+                
+
+                <div className="rounded-xl border border-border bg-background/80 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Send preview</p>
+                      <p className="text-xs text-muted-foreground">
+                        {preview.total === 0
+                          ? "Select filters to see who will be included."
+                          : "Counts for the current selection before sending."}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    <div className="rounded-lg border border-border bg-card p-3">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Matched</p>
+                      <p className="mt-1 text-xl font-semibold">{preview.total}</p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-card p-3">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Already invited</p>
+                      <p className="mt-1 text-xl font-semibold">{preview.alreadyInvited}</p>
+                    </div>
+                    <div className="rounded-lg border border-border bg-card p-3">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Will be sent</p>
+                      <p className="mt-1 text-xl font-semibold">{preview.toSend}</p>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">

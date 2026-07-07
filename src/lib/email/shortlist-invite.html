@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+  <head>
+      <div class="brand">
+        <h1>{{companyName | default:"Company Name"}}</h1>
+        <div class="small">Human Resources Department</div>
+      </div>
+
+      <div class="lead">Date: {{sentDate}}</div>
+
+      <p>Good morning <strong>{{applicantName}}</strong>,</p>
+
+      <p class="lead">RE: Shortlisting & Document Verification</p>
+
+      <p>Thank you for applying. Following an initial review of your application, you have been shortlisted pending document verification. Please submit the documents listed below within <strong>48 hours</strong> from the time of this email. After we verify your documents we will announce the assigned company/branch and virtual interview date.</p>
+
+      <div class="panel">
+        <strong>Next step — document submission (48 hours)</strong>
+        <p class="small">Submit all requested documents using the link below. If you prefer to email the files, use the alternate email address provided.</p>
+        <p style="margin-top:10px"><a class="cta" href="{{documentUploadUrl}}">Submit Documents</a></p>
+        <p class="small">Or email to: <a href="mailto:{{hrEmail}}" style="color:#9fd0ff;">{{hrEmail}}</a></p>
+      </div>
+
+      <div>
+        <strong>Required Documentation</strong>
+        <ol class="req small">
+          <li>Academic Certificate (Mandatory) — Higher Education or High School Certificate.</li>
+          <li>National Identification Card (Mandatory) — clear copy of your ID.</li>
+          <li>Work Ethics / Labour Clearance (Mandatory) — obtain as required by your jurisdiction.</li>
+          <li>Food Handler Certificate (Mandatory for food roles) — see link below if you don't have one.</li>
+          <li>Insurance Cover (Optional) — to avoid deductions from salary.</li>
+        </ol>
+
+        <p class="small">Food handler certificate — if you do not have this, obtain it here: <a href="{{foodHandlerCertUrl}}" style="color:#9fd0ff;">Get Food Handler Certificate</a></p>
+      </div>
+
+      <p class="small">Please ensure all documents are submitted within the stipulated 48-hour window to avoid disqualification due to delays. Once documents are verified we will send a follow-up email with the confirmed interview date, time and assigned branch.</p>
+
+      <p>We congratulate you on being shortlisted and look forward to meeting you after verification.</p>
+
+      <p>Yours faithfully,<br>
+      {{hrName | default:"Human Resources Manager"}}<br>
+      {{companyName | default:"Company Name"}}</p>
+        <strong>Required Documentation</strong>
+        <ol class="req small">
+          <li>Academic Certificate (Mandatory) — Higher Education or High School Certificate.</li>
+          <li>National Identification Card (Mandatory) — clear copy of your ID.</li>
+          <li>Work Ethics / Labour Clearance (Mandatory) — obtain as required by your jurisdiction.</li>
+          <li>Food Handler Certificate (Mandatory for food roles) — see link below if you don't have one.</li>
+          <li>Insurance Cover (Optional) — to avoid deductions from salary.</li>
+        </ol>
+
+        <p class="small">Food handler certificate — if you do not have this, obtain it here: <a href="{{foodHandlerCertUrl}}" style="color:#9fd0ff;">Get Food Handler Certificate</a></p>
+      </div>
+
+      <p class="small">Please ensure all documents are submitted within the stipulated 48-hour window to avoid disqualification due to delays. Once documents are verified we will send a follow-up email with the confirmed interview date, time and assigned branch.</p>
+
+      <!-- Interview invite section (can be used for bulk invites). Populate placeholders when sending bulk interview emails -->
+      <div style="margin-top:18px; padding:14px; background:#0b1220; border-radius:6px;">
+        <strong>Interview Invitation</strong>
+        <p class="small">This section is for applicants whose documents have been verified. Use for bulk invites by filling the placeholders below.</p>
+        <ul class="small" style="margin:8px 0; padding-left:18px;">
+          <li><strong>Assigned Branch / Company:</strong> {{assignedBranch | default:"To be confirmed"}}</li>
+          <li><strong>Role:</strong> {{role | default:"Position"}}</li>
+          <li><strong>Interview Date:</strong> {{interviewDate | default:"TBD"}}</li>
+          <li><strong>Interview Time:</strong> {{interviewTime | default:"TBD"}}</li>
+          <li><strong>Interview Type:</strong> {{interviewType | default:"Virtual"}}</li>
+        </ul>
+
+        <p class="small">Meeting link (click to join): <a href="{{meetingLink}}" style="color:#9fd0ff;">{{meetingLinkText | default:"Join Interview"}}</a></p>
+
+        <p class="small">Agenda:</p>
+        <ol class="req small">
+          <li>Salary discussion</li>
+          <li>Availability and start date</li>
+          <li>Branch placement</li>
+          <li>A.O.B.</li>
+        </ol>
+
+        <p class="small">If you're receiving this as part of a bulk invite, please ensure you join on time. If you cannot attend, reply to <a href="mailto:{{hrEmail}}" style="color:#9fd0ff;">{{hrEmail}}</a> with your availability.</p>
+      </div>
+
+      <p>We congratulate you on being shortlisted and look forward to meeting you after verification.</p>
+
+      <p>Yours faithfully,<br>
+      {{hrName | default:"Human Resources Manager"}}<br>
+      {{companyName | default:"Company Name"}}</p>
+
+      <div class="footer">
+        <div class="small">If you have questions, reply to <a href="mailto:{{hrEmail}}" style="color:#9fd0ff;">{{hrEmail}}</a> or visit the submission page above.</div>
+        <div class="small" style="margin-top:8px">This email was generated automatically. Do not reply to the sending address.</div>
+      </div>
+    </div>
+  </body>
+</html>
