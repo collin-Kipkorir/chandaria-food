@@ -57,6 +57,13 @@ export default defineConfig({
       async configureServer(server) {
         const env = loadEnv(server.config.mode, process.cwd(), "");
         Object.assign(process.env, env);
+        // Debug: Log loaded environment variables
+        console.log("Loaded env variables:", {
+          EMAIL_PROVIDER: process.env.EMAIL_PROVIDER,
+          EMAILJS_SERVICE_ID: process.env.EMAILJS_SERVICE_ID ? "✓ loaded" : "✗ missing",
+          EMAILJS_TEMPLATE_ID: process.env.EMAILJS_TEMPLATE_ID ? "✓ loaded" : "✗ missing",
+          EMAILJS_USER_ID: process.env.EMAILJS_USER_ID ? "✓ loaded" : "✗ missing",
+        });
         const serverModule = await import("./src/server");
         const serverHandler = serverModule.default ?? serverModule;
         server.middlewares.use(apiRouteMiddleware(serverHandler));

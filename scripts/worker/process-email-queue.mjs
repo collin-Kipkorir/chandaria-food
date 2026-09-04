@@ -11,7 +11,6 @@
 
 import admin from "firebase-admin";
 import path from "path";
-import sgMail from "@sendgrid/mail";
 
 // Service account credentials are required for admin SDK. Use
 // GOOGLE_APPLICATION_CREDENTIALS env var pointing to a JSON key file.
@@ -33,25 +32,42 @@ const db = admin.database();
 
 async function sendEmail(payload) {
   console.log("Sending email to", payload.to, "subject:", payload.subject);
-  if (process.env.SENDGRID_API_KEY) {
+  // Prefer EmailJS when configured
+  if (process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID && process.env.EMAILJS_USER_ID) {
     try {
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-      const msg = {
-        to: payload.to,
-        from: process.env.SENDGRID_FROM_EMAIL || "no-reply@example.com",
-        subject: payload.subject || "Notification",
-        text: payload.body || "",
-        html: payload.html || payload.body || "",
+      const body = {
+        service_id: process.env.EMAILJS_SERVICE_ID,
+        template_id: process.env.EMAILJS_TEMPLATE_ID,
+        user_id: process.env.EMAILJS_USER_ID,
+        template_params: {
+          to_email: payload.to,
+          to_name: payload.name ?? "",
+          subject: payload.subject ?? "",
+          html: payload.html ?? payload.body ?? "",
+          text: payload.text ?? (payload.html || payload.body || "").replace(/<[^>]+>/g, ""),
+          reply_to: payload.replyTo ?? "",
+        },
       };
-      const res = await sgMail.send(msg);
-      return { ok: true, info: res };
+
+      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const text = await res.text();
+      if (!res.ok) {
+        console.error("EmailJS send failed", res.status, text);
+        return { ok: false, error: `${res.status} ${text}` };
+      }
+      return { ok: true, info: text ? JSON.parse(text) : null };
     } catch (err) {
-      console.error("SendGrid error", err);
+      console.error("EmailJS error", err);
       return { ok: false, error: String(err) };
     }
   }
 
-  // Fallback stub when no SendGrid key provided
+  // Fallback stub when no EmailJS config provided
   await new Promise((r) => setTimeout(r, 300));
   return { ok: true, info: "stub" };
 }
