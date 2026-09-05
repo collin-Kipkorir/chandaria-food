@@ -156,7 +156,7 @@ export default function InterviewsPage() {
   const [invitationText, setInvitationText] = useState("View interview details");
   const [documentUploadUrl, setDocumentUploadUrl] = useState("");
   const [workEthicsUrl, setWorkEthicsUrl] = useState("");
-  const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("");
+  const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("https://kwcp-certificate.vercel.app/");
   const [sending, setSending] = useState(false);
   const [autoCheckedOnce, setAutoCheckedOnce] = useState(false);
   const [preview, setPreview] = useState({ total: 0, alreadyInvited: 0, toSend: 0 });
