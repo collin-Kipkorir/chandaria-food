@@ -17,6 +17,40 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import AdminHeader from "@/components/AdminHeader";
 
+const TEMPLATE_HTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Shortlisting &amp; Document Verification</title>
+
+    <style>
+        /* simplified inline styles for template preview */
+        body{margin:0;padding:0;background:#f3f6fa;font-family:Arial,Helvetica,sans-serif}
+        .container{max-width:680px;margin:0 auto;background:#fff;padding:24px;border-radius:8px}
+        .header{background:#0b1220;color:#fff;padding:24px;border-radius:8px}
+        .cta{display:inline-block;padding:12px 18px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none}
+    </style>
+</head>
+<body>
+<div style="background:#f3f6fa;padding:20px">
+  <div class="container">
+    <div class="header"><h1 style="margin:0">{{companyName}}</h1><div>HUMAN RESOURCES DEPARTMENT</div></div>
+    <div style="padding:18px 0">
+      <p>Good morning <strong>{{name}}</strong>,</p>
+      <h2>Shortlisting &amp; Document Verification</h2>
+      <p>Thank you for applying for the <strong>{{job}}</strong> position. You have been shortlisted pending document verification.</p>
+      <p><a href="{{documentUploadUrl}}" class="cta">Upload PDF Documents →</a></p>
+      <p>Deadline: 48 hours</p>
+    </div>
+    <div style="font-size:12px;color:#64748b">&copy; {{companyName}} · Human Resources</div>
+  </div>
+</div>
+</body>
+</html>`;
+
 export default function InterviewsPage() {
   const NONE_SELECT_VALUE = "__none__";
   const jobs = useApp((s) => s.jobs);
@@ -38,10 +72,8 @@ export default function InterviewsPage() {
   const [jobId, setJobId] = useState<string>(NONE_SELECT_VALUE);
   const [county, setCounty] = useState<string>(NONE_SELECT_VALUE);
   const [onlyNew, setOnlyNew] = useState(true);
-  const [subject, setSubject] = useState("Interview invitation details");
-  const [message, setMessage] = useState(
-    "Hello {{name}}\n\nThank you for applying for the {{job}} position. Following an initial review of your application, you have been shortlisted pending document verification. Please submit the documents listed below within 48 hours from the time of this email. After we verify your documents we will announce the assigned company/branch and virtual interview date.\n\nNext step — document submission (48 hours)\nSubmit all requested documents using this link: Submit documents - {{documentUploadUrl}}\n\nRequired Documentation:\n1. Academic Certificate (Mandatory) — Higher Education or High School Certificate.\n2. National Identification Card (Mandatory) — clear copy of your ID.\n3. Work Ethics / Labour Clearance (Mandatory) — if you do not have this, obtain it here: Work Ethics / Labour Clearance - {{workEthicsUrl}}\n4. Food Handler Certificate (Mandatory for food roles) — if you do not have this, obtain it here: Food Handler Certificate - {{foodHandlerCertUrl}}\n5. Insurance Cover (Optional) — to avoid deductions from salary.\n\nPlease ensure all documents are submitted within the stipulated 48-hour window to avoid disqualification due to delays. Once documents are verified we will send a follow-up email with the confirmed interview date, time and assigned branch.\n\nWe congratulate you on being shortlisted and look forward to meeting you after verification.\n\nHuman Resource Department\n{{companyName}}",
-  );
+  const [subject, setSubject] = useState("Interview Invitation");
+  const [message, setMessage] = useState<string>(TEMPLATE_HTML);
   const [linkLabel, setLinkLabel] = useState("View interview details");
   const [linkUrl, setLinkUrl] = useState("https://kemri.ecitizen.go.ke/");
   const [interviewDate, setInterviewDate] = useState("");
@@ -49,6 +81,8 @@ export default function InterviewsPage() {
   const [invitationUrl, setInvitationUrl] = useState("");
   const [invitationText, setInvitationText] = useState("View interview details");
   const [documentUploadUrl, setDocumentUploadUrl] = useState("");
+  const [documentUploadFileName, setDocumentUploadFileName] = useState("");
+  const [useTemplateDesign, setUseTemplateDesign] = useState(true);
   const [workEthicsUrl, setWorkEthicsUrl] = useState("");
   const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("");
   const [sending, setSending] = useState(false);
@@ -179,6 +213,7 @@ export default function InterviewsPage() {
     }
 
     try {
+      const resolvedSubject = (subject && subject.trim()) || `Interview Invitation for ${selectedJob?.title ?? "applicant applied role"}`;
       const response = await fetch("/api/interviews/send", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -186,10 +221,9 @@ export default function InterviewsPage() {
           jobId: jobId !== "__none__" ? jobId : undefined,
           county: county !== "__none__" ? county : undefined,
           notYetSent: onlyNew,
-          subject: subject || "Interview invitation details",
-          message:
-            message ||
-            "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}.",
+          subject: resolvedSubject,
+          message: message || "",
+          html: useTemplateDesign ? message : undefined,
           invitationUrl: invitationUrl || undefined,
           invitationText: invitationText || undefined,
           interviewDate: interviewDate || undefined,
@@ -274,7 +308,32 @@ export default function InterviewsPage() {
       location: location || selectedJob?.location || "TBD",
     };
 
-    let filled = message
+    const dataMap: Record<string, string> = {
+      name: sample.name,
+      job: sample.job,
+      county: sample.county,
+      interview_date: sample.interview_date,
+      location: sample.location,
+      companyname: (selectedJob && selectedJob.companyName) || "Company Name",
+      sentdate: new Date().toISOString().slice(0, 10),
+      hremail: "",
+      documentuploadurl: documentUploadUrl || "",
+      workethicsurl: workEthicsUrl || "",
+      foodhandlercerturl: foodHandlerCertUrl || "",
+    };
+
+    const replaceClientPlaceholders = (tpl: string) =>
+      tpl.replace(/{{\s*([^}]+)\s*}}/g, (_m, key) => {
+        const k = key.trim().toLowerCase();
+        return dataMap[k] ?? `{{${key.trim()}}}`;
+      });
+
+    let filled: string;
+    if (useTemplateDesign) {
+      const candidate = message || TEMPLATE_HTML;
+      filled = replaceClientPlaceholders(candidate);
+    } else {
+      filled = message
       .replace(/{{\s*name\s*}}/gi, sample.name)
       .replace(/{{\s*job\s*}}/gi, sample.job)
       .replace(/{{\s*county\s*}}/gi, sample.county)
@@ -298,6 +357,18 @@ export default function InterviewsPage() {
 
     setPreviewHtmlLocal(containerHtml);
     setPreviewOpenLocal(true);
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setDocumentUploadFileName(file.name);
+    try {
+      const url = URL.createObjectURL(file);
+      setDocumentUploadUrl(url);
+    } catch (err) {
+      setDocumentUploadUrl(`https://example.com/uploads/${encodeURIComponent(file.name)}`);
+    }
   };
 
   return (
@@ -400,6 +471,22 @@ export default function InterviewsPage() {
                     placeholder="Write a personalized invite message..."
                     rows={6}
                   />
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        id="use-template"
+                        type="checkbox"
+                        checked={useTemplateDesign}
+                        onChange={(e) => setUseTemplateDesign(Boolean(e.target.checked))}
+                      />
+                      <Label htmlFor="use-template" className="cursor-pointer">Use designed HTML template</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Label className="text-sm">Upload PDF (simulate)</Label>
+                      <input type="file" accept="application/pdf" onChange={onFileChange} />
+                      {documentUploadFileName && <div className="text-sm text-muted-foreground">{documentUploadFileName}</div>}
+                    </div>
+                  </div>
                   <div className="flex gap-2 mt-2">
                     <Button type="button" onClick={generatePreview}>Preview Mail</Button>
                     <Button type="button" variant="outline" onClick={() => { setPreviewOpenLocal(false); setPreviewHtmlLocal(""); }}>Close Preview</Button>

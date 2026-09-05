@@ -141,6 +141,7 @@ export async function sendInvitationsData(body: {
   applicationIds?: string[];
   subject: string;
   message: string;
+  html?: string;
   invitationText?: string;
   invitationUrl?: string;
   interviewDate?: string;
@@ -218,7 +219,14 @@ export async function sendInvitationsData(body: {
       foodhandlercerturl: body.foodHandlerCertUrl ?? "",
     };
     const personalized = replacePlaceholders(resolvedMessage, data);
-    const html = buildHtmlBody(personalized, body.invitationUrl, body.invitationText);
+
+    // If admin provided a full HTML template in the request body, prefer that
+    let html: string;
+    if (body.html && typeof body.html === "string" && body.html.trim()) {
+      html = replacePlaceholders(body.html, data);
+    } else {
+      html = buildHtmlBody(personalized, body.invitationUrl, body.invitationText);
+    }
 
     console.log(`[invites] sending to ${application.applicantEmail}`, { subject: resolvedSubject, message: personalized });
 
