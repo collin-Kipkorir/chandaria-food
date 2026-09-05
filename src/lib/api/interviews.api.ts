@@ -228,7 +228,7 @@ export async function sendInvitationsData(body: {
       html = buildHtmlBody(personalized, body.invitationUrl, body.invitationText);
     }
 
-    console.log(`[invites] sending to ${application.applicantEmail}`, { subject: resolvedSubject, message: personalized });
+    console.log(`[invites] sending to ${application.applicantEmail}`, { subject: resolvedSubject, html: Boolean(html) });
 
     const adminDb = getFirebaseAdminDatabase();
     const statusKey = buildInvitationStatusKey(application);
@@ -249,12 +249,12 @@ export async function sendInvitationsData(body: {
       });
     }
 
+    // Always send the designed HTML template as the message body. Do not send plain-text fallback.
     const result = await emailService.send({
       to: application.applicantEmail,
       name: application.applicantName,
       subject: resolvedSubject,
       html,
-      text: personalized,
     });
 
     // Detailed logging for send result to assist in diagnosing production failures
@@ -302,7 +302,7 @@ export async function sendInvitationsData(body: {
       });
 
       const interviewId = `${Date.now()}-${application.id}-invite`;
-      await adminDb.ref(`interviews/${interviewId}`).set({
+        await adminDb.ref(`interviews/${interviewId}`).set({
         id: interviewId,
         userId: application.userId ?? "",
         subject: resolvedSubject,
@@ -312,7 +312,7 @@ export async function sendInvitationsData(body: {
         interviewDate: data.interview_date,
         interviewTime: "",
         venue: data.location,
-        message: personalized,
+        message: html,
         bannerImageUrl: "",
         status: result.ok ? "pending" : "failed",
         createdAt: new Date().toISOString(),
@@ -327,7 +327,7 @@ export async function sendInvitationsData(body: {
         applicantName: application.applicantName,
         applicantEmail: application.applicantEmail,
         subject: resolvedSubject,
-        message: personalized,
+        message: html,
         sentAt: new Date().toISOString(),
       });
     }
