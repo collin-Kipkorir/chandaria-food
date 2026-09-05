@@ -444,8 +444,9 @@ export default function InterviewsPage() {
     const a = target.closest && (target.closest('a') as HTMLAnchorElement | null);
     if (a && a.textContent && a.textContent.toLowerCase().includes('upload')) {
       e.preventDefault();
-      // record a simulated uploaded filename
-      setDocumentUploadFileName('documents.pdf');
+      // use provided simulated filename or default
+      const name = (documentUploadFileName && documentUploadFileName.trim()) || 'documents.pdf';
+      setDocumentUploadFileName(name);
       // visually update the anchor
       a.innerText = 'Upload succeeded ✓';
       a.style.background = '#10b981';
@@ -588,6 +589,18 @@ export default function InterviewsPage() {
                     <Button type="button" onClick={generatePreview}>Preview Mail</Button>
                     <Button type="button" variant="outline" onClick={() => { setPreviewOpenLocal(false); setPreviewHtmlLocal(""); }}>Close Preview</Button>
                   </div>
+
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                    <div className="grid gap-2">
+                      <Label>Simulated upload filename (optional)</Label>
+                      <Input value={documentUploadFileName} onChange={(e) => setDocumentUploadFileName(e.target.value)} placeholder="e.g. my-documents.pdf" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label className="text-sm">Preview upload</Label>
+                      <div className="text-sm text-muted-foreground">Click the upload button in the preview to simulate an upload using this filename.</div>
+                    </div>
+                  </div>
+
                   {documentUploadFileName && (
                     <div className="mt-2 text-sm text-muted-foreground">Uploaded: {documentUploadFileName}</div>
                   )}
