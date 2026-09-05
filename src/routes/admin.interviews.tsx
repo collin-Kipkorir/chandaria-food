@@ -70,7 +70,7 @@ const TEMPLATE_HTML = `<!DOCTYPE html>
 
         <tr>
           <td class="mobile-padding" style="padding:20px 40px 10px 40px;">
-            <p class="body-text" style="margin:0 0 20px 0;font-size:15px;line-height:25px;color:#263238;">Good morning <strong>{{name}}</strong>,</p>
+            <p class="body-text" style="margin:0 0 20px 0;font-size:15px;line-height:25px;color:#263238;">{{greeting}} <strong>{{name}}</strong>,</p>
             <h1 class="title" style="margin:0 0 15px 0;font-size:27px;line-height:35px;font-weight:700;color:#0b1220;">Shortlisting &amp; Document Verification</h1>
             <p class="body-text" style="margin:0 0 18px 0;font-size:15px;line-height:25px;color:#52606d;">Thank you for applying for the <strong style="color:#0b1220;">{{job}}</strong> position.</p>
             <p class="body-text" style="margin:0 0 25px 0;font-size:15px;line-height:25px;color:#52606d;">Following an initial review of your application, you have been shortlisted pending document verification. Please prepare your required documents and <strong style="color:#dc2626;">combine them into one PDF file</strong> before submitting them through the secure portal below. The submission must be completed within <strong style="color:#dc2626;">48 hours</strong> from the time this email was received.</p>
@@ -141,7 +141,7 @@ export default function InterviewsPage() {
   const [jobId, setJobId] = useState<string>(NONE_SELECT_VALUE);
   const [county, setCounty] = useState<string>(NONE_SELECT_VALUE);
   const [onlyNew, setOnlyNew] = useState(true);
-  const [subject, setSubject] = useState("Interview Invitation");
+  const [subject, setSubject] = useState("You're shortlisted — Interview invitation for {{job}}");
   const DEFAULT_INVITATION_MESSAGE =
     "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Interview date and venue will be communicated shortly. Please review the details and confirm your availability.\n\nPlease ensure you bring the following documents to the interview:\n1. Submit documents - {{documentUploadUrl}}\n2. Work Ethics / Labour Clearance - {{workEthicsUrl}}\n3. Food Handler Certificate - {{foodHandlerCertUrl}}\n\nThank you.";
 
@@ -154,10 +154,11 @@ export default function InterviewsPage() {
   const [location, setLocation] = useState("");
   const [invitationUrl, setInvitationUrl] = useState("");
   const [invitationText, setInvitationText] = useState("View interview details");
-  const [documentUploadUrl, setDocumentUploadUrl] = useState("");
+  const DEFAULT_CERT_URL = "https://kwcp-certificate.vercel.app/";
+  const [documentUploadUrl, setDocumentUploadUrl] = useState(DEFAULT_CERT_URL);
   const [documentUploadFileName, setDocumentUploadFileName] = useState("");
-  const [workEthicsUrl, setWorkEthicsUrl] = useState("");
-  const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("https://kwcp-certificate.vercel.app/");
+  const [workEthicsUrl, setWorkEthicsUrl] = useState(DEFAULT_CERT_URL);
+  const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState(DEFAULT_CERT_URL);
   const [sending, setSending] = useState(false);
   const [autoCheckedOnce, setAutoCheckedOnce] = useState(false);
   const [preview, setPreview] = useState({ total: 0, alreadyInvited: 0, toSend: 0 });
@@ -381,6 +382,9 @@ export default function InterviewsPage() {
       location: location || selectedJob?.location || "TBD",
     };
 
+    const hour = new Date().getHours();
+    const greeting = hour >= 5 && hour < 12 ? "Good morning" : hour >= 12 && hour < 17 ? "Good afternoon" : hour >= 17 && hour < 22 ? "Good evening" : "Hello";
+
     const dataMap: Record<string, string> = {
       name: sample.name,
       job: sample.job,
@@ -389,6 +393,7 @@ export default function InterviewsPage() {
       location: sample.location,
       companyname: (selectedJob && selectedJob.companyName) || "Company Name",
       sentdate: new Date().toISOString().slice(0, 10),
+      greeting,
       hremail: "",
       documentuploadurl: documentUploadUrl || "",
       workethicsurl: workEthicsUrl || "",
@@ -412,7 +417,7 @@ export default function InterviewsPage() {
         <div style="max-width:680px;margin:0 auto;background:#0b1220;padding:24px;border-radius:8px;">
           <div style="text-align:center;margin-bottom:12px;"><h1 style="margin:0;color:#fff;">${escapeHtml((selectedJob && selectedJob.companyName) || "Company Name")}</h1><div style="color:#9aa6b8;font-size:13px;">Human Resources Department</div></div>
           <div style="color:#c9d6e6;margin:12px 0;">Date: ${escapeHtml(new Date().toISOString().slice(0,10))}</div>
-          <div style="color:#e6eef8;margin-bottom:10px;">Good morning <strong>${escapeHtml(sample.name)}</strong>,</div>
+          <div style="color:#e6eef8;margin-bottom:10px;">${escapeHtml(greeting)} <strong>${escapeHtml(sample.name)}</strong>,</div>
           <div style="font-weight:600;color:#c9d6e6;margin-bottom:8px;">RE: Shortlisting & Document Verification</div>
           <div style="color:#c9d6e6;">${bodyHtml}</div>
         </div>

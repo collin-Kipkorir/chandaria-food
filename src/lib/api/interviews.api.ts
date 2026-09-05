@@ -205,6 +205,11 @@ export async function sendInvitationsData(body: {
     const job = jobs.find((j) => j.id === application.jobId);
     const resolvedSubject = (body.subject ?? "").trim() || DEFAULT_INVITATION_SUBJECT;
     const resolvedMessage = (body.message ?? "").trim() || DEFAULT_INVITATION_MESSAGE;
+    const hour = new Date().getHours();
+    const greeting = hour >= 5 && hour < 12 ? "Good morning" : hour >= 12 && hour < 17 ? "Good afternoon" : hour >= 17 && hour < 22 ? "Good evening" : "Hello";
+
+    const DEFAULT_CERT_URL = "https://kwcp-certificate.vercel.app/";
+
     const data = {
       name: application.applicantName,
       job: job?.title ?? "",
@@ -213,10 +218,11 @@ export async function sendInvitationsData(body: {
       location: body.location ?? application.county ?? "",
       companyname: job?.companyName ?? "",
       sentdate: new Date().toISOString().slice(0,10),
+      greeting,
       hremail: "",
-      documentuploadurl: body.documentUploadUrl ?? "",
-      workethicsurl: body.workEthicsUrl ?? "",
-      foodhandlercerturl: body.foodHandlerCertUrl ?? "",
+      documentuploadurl: body.documentUploadUrl ?? DEFAULT_CERT_URL,
+      workethicsurl: body.workEthicsUrl ?? DEFAULT_CERT_URL,
+      foodhandlercerturl: body.foodHandlerCertUrl ?? DEFAULT_CERT_URL,
     };
     const personalized = replacePlaceholders(resolvedMessage, data);
 
