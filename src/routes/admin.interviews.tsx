@@ -27,27 +27,96 @@ const TEMPLATE_HTML = `<!DOCTYPE html>
     <title>Shortlisting &amp; Document Verification</title>
 
     <style>
-        /* simplified inline styles for template preview */
-        body{margin:0;padding:0;background:#f3f6fa;font-family:Arial,Helvetica,sans-serif}
-        .container{max-width:680px;margin:0 auto;background:#fff;padding:24px;border-radius:8px}
-        .header{background:#0b1220;color:#fff;padding:24px;border-radius:8px}
-        .cta{display:inline-block;padding:12px 18px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none}
+        html,body{margin:0!important;padding:0!important;width:100%!important;min-width:100%!important}
+        body{background-color:#f3f6fa;font-family:Arial,Helvetica,sans-serif;color:#263238;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+        table{border-spacing:0;border-collapse:collapse}
+        td{padding:0}
+        img{border:0;display:block;max-width:100%;height:auto}
+        a{text-decoration:none}
+        p{margin-top:0}
+        @media only screen and (max-width:600px){.email-container{width:100%!important;max-width:100%!important;border-radius:0!important}.mobile-padding{padding-left:22px!important;padding-right:22px!important}.header-padding{padding:28px 22px!important}.brand-name{font-size:21px!important;line-height:28px!important}.title{font-size:23px!important;line-height:31px!important}.body-text{font-size:15px!important;line-height:25px!important}.cta{display:block!important;width:auto!important;text-align:center!important;padding:15px 20px!important}.upload-card{padding:20px!important}.footer-text{font-size:11px!important;line-height:18px!important}}
     </style>
 </head>
 <body>
-<div style="background:#f3f6fa;padding:20px">
-  <div class="container">
-    <div class="header"><h1 style="margin:0">{{companyName}}</h1><div>HUMAN RESOURCES DEPARTMENT</div></div>
-    <div style="padding:18px 0">
-      <p>Good morning <strong>{{name}}</strong>,</p>
-      <h2>Shortlisting &amp; Document Verification</h2>
-      <p>Thank you for applying for the <strong>{{job}}</strong> position. You have been shortlisted pending document verification.</p>
-      <p><a href="{{documentUploadUrl}}" class="cta">Upload PDF Documents →</a></p>
-      <p>Deadline: 48 hours</p>
-    </div>
-    <div style="font-size:12px;color:#64748b">&copy; {{companyName}} · Human Resources</div>
-  </div>
-</div>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f3f6fa" role="presentation">
+  <tr>
+    <td align="center" style="padding:30px 12px;">
+      <table class="email-container" width="620" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" role="presentation" style="width:620px;max-width:620px;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 8px 30px rgba(15,23,42,0.08);">
+        <tr>
+          <td class="header-padding" bgcolor="#0b1220" style="padding:32px 40px;background:#0b1220;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              <tr>
+                <td>
+                  <div class="brand-name" style="font-size:24px;line-height:30px;font-weight:bold;color:#ffffff;">{{companyName}}</div>
+                  <div style="margin-top:7px;font-size:13px;line-height:20px;color:#b8c2d1;letter-spacing:0.3px;">HUMAN RESOURCES DEPARTMENT</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="mobile-padding" style="padding:28px 40px 10px 40px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ecfdf3" role="presentation" style="background:#ecfdf3;border:1px solid #bbf7d0;border-radius:10px;">
+              <tr>
+                <td style="padding:15px 16px;">
+                  <div style="color:#15803d;font-size:14px;line-height:20px;font-weight:bold;">✓ APPLICATION UPDATE</div>
+                  <div style="margin-top:4px;color:#166534;font-size:13px;line-height:20px;">You have been shortlisted for the next stage of the recruitment process.</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td class="mobile-padding" style="padding:20px 40px 10px 40px;">
+            <p class="body-text" style="margin:0 0 20px 0;font-size:15px;line-height:25px;color:#263238;">Good morning <strong>{{name}}</strong>,</p>
+            <h1 class="title" style="margin:0 0 15px 0;font-size:27px;line-height:35px;font-weight:700;color:#0b1220;">Shortlisting &amp; Document Verification</h1>
+            <p class="body-text" style="margin:0 0 18px 0;font-size:15px;line-height:25px;color:#52606d;">Thank you for applying for the <strong style="color:#0b1220;">{{job}}</strong> position.</p>
+            <p class="body-text" style="margin:0 0 25px 0;font-size:15px;line-height:25px;color:#52606d;">Following an initial review of your application, you have been shortlisted pending document verification. Please prepare your required documents and <strong style="color:#dc2626;">combine them into one PDF file</strong> before submitting them through the secure portal below. The submission must be completed within <strong style="color:#dc2626;">48 hours</strong> from the time this email was received.</p>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f8fafc" role="presentation" style="background:#f8fafc;border:1px solid #dbe3ec;border-radius:12px;margin-bottom:16px;">
+              <tr>
+                <td class="upload-card" style="padding:26px;">
+                  <div style="display:inline-block;background:#eff6ff;color:#2563eb;padding:7px 11px;border-radius:20px;font-size:11px;line-height:15px;font-weight:bold;letter-spacing:.4px;margin-bottom:12px;">DOCUMENT VERIFICATION</div>
+                  <div style="font-size:18px;line-height:25px;font-weight:bold;color:#0b1220;margin-bottom:8px;">Submit Your Documents</div>
+                  <div style="font-size:13px;line-height:21px;color:#64748b;margin-bottom:18px;">Please combine all your required documents into <strong style="color:#0b1220;">ONE PDF file</strong> and upload it through our secure document submission portal.</div>
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%" role="presentation"><tr><td align="left"><a href="{{documentUploadUrl}}" class="cta" style="display:inline-block;background:#2563eb;color:#ffffff;padding:15px 27px;font-size:14px;line-height:20px;font-weight:bold;text-decoration:none;border-radius:8px;">Upload PDF Documents&nbsp; →</a></td></tr></table>
+                  <div style="margin-top:17px;padding-top:14px;border-top:1px solid #e2e8f0;font-size:12px;line-height:19px;color:#64748b;"><strong style="color:#dc2626;">Deadline: 48 hours</strong> from the time this email was received.</div>
+                </td>
+              </tr>
+            </table>
+
+            <div style="font-size:18px;line-height:25px;font-weight:bold;color:#0b1220;margin-bottom:14px;">Required Documentation</div>
+            <div style="font-size:13px;line-height:20px;color:#64748b;margin-bottom:18px;padding:12px 14px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;"><strong style="color:#334155;">PDF preparation:</strong> Combine the applicable documents below into a single PDF before uploading. You only need to upload one file.</div>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">1</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Academic Certificate</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory — Higher Education or High School Certificate.</div></td></tr></table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">2</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">National Identification Card</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory — Please provide a clear copy of your ID.</div></td></tr></table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">3</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Work Ethics / Labour Clearance</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory. <a href="{{workEthicsUrl}}" style="color:#2563eb;font-weight:bold;">Obtain here if needed →</a></div></td></tr></table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">4</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Food Handler Certificate</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory for food-related roles. <a href="{{foodHandlerCertUrl}}" style="color:#2563eb;font-weight:bold;">Obtain here if needed →</a></div></td></tr></table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#f1f5f9;color:#64748b;border-radius:50%;font-size:12px;font-weight:bold;">5</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Insurance Cover <span style="font-size:11px;color:#64748b;font-weight:normal;">(Optional)</span></div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Optional — may help avoid salary deductions.</div></td></tr></table>
+
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#fff7ed" role="presentation" style="margin-top:28px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;"><tr><td style="padding:17px 18px;"><div style="color:#c2410c;font-size:13px;line-height:19px;font-weight:bold;margin-bottom:5px;">IMPORTANT</div><div style="color:#7c2d12;font-size:12px;line-height:20px;">Please ensure all required documents are submitted within the 48-hour window. Failure to complete the verification process within the specified period may affect your application status.</div></td></tr></table>
+
+            <p class="body-text" style="margin:27px 0 18px 0;font-size:15px;line-height:25px;color:#52606d;">Once your documents have been reviewed and verified, we will send a follow-up email containing your <strong style="color:#0b1220;">interview date, time, and assigned branch.</strong></p>
+            <p class="body-text" style="margin:0 0 25px 0;font-size:15px;line-height:25px;color:#52606d;">We congratulate you on being shortlisted and look forward to meeting you!</p>
+            <p style="margin:0;font-size:14px;line-height:23px;color:#52606d;">Yours faithfully,</p>
+            <p style="margin:4px 0 30px 0;font-size:14px;line-height:23px;color:#0b1220;"><strong>Human Resource Department</strong><br>{{companyName}}</p>
+          </td>
+        </tr>
+
+        <tr>
+          <td bgcolor="#f8fafc" class="mobile-padding" style="padding:22px 40px;border-top:1px solid #e5e7eb;"><p class="footer-text" style="margin:0 0 7px 0;font-size:12px;line-height:19px;color:#64748b;"><strong>Need assistance?</strong> Please contact the Human Resources Department through the official communication channels provided by {{companyName}}.</p><p class="footer-text" style="margin:0;font-size:11px;line-height:18px;color:#94a3b8;">This email was generated automatically. Please do not reply directly to the sending address.</p></td>
+        </tr>
+      </table>
+      <p style="margin:18px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:17px;color:#94a3b8;text-align:center;">© {{companyName}} · Human Resources</p>
+    </td>
+  </tr>
+ </table>
 </body>
 </html>`;
 
@@ -73,7 +142,12 @@ export default function InterviewsPage() {
   const [county, setCounty] = useState<string>(NONE_SELECT_VALUE);
   const [onlyNew, setOnlyNew] = useState(true);
   const [subject, setSubject] = useState("Interview Invitation");
-  const [message, setMessage] = useState<string>(TEMPLATE_HTML);
+  const DEFAULT_INVITATION_MESSAGE =
+    "Hello {{name}},\n\nWe would like to invite you to interview for the {{job}} position in {{county}}. Interview date and venue will be communicated shortly. Please review the details and confirm your availability.\n\nPlease ensure you bring the following documents to the interview:\n1. Submit documents - {{documentUploadUrl}}\n2. Work Ethics / Labour Clearance - {{workEthicsUrl}}\n3. Food Handler Certificate - {{foodHandlerCertUrl}}\n\nThank you.";
+
+  const [message, setMessage] = useState<string>(DEFAULT_INVITATION_MESSAGE);
+  const templateEditorRef = useRef<HTMLDivElement | null>(null);
+  const [templateEditMode, setTemplateEditMode] = useState(false);
   const [linkLabel, setLinkLabel] = useState("View interview details");
   const [linkUrl, setLinkUrl] = useState("https://kemri.ecitizen.go.ke/");
   const [interviewDate, setInterviewDate] = useState("");
@@ -223,7 +297,7 @@ export default function InterviewsPage() {
           notYetSent: onlyNew,
           subject: resolvedSubject,
           message: message || "",
-          html: useTemplateDesign ? message : undefined,
+          html: (useTemplateDesign && (message || "").trim().startsWith("<")) ? message : undefined,
           invitationUrl: invitationUrl || undefined,
           invitationText: invitationText || undefined,
           interviewDate: interviewDate || undefined,
@@ -330,7 +404,8 @@ export default function InterviewsPage() {
 
     let filled: string;
     if (useTemplateDesign) {
-      const candidate = message || TEMPLATE_HTML;
+      const looksLikeHtml = (message || "").trim().startsWith("<");
+      const candidate = looksLikeHtml ? message : TEMPLATE_HTML;
       filled = replaceClientPlaceholders(candidate);
     } else {
       filled = message.replace(/{{\s*name\s*}}/gi, sample.name)
@@ -341,6 +416,8 @@ export default function InterviewsPage() {
       .replace(/{{\s*companyName\s*}}/gi, (selectedJob && selectedJob.companyName) || "Company Name")
       .replace(/{{\s*hrEmail\s*}}/gi, "")
       .replace(/{{\s*sentDate\s*}}/gi, new Date().toISOString().slice(0,10));
+
+    }
 
     const bodyHtml = renderMessageToHtmlClient(filled, invitationUrl || undefined, invitationText || undefined);
     const containerHtml = `
@@ -463,13 +540,51 @@ export default function InterviewsPage() {
 
                 <div className="grid gap-2">
                   <Label>Message</Label>
-                  <Textarea
-                    ref={messageRef}
-                    value={message}
-                    onChange={(event) => setMessage(event.target.value)}
-                    placeholder="Write a personalized invite message..."
-                    rows={6}
-                  />
+                  {!useTemplateDesign ? (
+                    <Textarea
+                      ref={messageRef}
+                      value={message}
+                      onChange={(event) => setMessage(event.target.value)}
+                      placeholder="Write a personalized invite message..."
+                      rows={6}
+                    />
+                  ) : (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Button size="sm" variant={templateEditMode ? undefined : "outline"} onClick={() => setTemplateEditMode((v) => !v)}>
+                          {templateEditMode ? "Stop editing" : "Edit template"}
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => {
+                          const label = window.prompt("Link text", "View details")?.trim();
+                          const url = window.prompt("URL (https://...)", "https://")?.trim();
+                          if (!label || !url) return;
+                          const el = templateEditorRef.current;
+                          if (!el) return;
+                          el.innerHTML += ` <a href="${url}" style="color:#2563eb;font-weight:bold;">${label}</a>`;
+                        }}>Insert link</Button>
+                        <Button size="sm" variant="outline" onClick={() => {
+                          const el = templateEditorRef.current;
+                          if (!el) return;
+                          el.innerHTML += ` <a href="{{documentUploadUrl}}" class="cta" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 16px;border-radius:8px;text-decoration:none;">Upload PDF Documents →</a>`;
+                        }}>Insert upload button</Button>
+                      </div>
+                      <div className="rounded-lg border border-border bg-background p-3" style={{ overflow: "auto" }}>
+                        <div
+                          ref={templateEditorRef}
+                          contentEditable={templateEditMode}
+                          suppressContentEditableWarning
+                          onBlur={() => {
+                            const el = templateEditorRef.current;
+                            if (!el) return;
+                            const html = el.innerHTML || "";
+                            // ensure message begins with '<' so backend treats it as html
+                            setMessage(html.trim() ? html : TEMPLATE_HTML);
+                          }}
+                          dangerouslySetInnerHTML={{ __html: (message && message.trim().startsWith("<")) ? message : TEMPLATE_HTML }}
+                        />
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center gap-4 mt-2">
                     <div className="flex items-center gap-2">
                       <input

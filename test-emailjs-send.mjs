@@ -54,6 +54,23 @@ async function loadEnv(path = '.env') {
     }
   };
 
+  // Include private key when EmailJS account is in strict mode
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY || process.env.EMAILJS_PRIVATEKEY || process.env.EMAILJS_KEY;
+  if (privateKey) {
+    // Send as accessToken which the REST API accepts for strict-mode auth
+    payload.accessToken = privateKey;
+  }
+
+  // Debug: log payload structure but mask the private key value
+  const masked = Object.assign({}, payload, { private_key: privateKey ? '***PRIVATE_KEY***' : undefined });
+  console.log('Sending EmailJS payload:', {
+    service_id: masked.service_id,
+    template_id: masked.template_id,
+    user_id: masked.user_id,
+    has_private_key: !!masked.private_key,
+    template_params_keys: Object.keys(masked.template_params || {}),
+  });
+
   try {
     const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
