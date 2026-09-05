@@ -333,8 +333,7 @@ export default function InterviewsPage() {
       const candidate = message || TEMPLATE_HTML;
       filled = replaceClientPlaceholders(candidate);
     } else {
-      filled = message
-      .replace(/{{\s*name\s*}}/gi, sample.name)
+      filled = message.replace(/{{\s*name\s*}}/gi, sample.name)
       .replace(/{{\s*job\s*}}/gi, sample.job)
       .replace(/{{\s*county\s*}}/gi, sample.county)
       .replace(/{{\s*interview_date\s*}}/gi, sample.interview_date)
