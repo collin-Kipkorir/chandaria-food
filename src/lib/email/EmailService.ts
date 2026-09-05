@@ -1,33 +1,30 @@
 import type { EmailPayload, EmailProvider } from "./EmailProvider.js";
-import { EmailJSProvider } from "./providers/EmailJSProvider.js";
-import { AmazonSESProvider } from "./providers/AmazonSESProvider.js";
-import { SMTPProvider } from "./providers/SMTPProvider.js";
 import { MockProvider } from "./providers/MockProvider.js";
 
 export class EmailService {
   private provider: EmailProvider | null = null;
 
   constructor() {
-    this.provider = this.createProvider();
+    // Delay provider creation to runtime to avoid bundler tree-shaking
+    // when build-time env vars are not available.
   }
 
-  private createProvider(): EmailProvider {
+  private async createProvider(): Promise<EmailProvider> {
     const providerName = process.env.EMAIL_PROVIDER ?? "mock";
 
     try {
       if (providerName === "emailjs") {
-        console.log("[EmailService] Creating EmailJSProvider...");
-        return new EmailJSProvider();
+        const mod = await import("./providers/EmailJSProvider.js");
+        return new mod.EmailJSProvider();
       }
       if (providerName === "ses") {
-        console.log("[EmailService] Creating AmazonSESProvider...");
-        return new AmazonSESProvider();
+        const mod = await import("./providers/AmazonSESProvider.js");
+        return new mod.AmazonSESProvider();
       }
       if (providerName === "smtp") {
-        console.log("[EmailService] Creating SMTPProvider...");
-        return new SMTPProvider();
+        const mod = await import("./providers/SMTPProvider.js");
+        return new mod.SMTPProvider();
       }
-      console.log("[EmailService] Creating MockProvider (default)...");
       return new MockProvider();
     } catch (error) {
       console.warn(
@@ -39,8 +36,9 @@ export class EmailService {
   }
 
   async send(payload: EmailPayload) {
-    const provider = this.provider ?? this.createProvider();
-    this.provider = provider;
-    return provider.send(payload);
+    if (!this.provider) {
+      this.provider = await this.createProvider();
+    }
+    return this.provider.send(payload);
   }
 }
