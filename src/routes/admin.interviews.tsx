@@ -147,6 +147,8 @@ export default function InterviewsPage() {
 
   const [message, setMessage] = useState<string>(DEFAULT_INVITATION_MESSAGE);
   const templateEditorRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const pendingUploadAnchorRef = useRef<HTMLAnchorElement | null>(null);
   const [templateEditMode, setTemplateEditMode] = useState(false);
   const [linkLabel, setLinkLabel] = useState("View interview details");
   const [linkUrl, setLinkUrl] = useState("https://kemri.ecitizen.go.ke/");
@@ -426,13 +428,13 @@ export default function InterviewsPage() {
     // In preview, normalize placeholder links and simulate upload behavior:
     let previewHtml = containerHtml;
 
-    // Replace literal placeholder hrefs for document upload with a safe simulated-action anchor
-    previewHtml = previewHtml.replace(/href="\{\{\s*documentUploadUrl\s*\}\}"/g, 'href="#" onclick="event.preventDefault(); this.innerText=\'Upload succeeded ✓\'; this.style.background=\'#10b981\'; this.style.color=\'#ffffff\';"');
+    // Replace literal placeholder hrefs for document upload with a simulated upload action (preview only)
+    previewHtml = previewHtml.replace(/href="\{\{\s*documentUploadUrl\s*\}\}"/g, 'href="#" data-upload="1"');
 
-    // If a documentUploadUrl is provided by the admin, ensure the anchor opens in new tab and also add a simulated onclick
+    // If a documentUploadUrl is provided by the admin, override it in the preview to simulate upload behavior instead of navigating
     if (documentUploadUrl) {
       const esc = documentUploadUrl.replace(/"/g, '&quot;');
-      previewHtml = previewHtml.replace(new RegExp(`href=\"${esc}\"`, 'g'), `href=\"${esc}\" onclick=\"event.preventDefault(); this.innerText='Upload succeeded ✓'; this.style.background='\#10b981'; this.style.color='\#ffffff';\"`);
+      previewHtml = previewHtml.replace(new RegExp(`href=\"${esc}\"`, 'g'), `href=\"#\" data-upload=\"1\"`);
     }
 
     // Ensure work ethics and food handler certificate links open in new tab and use fallback if placeholder left
@@ -447,16 +449,28 @@ export default function InterviewsPage() {
     const target = e.target as HTMLElement | null;
     if (!target) return;
     const a = target.closest && (target.closest('a') as HTMLAnchorElement | null);
-    if (a && a.textContent && a.textContent.toLowerCase().includes('upload')) {
+    if (a && (a.getAttribute('data-upload') === '1' || (a.textContent && a.textContent.toLowerCase().includes('upload')))) {
       e.preventDefault();
-      // use provided simulated filename or default
-      const name = (documentUploadFileName && documentUploadFileName.trim()) || 'documents.pdf';
-      setDocumentUploadFileName(name);
-      // visually update the anchor
+      // store the clicked anchor and open hidden file chooser
+      pendingUploadAnchorRef.current = a;
+      fileInputRef.current?.click();
+      return;
+    }
+  };
+
+  const handleFileInputChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const f = ev.target.files?.[0];
+    if (!f) return;
+    const name = f.name || 'documents.pdf';
+    setDocumentUploadFileName(name);
+    const a = pendingUploadAnchorRef.current;
+    if (a) {
       a.innerText = 'Upload succeeded ✓';
       a.style.background = '#10b981';
       a.style.color = '#ffffff';
     }
+    pendingUploadAnchorRef.current = null;
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   // File upload simulation removed — document upload URL can be set manually in the fields below.
@@ -611,6 +625,7 @@ export default function InterviewsPage() {
                   )}
                   {previewOpenLocal && (
                     <div className="mt-3 rounded-lg border border-border bg-background p-3" style={{ overflow: "auto" }}>
+                      <input type="file" accept="application/pdf" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileInputChange} />
                       <div onClick={handlePreviewClick} dangerouslySetInnerHTML={{ __html: previewHtmlLocal }} />
                     </div>
                   )}
