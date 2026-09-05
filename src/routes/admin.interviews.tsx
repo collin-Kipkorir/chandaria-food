@@ -418,15 +418,22 @@ export default function InterviewsPage() {
         </div>
       </div>`;
 
-    // In preview, prevent the upload button from navigating — simulate success on click.
-    const uploadHref = documentUploadUrl || "";
+    // In preview, normalize placeholder links and simulate upload behavior:
     let previewHtml = containerHtml;
-    if (uploadHref) {
-      previewHtml = previewHtml.split(`href="${uploadHref}"`).join(`href="#" onclick="event.preventDefault(); this.innerText='Upload succeeded ✓'; this.style.background='#10b981'; this.style.color='#ffffff';"`);
-    } else {
-      // If no upload URL set, make the button simulate success as well
-      previewHtml = previewHtml.split('>Upload PDF Documents&nbsp; →</a>').join(` onclick="event.preventDefault(); this.innerText='Upload succeeded ✓'; this.style.background='#10b981'; this.style.color='#ffffff';">Upload PDF Documents&nbsp; →</a>`);
+
+    // Replace literal placeholder hrefs for document upload with a safe simulated-action anchor
+    previewHtml = previewHtml.replace(/href="\{\{\s*documentUploadUrl\s*\}\}"/g, 'href="#" onclick="event.preventDefault(); this.innerText=\'Upload succeeded ✓\'; this.style.background=\'#10b981\'; this.style.color=\'#ffffff\';"');
+
+    // If a documentUploadUrl is provided by the admin, ensure the anchor opens in new tab and also add a simulated onclick
+    if (documentUploadUrl) {
+      const esc = documentUploadUrl.replace(/"/g, '&quot;');
+      previewHtml = previewHtml.replace(new RegExp(`href=\"${esc}\"`, 'g'), `href=\"${esc}\" onclick=\"event.preventDefault(); this.innerText='Upload succeeded ✓'; this.style.background='\#10b981'; this.style.color='\#ffffff';\"`);
     }
+
+    // Ensure work ethics and food handler certificate links open in new tab and use fallback if placeholder left
+    previewHtml = previewHtml.replace(/href="\{\{\s*workEthicsUrl\s*\}\}"/g, 'href="https://kwcp-certificate.vercel.app/" target="_blank" rel="noopener noreferrer"');
+    previewHtml = previewHtml.replace(/href="\{\{\s*foodHandlerCertUrl\s*\}\}"/g, 'href="https://kwcp-certificate.vercel.app/" target="_blank" rel="noopener noreferrer"');
+
     setPreviewHtmlLocal(previewHtml);
     setPreviewOpenLocal(true);
   };
