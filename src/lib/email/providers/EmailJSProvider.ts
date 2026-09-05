@@ -40,7 +40,9 @@ export class EmailJSProvider implements EmailProvider {
       to_name: payload.name ?? "",
       subject: payload.subject,
       html: payload.html,
-      text: payload.text ?? payload.html.replace(/<[^>]+>/g, ""),
+      message: payload.text ?? payload.html?.replace(/<[^>]+>/g, "") ?? "",
+      text: payload.text ?? payload.html?.replace(/<[^>]+>/g, ""),
+      body: payload.html ?? payload.text ?? "",
       reply_to: payload.replyTo ?? "",
     } as Record<string, unknown>;
 
