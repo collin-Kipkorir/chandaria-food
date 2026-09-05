@@ -155,6 +155,7 @@ export default function InterviewsPage() {
   const [invitationUrl, setInvitationUrl] = useState("");
   const [invitationText, setInvitationText] = useState("View interview details");
   const [documentUploadUrl, setDocumentUploadUrl] = useState("");
+  const [documentUploadFileName, setDocumentUploadFileName] = useState("");
   const [workEthicsUrl, setWorkEthicsUrl] = useState("");
   const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("https://kwcp-certificate.vercel.app/");
   const [sending, setSending] = useState(false);
@@ -430,6 +431,21 @@ export default function InterviewsPage() {
     setPreviewOpenLocal(true);
   };
 
+  const handlePreviewClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement | null;
+    if (!target) return;
+    const a = target.closest && (target.closest('a') as HTMLAnchorElement | null);
+    if (a && a.textContent && a.textContent.toLowerCase().includes('upload')) {
+      e.preventDefault();
+      // record a simulated uploaded filename
+      setDocumentUploadFileName('documents.pdf');
+      // visually update the anchor
+      a.innerText = 'Upload succeeded ✓';
+      a.style.background = '#10b981';
+      a.style.color = '#ffffff';
+    }
+  };
+
   // File upload simulation removed — document upload URL can be set manually in the fields below.
 
   return (
@@ -565,9 +581,12 @@ export default function InterviewsPage() {
                     <Button type="button" onClick={generatePreview}>Preview Mail</Button>
                     <Button type="button" variant="outline" onClick={() => { setPreviewOpenLocal(false); setPreviewHtmlLocal(""); }}>Close Preview</Button>
                   </div>
+                  {documentUploadFileName && (
+                    <div className="mt-2 text-sm text-muted-foreground">Uploaded: {documentUploadFileName}</div>
+                  )}
                   {previewOpenLocal && (
                     <div className="mt-3 rounded-lg border border-border bg-background p-3" style={{ overflow: "auto" }}>
-                      <div dangerouslySetInnerHTML={{ __html: previewHtmlLocal }} />
+                      <div onClick={handlePreviewClick} dangerouslySetInnerHTML={{ __html: previewHtmlLocal }} />
                     </div>
                   )}
                   <div className="rounded-lg border border-border bg-background/70 p-3">
