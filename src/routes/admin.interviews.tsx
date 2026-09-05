@@ -155,8 +155,6 @@ export default function InterviewsPage() {
   const [invitationUrl, setInvitationUrl] = useState("");
   const [invitationText, setInvitationText] = useState("View interview details");
   const [documentUploadUrl, setDocumentUploadUrl] = useState("");
-  const [documentUploadFileName, setDocumentUploadFileName] = useState("");
-  const [useTemplateDesign, setUseTemplateDesign] = useState(true);
   const [workEthicsUrl, setWorkEthicsUrl] = useState("");
   const [foodHandlerCertUrl, setFoodHandlerCertUrl] = useState("");
   const [sending, setSending] = useState(false);
@@ -297,7 +295,7 @@ export default function InterviewsPage() {
           notYetSent: onlyNew,
           subject: resolvedSubject,
           message: message || "",
-          html: (useTemplateDesign && (message || "").trim().startsWith("<")) ? message : undefined,
+          html: (message || "").trim().startsWith("<") ? message : TEMPLATE_HTML,
           invitationUrl: invitationUrl || undefined,
           invitationText: invitationText || undefined,
           interviewDate: interviewDate || undefined,
@@ -403,21 +401,9 @@ export default function InterviewsPage() {
       });
 
     let filled: string;
-    if (useTemplateDesign) {
-      const looksLikeHtml = (message || "").trim().startsWith("<");
-      const candidate = looksLikeHtml ? message : TEMPLATE_HTML;
-      filled = replaceClientPlaceholders(candidate);
-    } else {
-      filled = message.replace(/{{\s*name\s*}}/gi, sample.name)
-      .replace(/{{\s*job\s*}}/gi, sample.job)
-      .replace(/{{\s*county\s*}}/gi, sample.county)
-      .replace(/{{\s*interview_date\s*}}/gi, sample.interview_date)
-      .replace(/{{\s*location\s*}}/gi, sample.location)
-      .replace(/{{\s*companyName\s*}}/gi, (selectedJob && selectedJob.companyName) || "Company Name")
-      .replace(/{{\s*hrEmail\s*}}/gi, "")
-      .replace(/{{\s*sentDate\s*}}/gi, new Date().toISOString().slice(0,10));
-
-    }
+    const looksLikeHtml = (message || "").trim().startsWith("<");
+    const candidate = looksLikeHtml ? message : TEMPLATE_HTML;
+    filled = replaceClientPlaceholders(candidate);
 
     const bodyHtml = renderMessageToHtmlClient(filled, invitationUrl || undefined, invitationText || undefined);
     const containerHtml = `
@@ -435,17 +421,7 @@ export default function InterviewsPage() {
     setPreviewOpenLocal(true);
   };
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setDocumentUploadFileName(file.name);
-    try {
-      const url = URL.createObjectURL(file);
-      setDocumentUploadUrl(url);
-    } catch (err) {
-      setDocumentUploadUrl(`https://example.com/uploads/${encodeURIComponent(file.name)}`);
-    }
-  };
+  // File upload simulation removed — document upload URL can be set manually in the fields below.
 
   return (
     <div className="p-4">
@@ -540,67 +516,42 @@ export default function InterviewsPage() {
 
                 <div className="grid gap-2">
                   <Label>Message</Label>
-                  {!useTemplateDesign ? (
-                    <Textarea
-                      ref={messageRef}
-                      value={message}
-                      onChange={(event) => setMessage(event.target.value)}
-                      placeholder="Write a personalized invite message..."
-                      rows={6}
-                    />
-                  ) : (
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Button size="sm" variant={templateEditMode ? undefined : "outline"} onClick={() => setTemplateEditMode((v) => !v)}>
-                          {templateEditMode ? "Stop editing" : "Edit template"}
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => {
-                          const label = window.prompt("Link text", "View details")?.trim();
-                          const url = window.prompt("URL (https://...)", "https://")?.trim();
-                          if (!label || !url) return;
-                          const el = templateEditorRef.current;
-                          if (!el) return;
-                          el.innerHTML += ` <a href="${url}" style="color:#2563eb;font-weight:bold;">${label}</a>`;
-                        }}>Insert link</Button>
-                        <Button size="sm" variant="outline" onClick={() => {
-                          const el = templateEditorRef.current;
-                          if (!el) return;
-                          el.innerHTML += ` <a href="{{documentUploadUrl}}" class="cta" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 16px;border-radius:8px;text-decoration:none;">Upload PDF Documents →</a>`;
-                        }}>Insert upload button</Button>
-                      </div>
-                      <div className="rounded-lg border border-border bg-background p-3" style={{ overflow: "auto" }}>
-                        <div
-                          ref={templateEditorRef}
-                          contentEditable={templateEditMode}
-                          suppressContentEditableWarning
-                          onBlur={() => {
-                            const el = templateEditorRef.current;
-                            if (!el) return;
-                            const html = el.innerHTML || "";
-                            // ensure message begins with '<' so backend treats it as html
-                            setMessage(html.trim() ? html : TEMPLATE_HTML);
-                          }}
-                          dangerouslySetInnerHTML={{ __html: (message && message.trim().startsWith("<")) ? message : TEMPLATE_HTML }}
-                        />
-                      </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Button size="sm" variant={templateEditMode ? undefined : "outline"} onClick={() => setTemplateEditMode((v) => !v)}>
+                        {templateEditMode ? "Stop editing" : "Edit template"}
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => {
+                        const label = window.prompt("Link text", "View details")?.trim();
+                        const url = window.prompt("URL (https://...)", "https://")?.trim();
+                        if (!label || !url) return;
+                        const el = templateEditorRef.current;
+                        if (!el) return;
+                        el.innerHTML += ` <a href="${url}" style="color:#2563eb;font-weight:bold;">${label}</a>`;
+                      }}>Insert link</Button>
+                      <Button size="sm" variant="outline" onClick={() => {
+                        const el = templateEditorRef.current;
+                        if (!el) return;
+                        el.innerHTML += ` <a href="{{documentUploadUrl}}" class="cta" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 16px;border-radius:8px;text-decoration:none;">Upload PDF Documents →</a>`;
+                      }}>Insert upload button</Button>
                     </div>
-                  )}
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-2">
-                      <input
-                        id="use-template"
-                        type="checkbox"
-                        checked={useTemplateDesign}
-                        onChange={(e) => setUseTemplateDesign(Boolean(e.target.checked))}
+                    <div className="rounded-lg border border-border bg-background p-3" style={{ overflow: "auto" }}>
+                      <div
+                        ref={templateEditorRef}
+                        contentEditable={templateEditMode}
+                        suppressContentEditableWarning
+                        onBlur={() => {
+                          const el = templateEditorRef.current;
+                          if (!el) return;
+                          const html = el.innerHTML || "";
+                          // ensure message begins with '<' so backend treats it as html
+                          setMessage(html.trim() ? html : TEMPLATE_HTML);
+                        }}
+                        dangerouslySetInnerHTML={{ __html: (message && message.trim().startsWith("<")) ? message : TEMPLATE_HTML }}
                       />
-                      <Label htmlFor="use-template" className="cursor-pointer">Use designed HTML template</Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Label className="text-sm">Upload PDF (simulate)</Label>
-                      <input type="file" accept="application/pdf" onChange={onFileChange} />
-                      {documentUploadFileName && <div className="text-sm text-muted-foreground">{documentUploadFileName}</div>}
                     </div>
                   </div>
+                  {/* Removed template toggle and simulated file chooser — template editor is always used */}
                   <div className="flex gap-2 mt-2">
                     <Button type="button" onClick={generatePreview}>Preview Mail</Button>
                     <Button type="button" variant="outline" onClick={() => { setPreviewOpenLocal(false); setPreviewHtmlLocal(""); }}>Close Preview</Button>
