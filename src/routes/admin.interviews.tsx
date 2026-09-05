@@ -81,7 +81,7 @@ const TEMPLATE_HTML = `<!DOCTYPE html>
                   <div style="display:inline-block;background:#eff6ff;color:#2563eb;padding:7px 11px;border-radius:20px;font-size:11px;line-height:15px;font-weight:bold;letter-spacing:.4px;margin-bottom:12px;">DOCUMENT VERIFICATION</div>
                   <div style="font-size:18px;line-height:25px;font-weight:bold;color:#0b1220;margin-bottom:8px;">Submit Your Documents</div>
                   <div style="font-size:13px;line-height:21px;color:#64748b;margin-bottom:18px;">Please combine all your required documents into <strong style="color:#0b1220;">ONE PDF file</strong> and upload it through our secure document submission portal.</div>
-                  <table cellpadding="0" cellspacing="0" border="0" width="100%" role="presentation"><tr><td align="left"><a href="{{documentUploadUrl}}" class="cta" style="display:inline-block;background:#2563eb;color:#ffffff;padding:15px 27px;font-size:14px;line-height:20px;font-weight:bold;text-decoration:none;border-radius:8px;">Upload PDF Documents&nbsp; →</a></td></tr></table>
+                  <table cellpadding="0" cellspacing="0" border="0" width="100%" role="presentation"><tr><td align="left"><a href="{{documentUploadUrl}}" class="cta" style="display:inline-block;background:#2563eb;color:#ffffff;padding:15px 27px;font-size:14px;line-height:20px;font-weight:bold;text-decoration:none;border-radius:8px;" target="_blank" rel="noopener noreferrer">Upload PDF Documents&nbsp; →</a></td></tr></table>
                   <div style="margin-top:17px;padding-top:14px;border-top:1px solid #e2e8f0;font-size:12px;line-height:19px;color:#64748b;"><strong style="color:#dc2626;">Deadline: 48 hours</strong> from the time this email was received.</div>
                 </td>
               </tr>
@@ -94,9 +94,9 @@ const TEMPLATE_HTML = `<!DOCTYPE html>
 
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">2</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">National Identification Card</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory — Please provide a clear copy of your ID.</div></td></tr></table>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">3</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Work Ethics / Labour Clearance</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory. <a href="{{workEthicsUrl}}" style="color:#2563eb;font-weight:bold;">Obtain here if needed →</a></div></td></tr></table>
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">3</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Work Ethics / Labour Clearance</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory. <a href="{{workEthicsUrl}}" style="color:#2563eb;font-weight:bold;" target="_blank" rel="noopener noreferrer">Obtain here if needed →</a></div></td></tr></table>
 
-            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">4</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Food Handler Certificate</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory for food-related roles. <a href="{{foodHandlerCertUrl}}" style="color:#2563eb;font-weight:bold;">Obtain here if needed →</a></div></td></tr></table>
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-bottom:1px solid #edf0f4;"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#eff6ff;color:#2563eb;border-radius:50%;font-size:12px;font-weight:bold;">4</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Food Handler Certificate</div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Mandatory for food-related roles. <a href="{{foodHandlerCertUrl}}" style="color:#2563eb;font-weight:bold;" target="_blank" rel="noopener noreferrer">Obtain here if needed →</a></div></td></tr></table>
 
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td width="36" valign="top" style="padding:14px 0;"><div style="width:27px;height:27px;line-height:27px;text-align:center;background:#f1f5f9;color:#64748b;border-radius:50%;font-size:12px;font-weight:bold;">5</div></td><td style="padding:12px 0 14px 8px;"><div style="font-size:14px;line-height:20px;font-weight:bold;color:#1e293b;">Insurance Cover <span style="font-size:11px;color:#64748b;font-weight:normal;">(Optional)</span></div><div style="margin-top:4px;font-size:12px;line-height:19px;color:#64748b;">Optional — may help avoid salary deductions.</div></td></tr></table>
 
@@ -417,7 +417,16 @@ export default function InterviewsPage() {
         </div>
       </div>`;
 
-    setPreviewHtmlLocal(containerHtml);
+    // In preview, prevent the upload button from navigating — simulate success on click.
+    const uploadHref = documentUploadUrl || "";
+    let previewHtml = containerHtml;
+    if (uploadHref) {
+      previewHtml = previewHtml.split(`href="${uploadHref}"`).join(`href="#" onclick="event.preventDefault(); this.innerText='Upload succeeded ✓'; this.style.background='#10b981'; this.style.color='#ffffff';"`);
+    } else {
+      // If no upload URL set, make the button simulate success as well
+      previewHtml = previewHtml.split('>Upload PDF Documents&nbsp; →</a>').join(` onclick="event.preventDefault(); this.innerText='Upload succeeded ✓'; this.style.background='#10b981'; this.style.color='#ffffff';">Upload PDF Documents&nbsp; →</a>`);
+    }
+    setPreviewHtmlLocal(previewHtml);
     setPreviewOpenLocal(true);
   };
 
