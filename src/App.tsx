@@ -38,12 +38,12 @@ const EDUCATION_LEVELS = [
 ];
 
 const SALARY_RANGES = [
-  "Below KSh 20,000",
-  "KSh 20,000 – 35,000",
-  "KSh 35,000 – 60,000",
-  "KSh 60,000 – 90,000",
-  "KSh 90,000 – 150,000",
-  "Above KSh 150,000",
+  "Below KSh 15,000",
+  "KSh 15,000 – 20,000",
+  "KSh 20,000 – 25,000",
+  "KSh 25,000 – 30,000",
+  "KSh 30,000 – 50,000",
+  "Above KSh 50,000",
   "Negotiable",
 ];
 
@@ -412,8 +412,8 @@ function Hero() {
             <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-8">
               <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
-                Chandaria <br />
-                <span className="text-brand-gold">Food Plus</span>
+                Chandarana <br />
+                <span className="text-brand-gold">FoodPlus</span>
               </h3>
               <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
                 More than just food
