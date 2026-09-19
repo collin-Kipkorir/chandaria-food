@@ -9,27 +9,87 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
+import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
+import { Route as AdminRtdbDebugRouteImport } from './routes/admin.rtdb-debug'
 
-export interface FileRoutesByFullPath {}
-export interface FileRoutesByTo {}
+const JobsJobIdRoute = JobsJobIdRouteImport.update({
+  id: '/jobs/$jobId',
+  path: '/jobs/$jobId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompaniesSlugRoute = CompaniesSlugRouteImport.update({
+  id: '/companies/$slug',
+  path: '/companies/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRtdbDebugRoute = AdminRtdbDebugRouteImport.update({
+  id: '/admin/rtdb-debug',
+  path: '/admin/rtdb-debug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+
+export interface FileRoutesByFullPath {
+  '/admin/rtdb-debug': typeof AdminRtdbDebugRoute
+  '/companies/$slug': typeof CompaniesSlugRoute
+  '/jobs/$jobId': typeof JobsJobIdRoute
+}
+export interface FileRoutesByTo {
+  '/admin/rtdb-debug': typeof AdminRtdbDebugRoute
+  '/companies/$slug': typeof CompaniesSlugRoute
+  '/jobs/$jobId': typeof JobsJobIdRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/admin/rtdb-debug': typeof AdminRtdbDebugRoute
+  '/companies/$slug': typeof CompaniesSlugRoute
+  '/jobs/$jobId': typeof JobsJobIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: never
+  fullPaths: '/admin/rtdb-debug' | '/companies/$slug' | '/jobs/$jobId'
   fileRoutesByTo: FileRoutesByTo
-  to: never
-  id: '__root__'
+  to: '/admin/rtdb-debug' | '/companies/$slug' | '/jobs/$jobId'
+  id: '__root__' | '/admin/rtdb-debug' | '/companies/$slug' | '/jobs/$jobId'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {}
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {}
+export interface RootRouteChildren {
+  AdminRtdbDebugRoute: typeof AdminRtdbDebugRoute
+  CompaniesSlugRoute: typeof CompaniesSlugRoute
+  JobsJobIdRoute: typeof JobsJobIdRoute
 }
 
-const rootRouteChildren: RootRouteChildren = {}
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/jobs/$jobId': {
+      id: '/jobs/$jobId'
+      path: '/jobs/$jobId'
+      fullPath: '/jobs/$jobId'
+      preLoaderRoute: typeof JobsJobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/companies/$slug': {
+      id: '/companies/$slug'
+      path: '/companies/$slug'
+      fullPath: '/companies/$slug'
+      preLoaderRoute: typeof CompaniesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/rtdb-debug': {
+      id: '/admin/rtdb-debug'
+      path: '/admin/rtdb-debug'
+      fullPath: '/admin/rtdb-debug'
+      preLoaderRoute: typeof AdminRtdbDebugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  AdminRtdbDebugRoute: AdminRtdbDebugRoute,
+  CompaniesSlugRoute: CompaniesSlugRoute,
+  JobsJobIdRoute: JobsJobIdRoute,
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
