@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import type { Job } from "@/lib/types";
+import careersStoreTeam from "@/assets/careers-store-team.jpg";
 
 const EDUCATION_LEVELS = [
   "Certificate",
@@ -769,10 +770,12 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
 
       <header className="relative mt-5 overflow-hidden rounded-3xl bg-gradient-to-br from-brand-green via-brand-green-dark to-brand-green-deep p-6 text-white shadow-xl animate-in fade-in slide-in-from-bottom-4 duration-500 sm:p-10">
         <img
-          src="https://images.unsplash.com/photo-1543353071-087092ec393f?auto=format&fit=crop&w=1600&q=90"
+          src={careersStoreTeam}
           alt="Prepared fresh food and smiling staff in a store environment"
-          className="absolute inset-0 h-full w-full object-cover opacity-22"
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
           loading="lazy"
+          width={1600}
+          height={900}
         />
         <div
           aria-hidden
