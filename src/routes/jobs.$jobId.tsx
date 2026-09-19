@@ -187,6 +187,13 @@ function JobDetail() {
     }
     setSubmitting(true);
     try {
+      const cvUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () =>
+          typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("Invalid CV file"));
+        reader.onerror = () => reject(reader.error ?? new Error("Could not read CV file"));
+        reader.readAsDataURL(cvFile);
+      });
       const res = await apply(job.id, {
         applicantName: fullName.trim(),
         applicantEmail: email.trim(),
@@ -194,6 +201,8 @@ function JobDetail() {
         county,
         educationLevel: education,
         expectedSalary: salary,
+        cvUrl,
+        cvFileName: cvFile.name,
         coverLetter: coverLetter.trim() || undefined,
       });
       if (!res.ok || !res.applicationId) {

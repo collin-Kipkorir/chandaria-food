@@ -1,5 +1,11 @@
 import fs from "node:fs";
-import admin from "firebase-admin";
+import {
+  cert,
+  getApps,
+  initializeApp,
+  type Credential,
+  type ServiceAccount,
+} from "firebase-admin/app";
 import { getDatabase, type Database } from "firebase-admin/database";
 
 let db: Database | null = null;
@@ -23,7 +29,7 @@ function initializeAdmin() {
   // Prefer explicit service account JSON in env (`FIREBASE_SERVICE_ACCOUNT`) or a
   // file path via `GOOGLE_APPLICATION_CREDENTIALS`. Do NOT fall back to
   // Application Default Credentials (metadata server) in serverless environments.
-  let credential: admin.credential.Credential | undefined;
+  let credential: Credential;
 
   if (credentialPath) {
     if (!fs.existsSync(credentialPath)) {
@@ -31,11 +37,11 @@ function initializeAdmin() {
         `GOOGLE_APPLICATION_CREDENTIALS is set to '${credentialPath}' but the file does not exist. Set a valid path or provide FIREBASE_SERVICE_ACCOUNT env JSON.`,
       );
     }
-    credential = admin.credential.cert(credentialPath);
+    credential = cert(credentialPath);
   } else if (credentialJson) {
     try {
       const parsed = typeof credentialJson === "string" ? JSON.parse(credentialJson) : credentialJson;
-      credential = admin.credential.cert(parsed as admin.ServiceAccount);
+      credential = cert(parsed as ServiceAccount);
     } catch (error) {
       throw new Error(
         "Failed to parse FIREBASE_SERVICE_ACCOUNT / GOOGLE_SERVICE_ACCOUNT JSON. Ensure the env contains valid service account JSON.",
@@ -47,8 +53,8 @@ function initializeAdmin() {
     );
   }
 
-  if (admin.apps.length === 0) {
-    admin.initializeApp({
+  if (getApps().length === 0) {
+    initializeApp({
       credential,
       databaseURL,
     });
