@@ -81,24 +81,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
+      { title: "AjiraConnect — Find work. Build your future." },
       {
         name: "description",
-        content: "A scalable platform for job recruitment and interview management.",
+        content:
+          "AjiraConnect connects job seekers across Kenya with verified employers. Browse open roles and apply in minutes — no account needed.",
       },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
+      { name: "author", content: "AjiraConnect" },
+      { property: "og:title", content: "AjiraConnect — Find work. Build your future." },
       {
         property: "og:description",
-        content: "A scalable platform for job recruitment and interview management.",
+        content:
+          "AjiraConnect connects job seekers across Kenya with verified employers. Browse open roles and apply in minutes — no account needed.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
+      { name: "twitter:title", content: "AjiraConnect — Find work. Build your future." },
       {
         name: "twitter:description",
-        content: "A scalable platform for job recruitment and interview management.",
+        content:
+          "AjiraConnect connects job seekers across Kenya with verified employers. Browse open roles and apply in minutes — no account needed.",
       },
       {
         property: "og:image",
@@ -118,7 +120,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap",
       },
     ],
   }),
