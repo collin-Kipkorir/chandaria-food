@@ -27,6 +27,8 @@ import {
 import { useApp } from "@/lib/store";
 import type { Job } from "@/lib/types";
 import careersStoreTeam from "@/assets/careers-store-team.jpg";
+import ajiraHero from "@/assets/ajira-hero.jpg";
+import ajiraAbout from "@/assets/ajira-about.jpg";
 
 const EDUCATION_LEVELS = [
   "Certificate",
@@ -57,58 +59,58 @@ const NAV = [
 
 const STORES = [
   {
-    name: "Supermarkets",
+    name: "Retail & FMCG",
     icon: ShoppingBasket,
     description:
-      "Our flagship full-service supermarkets carry thousands of local and imported food products, fresh produce, bakery, deli, and household essentials.",
+      "Supermarkets, distributors and consumer-goods brands hire through AjiraConnect for sales, merchandising, operations and management roles.",
   },
   {
-    name: "Fresh Produce & Deli",
-    icon: Leaf,
-    description:
-      "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
-  },
-  {
-    name: "Bakery & Café",
+    name: "Hospitality & Food Service",
     icon: Utensils,
     description:
-      "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
+      "Hotels, restaurants, bakeries and cafés across Kenya post front-of-house, kitchen and service roles on the platform every week.",
   },
   {
-    name: "Online & Delivery",
+    name: "Logistics & Delivery",
     icon: Truck,
     description:
-      "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
+      "From warehouse assistants to dispatch riders and fleet supervisors, logistics employers find reliable people fast on AjiraConnect.",
   },
   {
-    name: "Own-Brand Products",
+    name: "Corporate & Office",
     icon: Building2,
     description:
-      "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
+      "Administration, finance, HR and customer-care openings from growing Kenyan companies — from startups to established brands.",
   },
   {
-    name: "Community & Loyalty",
+    name: "Agriculture & Fresh Produce",
     icon: Leaf,
     description:
-      "Our Foodplus Rewards programme and community nutrition initiatives connect us to millions of Kenyan households beyond the checkout.",
+      "Farms, processors and fresh-produce suppliers connect with quality-assurance, agronomy and field-operations talent.",
+  },
+  {
+    name: "Internships & Graduate",
+    icon: GraduationCap,
+    description:
+      "Entry-level programmes and internships that help students and recent graduates take their first confident step into work.",
   },
 ];
 
 const SERVICES = [
   {
-    icon: ShoppingBasket,
-    title: "Fresh Groceries",
-    text: "Daily-fresh produce, meats and household essentials sourced locally.",
+    icon: Search,
+    title: "Verified Roles",
+    text: "Every listing is reviewed before it goes live, so you apply with confidence.",
   },
   {
-    icon: Utensils,
-    title: "Ready-To-Eat",
-    text: "In-house bakery, deli and hot-foods counter for meals on the go.",
+    icon: Send,
+    title: "Direct Applications",
+    text: "Apply straight to the employer in three quick steps — no account, no middlemen.",
   },
   {
-    icon: Truck,
-    title: "Delivery & Pickup",
-    text: "Same-day delivery across Nairobi and click-and-collect nationwide.",
+    icon: Sparkles,
+    title: "Career Growth",
+    text: "Roles across every level, from internships to senior management, all in one place.",
   },
 ];
 
@@ -244,14 +246,14 @@ function Header({
           className="flex items-center gap-3 text-left"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-green-deep ring-2 ring-brand-gold/40 sm:h-11 sm:w-11">
-            <Leaf className="h-5 w-5 text-brand-gold" />
+            <Briefcase className="h-5 w-5 text-brand-gold" />
           </div>
           <div className="leading-tight">
             <div className="font-display text-base tracking-wider text-white sm:text-xl">
-              CHANDARANA <span className="text-brand-gold">FOODPLUS</span>
+              AJIRA<span className="text-brand-gold">CONNECT</span>
             </div>
             <div className="hidden text-[10px] uppercase tracking-[0.25em] text-white/60 sm:block">
-              More than just food
+              Find work. Build your future.
             </div>
           </div>
         </button>
