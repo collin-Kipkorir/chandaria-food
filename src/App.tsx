@@ -27,6 +27,8 @@ import {
 import { useApp } from "@/lib/store";
 import type { Job } from "@/lib/types";
 import careersStoreTeam from "@/assets/careers-store-team.jpg";
+import ajiraHero from "@/assets/ajira-hero.jpg";
+import ajiraAbout from "@/assets/ajira-about.jpg";
 
 const EDUCATION_LEVELS = [
   "Certificate",
@@ -57,58 +59,58 @@ const NAV = [
 
 const STORES = [
   {
-    name: "Supermarkets",
+    name: "Retail & FMCG",
     icon: ShoppingBasket,
     description:
-      "Our flagship full-service supermarkets carry thousands of local and imported food products, fresh produce, bakery, deli, and household essentials.",
+      "Supermarkets, distributors and consumer-goods brands hire through AjiraConnect for sales, merchandising, operations and management roles.",
   },
   {
-    name: "Fresh Produce & Deli",
-    icon: Leaf,
-    description:
-      "Farm-fresh fruits, vegetables, dairy, and a world-class deli section. We source carefully from trusted local farmers and suppliers across Kenya.",
-  },
-  {
-    name: "Bakery & Café",
+    name: "Hospitality & Food Service",
     icon: Utensils,
     description:
-      "In-store bakeries and café counters offering fresh-baked bread, pastries, coffee, and ready-to-eat meals for on-the-go customers.",
+      "Hotels, restaurants, bakeries and cafés across Kenya post front-of-house, kitchen and service roles on the platform every week.",
   },
   {
-    name: "Online & Delivery",
+    name: "Logistics & Delivery",
     icon: Truck,
     description:
-      "Kenya's growing online grocery platform with same-day delivery across Nairobi, Mombasa and key towns — powered by our logistics team.",
+      "From warehouse assistants to dispatch riders and fleet supervisors, logistics employers find reliable people fast on AjiraConnect.",
   },
   {
-    name: "Own-Brand Products",
+    name: "Corporate & Office",
     icon: Building2,
     description:
-      "A growing range of Chandarana-branded staples — quality you can trust at prices that are better for you and better for all Kenyans.",
+      "Administration, finance, HR and customer-care openings from growing Kenyan companies — from startups to established brands.",
   },
   {
-    name: "Community & Loyalty",
+    name: "Agriculture & Fresh Produce",
     icon: Leaf,
     description:
-      "Our Foodplus Rewards programme and community nutrition initiatives connect us to millions of Kenyan households beyond the checkout.",
+      "Farms, processors and fresh-produce suppliers connect with quality-assurance, agronomy and field-operations talent.",
+  },
+  {
+    name: "Internships & Graduate",
+    icon: GraduationCap,
+    description:
+      "Entry-level programmes and internships that help students and recent graduates take their first confident step into work.",
   },
 ];
 
 const SERVICES = [
   {
-    icon: ShoppingBasket,
-    title: "Fresh Groceries",
-    text: "Daily-fresh produce, meats and household essentials sourced locally.",
+    icon: Search,
+    title: "Verified Roles",
+    text: "Every listing is reviewed before it goes live, so you apply with confidence.",
   },
   {
-    icon: Utensils,
-    title: "Ready-To-Eat",
-    text: "In-house bakery, deli and hot-foods counter for meals on the go.",
+    icon: Send,
+    title: "Direct Applications",
+    text: "Apply straight to the employer in three quick steps — no account, no middlemen.",
   },
   {
-    icon: Truck,
-    title: "Delivery & Pickup",
-    text: "Same-day delivery across Nairobi and click-and-collect nationwide.",
+    icon: Sparkles,
+    title: "Career Growth",
+    text: "Roles across every level, from internships to senior management, all in one place.",
   },
 ];
 
@@ -244,14 +246,14 @@ function Header({
           className="flex items-center gap-3 text-left"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-green-deep ring-2 ring-brand-gold/40 sm:h-11 sm:w-11">
-            <Leaf className="h-5 w-5 text-brand-gold" />
+            <Briefcase className="h-5 w-5 text-brand-gold" />
           </div>
           <div className="leading-tight">
             <div className="font-display text-base tracking-wider text-white sm:text-xl">
-              CHANDARANA <span className="text-brand-gold">FOODPLUS</span>
+              AJIRA<span className="text-brand-gold">CONNECT</span>
             </div>
             <div className="hidden text-[10px] uppercase tracking-[0.25em] text-white/60 sm:block">
-              More than just food
+              Find work. Build your future.
             </div>
           </div>
         </button>
@@ -343,10 +345,12 @@ function Hero() {
   return (
     <section className="relative isolate overflow-hidden bg-brand-green-deep text-white">
       <img
-        src="https://images.unsplash.com/photo-1514512364185-2a5f07e1b88d?auto=format&fit=crop&w=2000&q=90"
-        alt="Vibrant assortment of fresh fruits and vegetables"
-        className="absolute inset-0 h-full w-full object-cover opacity-24"
+        src={ajiraHero}
+        alt="Kenyan professionals welcoming a new colleague in a modern Nairobi office"
+        className="absolute inset-0 h-full w-full object-cover opacity-25"
         loading="eager"
+        width={1600}
+        height={900}
       />
       <div className="absolute inset-0 bg-gradient-to-br from-brand-green-deep via-brand-green-deep/90 to-brand-green-dark/80" />
       <div
@@ -361,15 +365,15 @@ function Hero() {
       <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-3 py-16 sm:px-4 sm:py-24 lg:grid-cols-[1.2fr_1fr] lg:py-32">
         <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
           <div className="inline-flex items-center gap-2 rounded-full border border-brand-gold/40 bg-brand-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-brand-gold">
-            <Sparkles className="h-3 w-3" /> We're hiring across Kenya
+            <Sparkles className="h-3 w-3" /> Connecting talent across Kenya
           </div>
-          <h1 className="mt-5 font-display text-4xl leading-[1.05] tracking-wide sm:text-6xl lg:text-7xl">
-            GROW WITH <br />
-            <span className="text-brand-gold">PURPOSE</span>
+          <h1 className="mt-5 font-display text-4xl font-extrabold leading-[1.05] tracking-wide sm:text-6xl lg:text-7xl">
+            FIND WORK. <br />
+            <span className="text-brand-gold">BUILD YOUR FUTURE.</span>
           </h1>
           <p className="mt-5 max-w-xl text-base text-white/80 sm:text-lg">
-            Join the family behind Kenya's most trusted neighbourhood supermarkets. Fresh
-            opportunities. Real growth. Lasting impact.
+            AjiraConnect links job seekers with verified employers across Kenya. Browse open
+            roles, apply in minutes, and take the next step in your career — no account needed.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <button
@@ -388,12 +392,12 @@ function Hero() {
 
           <dl className="mt-12 grid max-w-md grid-cols-3 gap-6 sm:gap-8">
             {[
-              { v: "50+", l: "Stores" },
-              { v: "1.2k", l: "Team" },
-              { v: "40+", l: "Years" },
+              { v: "500+", l: "Open roles" },
+              { v: "120+", l: "Employers" },
+              { v: "47", l: "Counties" },
             ].map((s) => (
               <div key={s.l}>
-                <dt className="font-display text-3xl text-brand-gold sm:text-4xl">{s.v}</dt>
+                <dt className="font-display text-3xl font-bold text-brand-gold sm:text-4xl">{s.v}</dt>
                 <dd className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/60">
                   {s.l}
                 </dd>
@@ -405,19 +409,21 @@ function Hero() {
         <div className="hidden lg:block animate-in fade-in zoom-in-95 duration-1000">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/10 shadow-2xl group">
             <img
-              src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1400&q=90"
-              alt="Close-up of colorful produce display in a market"
+              src={ajiraAbout}
+              alt="A recruiter interviewing a smiling candidate in a modern office"
               className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
               loading="lazy"
+              width={1408}
+              height={896}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
             <div className="absolute inset-x-0 bottom-0 p-8">
-              <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
-                Chandarana <br />
-                <span className="text-brand-gold">FoodPlus</span>
+              <h3 className="font-display text-3xl font-bold leading-tight tracking-wide text-white">
+                Ajira <br />
+                <span className="text-brand-gold">Connect</span>
               </h3>
               <p className="mt-3 text-sm font-semibold uppercase tracking-[0.18em] text-white/90">
-                More than just food
+                Your next opportunity starts here
               </p>
             </div>
           </div>
@@ -441,33 +447,35 @@ function About() {
       <div className="mx-auto grid max-w-6xl gap-10 px-3 sm:px-4 lg:grid-cols-2 lg:gap-16">
         <div className="relative aspect-[5/4] overflow-hidden rounded-3xl shadow-xl group">
           <img
-            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=90"
-            alt="Baskets of fresh vegetables and herbs at a farmers market"
+            src={ajiraAbout}
+            alt="A recruiter interviewing a smiling candidate in a modern office"
             className="h-full w-full object-cover transition group-hover:scale-105 duration-500"
             loading="lazy"
+            width={1408}
+            height={896}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-green-deep/90 via-transparent to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-8">
-            <h3 className="font-display text-3xl leading-tight tracking-wide text-white">
-              Fresh local <br />
-              <span className="text-brand-gold">produce</span>
+            <h3 className="font-display text-3xl font-bold leading-tight tracking-wide text-white">
+              People. Culture. <br />
+              <span className="text-brand-gold">Growth.</span>
             </h3>
             <p className="mt-2 text-sm text-white/90">
-              Sourced daily from Kenyan farms, supporting local communities.
+              Connecting Kenyan talent with employers who invest in their people.
             </p>
           </div>
         </div>
         <div>
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold-dark">
-            About Chandarana Foodplus
+            About AjiraConnect
           </span>
-          <h2 className="mt-3 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
-            A KENYAN STORY OF <span className="text-brand-gold-dark">FRESH</span>
+          <h2 className="mt-3 font-display text-3xl font-bold leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
+            WHERE KENYA <span className="text-brand-gold-dark">WORKS</span>
           </h2>
           <p className="mt-5 text-base leading-relaxed text-brand-green-deep/75">
-            For more than four decades, Chandarana Foodplus has been the neighbourhood market
-            families trust. We're proudly Kenyan, family run, and obsessed with sourcing the
-            freshest local produce — from farm, to shelf, to your table.
+            AjiraConnect is Kenya's career connection platform. We bring verified employers and
+            ambitious job seekers together in one simple place — browse real openings, apply in
+            minutes, and get hired without agents or hidden fees.
           </p>
           <div className="mt-7 grid gap-4 sm:grid-cols-3">
             {SERVICES.map((s) => (

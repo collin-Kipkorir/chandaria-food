@@ -5,13 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --col  --color-brand-green: oklch(0.33 0.09 142);
-  --color-brand-green-dark: oklch(0.25 0.08 142);
-  --color-brand-green-deep: oklch(0.20 0.07 142);
-  --color-brand-gold: oklch(0.82 0.16 90);
-  --color-brand-gold-dark: oklch(0.72 0.17 88);
-  --color-brand-cream: oklch(0.98 0.01 95);
-  --font-body: "Inter", system-ui, sans-serif;
+  --color-brand-green: #13795b;
+  --color-brand-green-dark: #0e5e46;
+  --color-brand-green-deep: #0b3d2e;
+  --color-brand-gold: #f4b942;
+  --color-brand-gold-dark: #dea32b;
+  --color-brand-cream: #f7faf8;
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-body: "Figtree", system-ui, sans-serif;
 }
 
 /*
@@ -153,13 +154,6 @@
   --sidebar-primary-foreground: var(--color-brand-cream);
   --sidebar-accent: var(--color-brand-gold);
   --sidebar-accent-foreground: var(--color-brand-green-deep);
-  /* Also expose the brand tokens directly for legacy components */
-  --color-brand-green: oklch(0.33 0.09 142);
-  --color-brand-green-dark: oklch(0.25 0.08 142);
-  --color-brand-green-deep: oklch(0.20 0.07 142);
-  --color-brand-gold: oklch(0.82 0.16 90);
-  --color-brand-gold-dark: oklch(0.72 0.17 88);
-  --color-brand-cream: oklch(0.98 0.01 95);
 }
 
 @layer base {
