@@ -505,14 +505,14 @@ function Stores() {
       <div className="mx-auto max-w-6xl px-3 sm:px-4">
         <div className="text-center">
           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-brand-gold">
-            OUR BUSINESS
+            EXPLORE CATEGORIES
           </span>
-          <h2 className="mt-4 font-display text-3xl leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
-            WHAT WE <span className="text-brand-gold">DO</span>
+          <h2 className="mt-4 font-display text-3xl font-bold leading-tight tracking-wide text-brand-green-deep sm:text-5xl">
+            WHERE THE <span className="text-brand-gold">JOBS ARE</span>
           </h2>
           <p className="mt-4 mx-auto max-w-2xl text-sm text-brand-green-deep/70 sm:text-base">
-            Chandarana Foodplus operates across multiple food retail formats, offering diverse
-            career pathways for everyone.
+            AjiraConnect partners with employers across Kenya's biggest industries, so there's
+            always a role that fits your skills and ambitions.
           </p>
         </div>
 
@@ -1146,14 +1146,14 @@ function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-3 text-center sm:flex-row sm:px-4 sm:text-left">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-full ring-2 ring-brand-gold/40">
-            <Leaf className="h-4 w-4 text-brand-gold" />
+            <Briefcase className="h-4 w-4 text-brand-gold" />
           </div>
           <div className="font-display text-base tracking-wider">
-            CHANDARANA <span className="text-brand-gold">FOODPLUS</span>
+            AJIRA<span className="text-brand-gold">CONNECT</span>
           </div>
         </div>
         <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
-          © {new Date().getFullYear()} Chandarana Foodplus — More than just food
+          © {new Date().getFullYear()} AjiraConnect — Find work. Build your future.
         </p>
       </div>
     </footer>
