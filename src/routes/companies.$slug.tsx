@@ -7,11 +7,11 @@ import { ArrowRight, Building2, MapPin, Briefcase } from "lucide-react";
 import { useMemo } from "react";
 
 const COMPANY_BY_SLUG: Record<string, { name: string; tagline: string; about: string }> = {
-  "chandaria-food-plus": {
-    name: "Chandaria Food Plus",
-    tagline: "Nourishing Kenya, one product at a time.",
+  "ajiraconnect-partners": {
+    name: "AjiraConnect Partners",
+    tagline: "Connecting Kenya's talent with opportunity.",
     about:
-      "Chandaria Food Plus is a leading Kenyan food manufacturer producing trusted everyday staples. We invest in our people through structured training, internal mobility, and a strong culture of safety and quality.",
+      "AjiraConnect Partners is a network of verified Kenyan employers across retail, hospitality, logistics and more. Every role is reviewed before it goes live, so you can apply with confidence — no agents, no hidden fees.",
   },
 };
 
@@ -43,14 +43,14 @@ function CompanyPage() {
     <div className="min-h-screen">
       <AppHeader />
 
-      <section className="border-b bg-gradient-to-br from-orange-500 to-amber-500 text-white">
+      <section className="border-b bg-gradient-to-br from-brand-green-deep via-brand-green-dark to-brand-green text-white">
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wider text-orange-100">
+          <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wider text-brand-gold">
             <Building2 className="h-4 w-4" /> Featured employer
           </div>
-          <h1 className="mt-2 text-4xl font-bold tracking-tight">{meta.name}</h1>
-          <p className="mt-2 max-w-2xl text-orange-50">{meta.tagline}</p>
-          <p className="mt-6 max-w-3xl text-sm text-orange-50/90">{meta.about}</p>
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight">{meta.name}</h1>
+          <p className="mt-2 max-w-2xl text-white/80">{meta.tagline}</p>
+          <p className="mt-6 max-w-3xl text-sm text-white/70">{meta.about}</p>
         </div>
       </section>
 

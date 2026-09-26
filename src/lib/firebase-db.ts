@@ -10,7 +10,7 @@ import {
 import { getFirebaseDb } from "./firebase.js";
 
 /**
- * Chandarana Foodplus — Realtime Database schema
+ * AjiraConnect — Realtime Database schema
  *
  * /users/{userId}           — registered seekers + admin accounts
  * /jobs/{jobId}             — open/closed job postings (public careers page)
