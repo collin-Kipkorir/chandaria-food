@@ -306,7 +306,7 @@ export const useApp = create<AppState>()(
           const inv: InterviewInvitation = {
             id: iid,
             userId: a.userId ?? u?.id ?? "",
-            companyName: opts.companyName ?? "Chandarana Foodplus",
+            companyName: opts.companyName ?? "AjiraConnect",
             jobTitle: opts.jobTitle ?? "",
             interviewDate: opts.interviewDate ?? "",
             interviewTime: opts.interviewTime ?? "",
