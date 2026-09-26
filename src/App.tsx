@@ -23,6 +23,8 @@ import {
   FileUp,
   Wallet,
   Send,
+  Mail,
+  Phone,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
 import type { Job } from "@/lib/types";
@@ -1141,20 +1143,106 @@ function JobDetailView({ job, onBack }: { job: Job; onBack: () => void }) {
 
 // ---------------- Footer ----------------
 function Footer() {
+  const links: { label: string; target: string }[] = [
+    { label: "Home", target: "home" },
+    { label: "About", target: "about" },
+    { label: "Our Stores", target: "stores" },
+    { label: "Careers", target: "careers" },
+    { label: "Apply Now", target: "careers" },
+  ];
   return (
-    <footer className="border-t border-white/10 bg-brand-green-deep py-10 text-white">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-3 text-center sm:flex-row sm:px-4 sm:text-left">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full ring-2 ring-brand-gold/40">
-            <Briefcase className="h-4 w-4 text-brand-gold" />
+    <footer className="relative overflow-hidden bg-brand-green-deep text-white">
+      {/* gold accent line */}
+      <div className="h-1 w-full bg-gradient-to-r from-brand-gold via-brand-gold-dark to-brand-gold" />
+      {/* subtle pattern glow */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-gold/10 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -left-24 h-72 w-72 rounded-full bg-brand-green/30 blur-3xl"
+      />
+
+      <div className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Brand */}
+          <div className="lg:col-span-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-green ring-2 ring-brand-gold/50">
+                <Briefcase className="h-5 w-5 text-brand-gold" />
+              </div>
+              <div>
+                <div className="font-display text-lg font-bold tracking-wider">
+                  AJIRA<span className="text-brand-gold">CONNECT</span>
+                </div>
+                <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">
+                  Find work. Build your future.
+                </div>
+              </div>
+            </div>
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/70">
+              AjiraConnect links job seekers across Kenya with verified employers. Browse open
+              roles and apply in minutes — no account needed.
+            </p>
           </div>
-          <div className="font-display text-base tracking-wider">
-            AJIRA<span className="text-brand-gold">CONNECT</span>
+
+          {/* Quick links */}
+          <div>
+            <h3 className="font-display text-xs font-bold uppercase tracking-[0.25em] text-brand-gold">
+              Explore
+            </h3>
+            <ul className="mt-4 space-y-2.5">
+              {links.map((l) => (
+                <li key={l.label}>
+                  <button
+                    type="button"
+                    onClick={() => goTo(l.target)}
+                    className="group inline-flex items-center gap-2 text-sm text-white/70 transition hover:text-brand-gold"
+                  >
+                    <ArrowRight className="h-3 w-3 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
+                    {l.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <h3 className="font-display text-xs font-bold uppercase tracking-[0.25em] text-brand-gold">
+              Get in touch
+            </h3>
+            <ul className="mt-4 space-y-3 text-sm text-white/70">
+              <li className="flex items-center gap-2.5">
+                <Mail className="h-4 w-4 shrink-0 text-brand-gold" />
+                <a href="mailto:careers@ajiraconnect.co.ke" className="transition hover:text-brand-gold">
+                  careers@ajiraconnect.co.ke
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <Phone className="h-4 w-4 shrink-0 text-brand-gold" />
+                <a href="tel:+254700000000" className="transition hover:text-brand-gold">
+                  +254 700 000 000
+                </a>
+              </li>
+              <li className="flex items-center gap-2.5">
+                <MapPin className="h-4 w-4 shrink-0 text-brand-gold" />
+                Nairobi, Kenya
+              </li>
+            </ul>
           </div>
         </div>
-        <p className="text-[11px] uppercase tracking-[0.2em] text-white/60">
-          © {new Date().getFullYear()} AjiraConnect — Find work. Build your future.
-        </p>
+
+        {/* Bottom bar */}
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-center sm:flex-row sm:text-left">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/50">
+            © {new Date().getFullYear()} AjiraConnect. All rights reserved.
+          </p>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-white/50">
+            Connecting talent across all 47 counties
+          </p>
+        </div>
       </div>
     </footer>
   );
