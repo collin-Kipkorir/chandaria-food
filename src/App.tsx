@@ -624,10 +624,14 @@ function Careers({ jobs, onOpenJob }: { jobs: Job[]; onOpenJob: (j: Job) => void
                 </span>
               </div>
 
-              {/* Job title */}
+              {/* Job title + company */}
               <h3 className="font-display text-sm sm:text-base leading-tight font-medium text-brand-green-deep">
                 {job.title}
               </h3>
+              <div className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500">
+                <Building2 className="h-3.5 w-3.5 flex-shrink-0 text-brand-green/70" />
+                <span className="truncate">{job.companyName}</span>
+              </div>
 
               {/* Location */}
               <div className="mt-2 flex items-center gap-1.5 text-xs text-gray-600">
