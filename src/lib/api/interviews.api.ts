@@ -88,7 +88,8 @@ export async function getFiltersData() {
 }
 
 function buildInvitationRecipientKey(application: JobApplication) {
-  return `${application.jobId}:${application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id}`;
+  const email = (application.applicantEmail ?? "").trim().toLowerCase();
+  return `${application.jobId}:${application.userId?.trim() || email || application.id}`;
 }
 
 function toInvitationStatusRecords(value: Record<string, unknown> | null): InvitationStatusRecord[] {
