@@ -333,7 +333,7 @@ export default function InterviewsPage() {
       setOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to send invitations");
+      toast.error(err instanceof Error && err.message ? `Failed to send invitations: ${err.message}` : "Failed to send invitations");
     } finally {
       setSending(false);
     }
