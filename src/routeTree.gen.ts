@@ -9,13 +9,13 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
-import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
 import { Route as AdminRtdbDebugRouteImport } from './routes/admin.rtdb-debug'
+import { Route as CompaniesSlugRouteImport } from './routes/companies.$slug'
+import { Route as JobsJobIdRouteImport } from './routes/jobs.$jobId'
 
-const JobsJobIdRoute = JobsJobIdRouteImport.update({
-  id: '/jobs/$jobId',
-  path: '/jobs/$jobId',
+const AdminRtdbDebugRoute = AdminRtdbDebugRouteImport.update({
+  id: '/admin/rtdb-debug',
+  path: '/admin/rtdb-debug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CompaniesSlugRoute = CompaniesSlugRouteImport.update({
@@ -23,9 +23,9 @@ const CompaniesSlugRoute = CompaniesSlugRouteImport.update({
   path: '/companies/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRtdbDebugRoute = AdminRtdbDebugRouteImport.update({
-  id: '/admin/rtdb-debug',
-  path: '/admin/rtdb-debug',
+const JobsJobIdRoute = JobsJobIdRouteImport.update({
+  id: '/jobs/$jobId',
+  path: '/jobs/$jobId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -61,11 +61,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/jobs/$jobId': {
-      id: '/jobs/$jobId'
-      path: '/jobs/$jobId'
-      fullPath: '/jobs/$jobId'
-      preLoaderRoute: typeof JobsJobIdRouteImport
+    '/admin/rtdb-debug': {
+      id: '/admin/rtdb-debug'
+      path: '/admin/rtdb-debug'
+      fullPath: '/admin/rtdb-debug'
+      preLoaderRoute: typeof AdminRtdbDebugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companies/$slug': {
@@ -75,11 +75,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/rtdb-debug': {
-      id: '/admin/rtdb-debug'
-      path: '/admin/rtdb-debug'
-      fullPath: '/admin/rtdb-debug'
-      preLoaderRoute: typeof AdminRtdbDebugRouteImport
+    '/jobs/$jobId': {
+      id: '/jobs/$jobId'
+      path: '/jobs/$jobId'
+      fullPath: '/jobs/$jobId'
+      preLoaderRoute: typeof JobsJobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

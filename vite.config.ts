@@ -48,6 +48,12 @@ function apiRouteMiddleware(serverHandler: {
 // Minimal Vite config using standard plugins. We removed the project-specific
 // `@lovable.dev/vite-tanstack-config` to decouple the build from TanStack Start.
 export default defineConfig({
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom", "sonner"],
+  },
   plugins: [
     react(),
     tsconfigPaths(),

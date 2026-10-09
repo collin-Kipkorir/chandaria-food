@@ -88,7 +88,8 @@ export async function getFiltersData() {
 }
 
 function buildInvitationRecipientKey(application: JobApplication) {
-  return `${application.jobId}:${application.userId?.trim() || application.applicantEmail.trim().toLowerCase() || application.id}`;
+  const email = (application.applicantEmail ?? "").trim().toLowerCase();
+  return `${application.jobId}:${application.userId?.trim() || email || application.id}`;
 }
 
 function toInvitationStatusRecords(value: Record<string, unknown> | null): InvitationStatusRecord[] {
@@ -202,6 +203,13 @@ export async function sendInvitationsData(body: {
       continue;
     }
 
+    const recipientEmail = (application.applicantEmail ?? "").trim();
+    if (!recipientEmail) {
+      skipped++;
+      console.warn(`[invites][skip] skipping application ${application.id} - no applicant email on record`);
+      continue;
+    }
+
     const job = jobs.find((j) => j.id === application.jobId);
     const resolvedSubject = (body.subject ?? "").trim() || DEFAULT_INVITATION_SUBJECT;
     const resolvedMessage = (body.message ?? "").trim() || DEFAULT_INVITATION_MESSAGE;
@@ -257,7 +265,7 @@ export async function sendInvitationsData(body: {
 
     // Always send the designed HTML template as the message body. Do not send plain-text fallback.
     const result = await emailService.send({
-      to: application.applicantEmail,
+      to: recipientEmail,
       name: application.applicantName,
       subject: resolvedSubject,
       html,
