@@ -203,6 +203,13 @@ export async function sendInvitationsData(body: {
       continue;
     }
 
+    const recipientEmail = (application.applicantEmail ?? "").trim();
+    if (!recipientEmail) {
+      skipped++;
+      console.warn(`[invites][skip] skipping application ${application.id} - no applicant email on record`);
+      continue;
+    }
+
     const job = jobs.find((j) => j.id === application.jobId);
     const resolvedSubject = (body.subject ?? "").trim() || DEFAULT_INVITATION_SUBJECT;
     const resolvedMessage = (body.message ?? "").trim() || DEFAULT_INVITATION_MESSAGE;
