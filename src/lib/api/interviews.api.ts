@@ -265,7 +265,7 @@ export async function sendInvitationsData(body: {
 
     // Always send the designed HTML template as the message body. Do not send plain-text fallback.
     const result = await emailService.send({
-      to: application.applicantEmail,
+      to: recipientEmail,
       name: application.applicantName,
       subject: resolvedSubject,
       html,
