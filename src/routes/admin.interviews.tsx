@@ -311,7 +311,16 @@ export default function InterviewsPage() {
           foodHandlerCertUrl: foodHandlerCertUrl || undefined,
         }),
       });
-      if (!response.ok) throw new Error("Send request failed");
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const errBody = await response.json();
+          detail = errBody?.error ?? "";
+        } catch {
+          /* non-JSON error body */
+        }
+        throw new Error(detail || `Send request failed (${response.status})`);
+      }
       const result = await response.json();
       setRecentSends((prev) => [...(result.sentItems ?? []), ...prev].slice(0, 6));
       setPreview((prev) => ({
