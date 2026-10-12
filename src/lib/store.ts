@@ -132,6 +132,8 @@ interface AppState {
   audit: (action: string, target: string) => void;
 }
 
+console.log("[store.ts] Creating Zustand store with isFirebaseConfigured=", isFirebaseConfigured);
+
 export const useApp = create<AppState>()(
   persist(
     (set, get) => ({
@@ -672,12 +674,20 @@ export const useApp = create<AppState>()(
 let syncStarted = false;
 export function startFirebaseSync() {
   if (syncStarted) return;
-  if (!isFirebaseConfigured) return;
+  if (!isFirebaseConfigured) {
+    console.warn("[startFirebaseSync] Firebase is NOT configured. isFirebaseConfigured=false");
+    return;
+  }
   const db = getFirebaseDb();
-  if (!db) return;
+  if (!db) {
+    console.warn("[startFirebaseSync] Failed to get Firebase DB instance");
+    return;
+  }
   syncStarted = true;
+  console.log("[startFirebaseSync] Starting Firebase sync with configured database");
 
   void (async () => {
+    console.log("[startFirebaseSync] Starting initial snapshot fetch...");
     const usersSnap = await dbGet(ref(db, "users"));
     if (!usersSnap.exists()) await dbSet(ref(db, `users/${SEED_ADMIN.id}`), SEED_ADMIN);
     else {
@@ -701,6 +711,14 @@ export function startFirebaseSync() {
           dbGet(ref(db, "audits")),
         ]);
 
+      console.log("[startFirebaseSync] Initial snapshots fetched", {
+        jobs: jobsSnap.exists() ? Object.keys(jobsSnap.val()).length : 0,
+        applications: appsSnap.exists() ? Object.keys(appsSnap.val()).length : 0,
+        campaigns: campaignsSnap.exists() ? Object.keys(campaignsSnap.val()).length : 0,
+        emailLogs: emailLogsSnap.exists() ? Object.keys(emailLogsSnap.val()).length : 0,
+        interviews: interviewsSnap.exists() ? Object.keys(interviewsSnap.val()).length : 0,
+      });
+
       if (jobsSnap.exists()) {
         useApp.setState({
           jobs: toArray<Job>(jobsSnap.val()).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
@@ -717,11 +735,18 @@ export function startFirebaseSync() {
         useApp.setState({ firebaseReady: true });
       }
       if (appsSnap.exists()) {
-        useApp.setState({
-          applications: toArray<JobApplication>(appsSnap.val()).sort((a, b) =>
-            b.createdAt.localeCompare(a.createdAt),
-          ),
+        const apps = toArray<JobApplication>(appsSnap.val()).sort((a, b) =>
+          b.createdAt.localeCompare(a.createdAt),
+        );
+        console.log("[startFirebaseSync] Initial applications fetch:", {
+          count: apps.length,
+          sample: apps.slice(0, 3),
         });
+        useApp.setState({
+          applications: apps,
+        });
+      } else {
+        console.warn("[startFirebaseSync] No applications found in database");
       }
       if (campaignsSnap.exists()) {
         useApp.setState({
@@ -759,6 +784,7 @@ export function startFirebaseSync() {
     }
   })();
 
+  console.log("[startFirebaseSync] About to set up onValue listeners...");
   onValue(ref(db, "users"), (snap) => {
     useApp.setState({ users: toArray<User>(snap.val()) });
   });
@@ -796,15 +822,25 @@ export function startFirebaseSync() {
     useApp.setState({ jobs: list });
   });
   onValue(ref(db, "applications"), (snap) => {
-    const list = toArray<JobApplication>(snap.val()).sort((a, b) =>
+    const rawData = snap.val();
+    const list = toArray<JobApplication>(rawData).sort((a, b) =>
       b.createdAt.localeCompare(a.createdAt),
     );
-    console.debug("[startFirebaseSync] applications onValue ->", {
+    console.log("[startFirebaseSync] applications onValue listener fired", {
+      exists: snap.exists(),
+      rawDataType: typeof rawData,
+      rawDataKeys: rawData && typeof rawData === 'object' ? Object.keys(rawData).length : 0,
       count: list.length,
-      sample: list.slice(0, 5),
+      sample: list.slice(0, 3),
     });
     useApp.setState({ applications: list });
+  }, (error) => {
+    console.error("[startFirebaseSync] applications onValue listener error:", error);
   });
+  
+  console.log("[startFirebaseSync] Attached onValue listener for applications");
+  
+  console.log("[startFirebaseSync] Finished setting up all onValue listeners. Firebase sync is active.");
 }
 
 export const useCurrentUser = () => {

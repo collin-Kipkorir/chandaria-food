@@ -30,6 +30,15 @@ export function buildInvitationStatusKey(application: JobApplication): string {
   return `${recipientKey}::${application.jobId ?? "all"}`;
 }
 
+export function buildRealtimeDatabaseKey(value: string): string {
+  return encodeURIComponent(value)
+    .replace(/\./g, "%2E")
+    .replace(/#/g, "%23")
+    .replace(/\$/g, "%24")
+    .replace(/\[/g, "%5B")
+    .replace(/\]/g, "%5D");
+}
+
 export function buildInvitationStatusRecord(
   application: JobApplication,
   status: "pending" | "sent" | "failed" = "sent",

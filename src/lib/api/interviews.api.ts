@@ -4,6 +4,7 @@ import {
   buildInvitationCampaignId,
   buildInvitationStatusRecord,
   buildInvitationStatusKey,
+  buildRealtimeDatabaseKey,
   hasReceivedInvitation,
   shouldSkipInvitation,
   type InvitationStatusRecord,
@@ -246,7 +247,7 @@ export async function sendInvitationsData(body: {
 
     const adminDb = getFirebaseAdminDatabase();
     const statusKey = buildInvitationStatusKey(application);
-    const statusPath = `bulkInviteStatus/${encodeURIComponent(statusKey)}`;
+    const statusPath = `bulkInviteStatus/${buildRealtimeDatabaseKey(statusKey)}`;
     const pendingStatus = buildInvitationStatusRecord(application, "pending");
 
     if (adminDb) {
