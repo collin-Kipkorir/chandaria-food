@@ -31,12 +31,23 @@ export function buildInvitationStatusKey(application: JobApplication): string {
 }
 
 export function buildRealtimeDatabaseKey(value: string): string {
-  return encodeURIComponent(value)
-    .replace(/\./g, "%2E")
-    .replace(/#/g, "%23")
-    .replace(/\$/g, "%24")
-    .replace(/\[/g, "%5B")
-    .replace(/\]/g, "%5D");
+  // Firebase Realtime Database rejects literal '.' '#' '$' '[' ']' and '/' in path keys.
+  // Percent-encoding is not sufficient because the URL parser can decode the value back to a rejected character.
+  // Base64url is safe because it uses only letters, numbers, '-' and '_'.
+  const safeValue = value.trim();
+
+  if (typeof Buffer !== "undefined") {
+    return Buffer.from(safeValue, "utf8").toString("base64url");
+  }
+
+  if (typeof btoa === "function") {
+    return btoa(unescape(encodeURIComponent(safeValue)))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/g, "");
+  }
+
+  return safeValue.replace(/[.#$\[\]/]/g, "_");
 }
 
 export function buildInvitationStatusRecord(
