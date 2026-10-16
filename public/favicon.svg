@@ -1,13 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="AjiraConnect">
   <rect width="32" height="32" rx="7.5" fill="#0b3d2e" />
   <path
-    d="M12.2 11.8v-2a2.4 2.4 0 0 1 2.4-2.4h2.8a2.4 2.4 0 0 1 2.4 2.4v2"
+    d="M8.7 24.4 16 7.6 23.3 24.4"
     fill="none"
     stroke="#f4b942"
-    stroke-width="2.1"
+    stroke-width="3.2"
     stroke-linecap="round"
+    stroke-linejoin="round"
   />
-  <rect x="5.8" y="11.8" width="20.4" height="13.6" rx="3.1" fill="#f4b942" />
-  <rect x="5.8" y="16.5" width="20.4" height="1.5" fill="#0b3d2e" opacity="0.38" />
-  <rect x="14.1" y="15.3" width="3.8" height="3.9" rx="1.2" fill="#0b3d2e" />
+  <path d="M12.6 18.3h6.8" stroke="#f4b942" stroke-width="3.2" stroke-linecap="round" />
 </svg>
